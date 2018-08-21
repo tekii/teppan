@@ -39,7 +39,8 @@ RMDIR:= @-rmdir
 
 ##
 ## M4
-##
+## /usr/local/Cellar/autoconf/2.69/share/autoconf/m4sugar/m4sugar.m4f
+## /usr/share/autoconf/m4sugar/m4sugar.m4f
 M4= $(shell which m4)
 ifeq ($(__UNAME__),Linux)
 M4_FLAGS:= \
@@ -65,6 +66,7 @@ M4_FLAGS+= \
 ##
 .PRECIOUS: $(__ROOT__)/%/
 $(__ROOT__)/%/:
+	echo 'trulala' $@
 	mkdir -p $@
 ##
 ## as first target build marks all langs as done one rule doesn't

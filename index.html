@@ -3,6 +3,9 @@
 __BUILD_TOP([__EN__])
 __BUILD_COPY([img/us.png])
 __BUILD_COPY([img/es.png])
+__BUILD_COPY([img/foto1.jpg])
+__BUILD_COPY([img/foto4.jpg])
+__BUILD_COPY([img/foto3.jpg])
 
 m4_divert_push([HEADER])dnl
 <meta name="keywords" content="tekii,teky,trazabilidad,traceability,anmat">
@@ -29,30 +32,37 @@ m4_changequote([,])dnl
 ])
 
 m4_divert_text([AMP_CUSTOM_ELEMENTS],[
-<script async custom-element="amp-carousel"
-        src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
+<script async custom-element="amp-carousel" src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
 ])
 
 m4_divert_push([BODY])dnl
 <amp-carousel
-   height="250"
+   height="390"
+   width="100vw"
    dnl   layout="responsive"
    type="slides"
    layout="fixed-height"
    dnl   type="carousel"
    autoplay
-   delay="2000"
+   delay="1500"
    >
   <div>
-    <div class="blue-box">This is a blue box.</div>
+      <amp-img src="static/img/foto4.jpg" alt="Business Responsive Template" height="390" layout="responsive" class="i-amphtml-element i-amphtml-layout-responsive i-amphtml-layout-size-defined i-amphtml-layout">
+          <i-amphtml-sizer style="display: block; padding-top: 72.2222%;"></i-amphtml-sizer>
+          <img decoding="async" alt="Business Responsive Template" src="static/img/foto4.jpg" class="i-amphtml-fill-content i-amphtml-replaced-content"/>
+      </amp-img>
   </div>
   <div>
-    <div class="red-box"></div>
-    This is a red box.
+      <amp-img src="static/img/foto1.jpg" alt="Business Responsive Template" height="390" layout="responsive" class="i-amphtml-element i-amphtml-layout-responsive i-amphtml-layout-size-defined i-amphtml-layout">
+          <i-amphtml-sizer style="display: block; padding-top: 72.2222%;"></i-amphtml-sizer>
+          <img decoding="async" alt="Business Responsive Template" src="static/img/foto1.jpg" class="i-amphtml-fill-content i-amphtml-replaced-content"/>
+      </amp-img>
   </div>
   <div>
-    <div class="green-box"></div>
-    This is a green box.
+      <amp-img src="static/img/foto3.jpg" alt="Business Responsive Template" height="390" layout="responsive" class="i-amphtml-element i-amphtml-layout-responsive i-amphtml-layout-size-defined i-amphtml-layout">
+          <i-amphtml-sizer style="display: block; padding-top: 72.2222%;"></i-amphtml-sizer>
+          <img decoding="async" alt="Business Responsive Template" src="static/img/foto3.jpg" class="i-amphtml-fill-content i-amphtml-replaced-content"/>
+      </amp-img>
   </div>
 </amp-carousel>
 
