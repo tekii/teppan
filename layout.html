@@ -37,47 +37,514 @@ m4_divert_push([BUILD])dnl
       /* amp custom styles */
       m4_undivert(AMP_CUSTOM_STYLES)[]dnl
     </style>
+    <style amp-custom>
+
+        div,span,h1,h2,h3,h4,h5,h6,p,blockquote,a,ol,ul,li,figcaption,textarea,input{
+           font: inherit;
+        }
+        section{
+           background-color: #eeeeee;
+        }
+        section,.container,.container-fluid{
+           position: relative;
+           word-wrap: break-word;
+        }
+        a{
+           font-style: normal;
+           font-weight: 400;
+           cursor: pointer;
+        }
+        a, a:hover{
+           text-decoration: none;
+        }
+        h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.display-1,.display-2,.display-3,.display-4{
+           line-height: 1;
+           word-break: break-word;
+           word-wrap: break-word;
+        }
+        b,strong{
+           font-weight: bold;
+        }
+        .is-builder section.horizontal-menu .ampstart-btn{
+           display: none;
+        }
+        @media (max-width: 991px){
+           .is-builder section.horizontal-menu .navbar-toggler{
+               display: block;
+           }
+        }
+
+        .tki .nav-item:focus,.tki .nav-link:focus{
+           outline: none;
+        }
+        .tki .navbar-nav{
+           list-style-type: none;
+           display: flex;
+           flex-direction: row;
+           padding-left: 0;
+        }
+        .tki .navbar-nav .nav-link{
+           margin: 0.667em 1em;
+           font-weight: normal;
+        }
+        .tki .container{
+           display: flex;
+        }
+        @media (max-width: 991px){
+           .tki ul.navbar-nav{
+               flex-direction: column;
+           }
+           .tki ul.navbar-nav li{
+               margin: auto;
+           }
+        }
+
+        .tki .link.dropdown-toggle:after{
+           content: "";
+           margin-left: 0.25rem;
+           border-top: 0.35em solid;
+           border-right: 0.35em solid transparent;
+           border-left: 0.35em solid transparent;
+           border-bottom: 0;
+        }
+        .tki .navbar{
+           z-index: 100;
+           display: flex;
+           flex-direction: row;
+           width: 100%;
+           min-height: 77px;
+           transition: all 0.3s;
+           background: #0a57a2;
+        }
+        .tki .navbar .navbar-logo{
+           margin-right: 0.8rem;
+        }
+        .tki .navbar .navbar-logo img{
+           height: auto;
+        }
+        .tki .navbar.navbar-short{
+           background: #0a57a2;
+        }
+        .tki .navbar.navbar-short .navbar-brand{
+           padding: 0;
+        }
+        .tki .navbar.opened{
+           transition: all 0.3s;
+           background: #0a57a2;
+        }
+        .tki .navbar .navbar-collapse{
+           display: flex;
+           justify-content: flex-end;
+           z-index: 1;
+           flex-basis: 100%;
+           align-items: center;
+        }
+        .tki .navbar.collapsed button.navbar-toggler{
+           display: block;
+        }
+        .tki .navbar.collapsed .navbar-collapse{
+           display: none;
+           position: absolute;
+           top: 0;
+           right: 0;
+           min-height: 100vh;
+           background: #0a57a2;
+           padding: 1.5rem 2rem 1rem 2rem;
+        }
+        .tki .navbar.collapsed.opened .navbar-collapse.show,.tki .navbar.collapsed.opened .navbar-collapse.collapsing{
+           display: block;
+        }
+        .tki .navbar.collapsed .navbar-brand{
+           flex-shrink: initial;
+           word-break: break-word;
+        }
+        @media (max-width: 991px){
+           .tki .navbar .navbar-collapse{
+               display: none;
+               position: absolute;
+               top: 0;
+               right: 0;
+               min-height: 100vh;
+               background: #0a57a2;
+               padding: 1rem 2rem 1rem 2rem;
+           }
+           .tki .navbar.opened .navbar-collapse.show,.tki .navbar.opened .navbar-collapse.collapsing{
+               display: block;
+           }
+           .tki .navbar .navbar-brand{
+               flex-shrink: initial;
+               word-break: break-word;
+           }
+        }
+        .tki .navbar-brand{
+           display: flex;
+           flex-shrink: 0;
+           align-items: center;
+           margin-right: 0;
+           padding: 0;
+           transition: all 0.3s;
+           word-break: break-word;
+           z-index: 1;
+        }
+        .tki .navbar-brand .navbar-caption{
+           line-height: inherit;
+           font-weight: normal;
+           letter-spacing: 1px;
+           display: flex;
+        }
+        .tki .navbar-brand .navbar-logo a{
+           outline: none;
+        }
+        .tki .navbar-expand-lg .navbar-nav .nav-link{
+           padding: 0;
+        }
+        .tki ul.navbar-nav{
+           flex-wrap: wrap;
+        }
+        .tki .navbar-buttons{
+           text-align: center;
+        }
+        .tki button.navbar-toggler{
+           display: none;
+           outline: none;
+           width: 31px;
+           height: 20px;
+           cursor: pointer;
+           transition: all 0.2s;
+           position: relative;
+           align-self: center;
+        }
+        .tki button.navbar-toggler .hamburger span{
+           position: absolute;
+           right: 0;
+           width: 30px;
+           height: 2px;
+           border-right: 5px;
+           background-color: #ffffff;
+        }
+        .tki button.navbar-toggler .hamburger span:nth-child(1){
+           top: 0;
+           transition: all 0.2s;
+        }
+        .tki button.navbar-toggler .hamburger span:nth-child(2){
+           top: 8px;
+           transition: all 0.15s;
+        }
+        .tki button.navbar-toggler .hamburger span:nth-child(3){
+           top: 8px;
+           transition: all 0.15s;
+        }
+        .tki button.navbar-toggler .hamburger span:nth-child(4){
+           top: 16px;
+           transition: all 0.2s;
+        }
+        .tki nav.opened .navbar-toggler:not(.hide) .hamburger span:nth-child(1){
+           top: 8px;
+           width: 0;
+           opacity: 0;
+           right: 50%;
+           transition: all 0.2s;
+        }
+        .tki nav.opened .navbar-toggler:not(.hide) .hamburger span:nth-child(2){
+           -webkit-transform: rotate(45deg);
+           transform: rotate(45deg);
+           transition: all 0.25s;
+        }
+        .tki nav.opened .navbar-toggler:not(.hide) .hamburger span:nth-child(3){
+           -webkit-transform: rotate(-45deg);
+           transform: rotate(-45deg);
+           transition: all 0.25s;
+        }
+        .tki nav.opened .navbar-toggler:not(.hide) .hamburger span:nth-child(4){
+           top: 8px;
+           width: 0;
+           opacity: 0;
+           right: 50%;
+           transition: all 0.2s;
+        }
+        .tki a.nav-link{
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           letter-spacing: 2px;
+        }
+        .tki .nav-link .mbr-iconfont,.tki .dropdown-item .mbr-iconfont{
+           margin-right: 0.2rem;
+        }
+        .tki .ampstart-btn.hamburger{
+           position: absolute;
+           top: 25px;
+           right: 20px;
+           margin-left: auto;
+           width: 30px;
+           height: 20px;
+           background: none;
+           border: none;
+           cursor: pointer;
+           z-index: 1000;
+        }
+        .tki .ampstart-btn.hamburger.sticky-but{
+           position: fixed;
+        }
+        .tki .ampstart-btn.hamburger:focus{
+           outline: none;
+        }
+        .tki .ampstart-btn.hamburger span{
+           position: absolute;
+           right: 0;
+           width: 30px;
+           height: 2px;
+           border-right: 5px;
+           background-color: #ffffff;
+        }
+        .tki .ampstart-btn.hamburger span:nth-child(1){
+           top: 0;
+           transition: all 0.2s;
+        }
+        .tki .ampstart-btn.hamburger span:nth-child(2){
+           top: 8px;
+           transition: all 0.15s;
+        }
+        .tki .ampstart-btn.hamburger span:nth-child(3){
+           top: 8px;
+           transition: all 0.15s;
+        }
+        .tki .ampstart-btn.hamburger span:nth-child(4){
+           top: 16px;
+           transition: all 0.2s;
+        }
+        @media (min-width: 992px){
+           .tki .ampstart-btn,.tki amp-sidebar{
+               display: none;
+           }
+        }
+        .tki amp-sidebar{
+           min-width: 260px;
+           z-index: 1050;
+           background-color: #0a57a2;
+        }
+        .tki amp-sidebar.open:after{
+           content: "";
+           position: absolute;
+           top: 0;
+           left: 0;
+           bottom: 0;
+           right: 0;
+           background-color: red;
+        }
+        .tki .open{
+           transform: translateX(0%);
+           display: block;
+        }
+        .tki .builder-sidebar{
+           background-color: #0a57a2;
+           position: relative;
+           height: 100vh;
+           z-index: 1030;
+           padding: 1rem 2rem;
+           max-width: 20rem;
+        }
+        .tki .builder-sidebar .dropdown{
+           position: relative;
+        }
+        .tki .builder-sidebar .dropdown:hover > .dropdown-menu{
+           position: relative;
+           text-align: center;
+        }
+        .tki .sidebar{
+           padding: 1rem 0;
+           margin: 0;
+        }
+        .tki .sidebar > li{
+           list-style: none;
+           display: flex;
+           flex-direction: column;
+        }
+        .tki .sidebar a{
+           display: block;
+           text-decoration: none;
+           margin-bottom: 10px;
+        }
+        .tki .close-sidebar{
+           width: 30px;
+           height: 30px;
+           position: relative;
+           cursor: pointer;
+           background-color: transparent;
+           border: none;
+        }
+        .tki .close-sidebar:focus{
+           outline: 2px auto #e3699a;
+        }
+        .tki .close-sidebar span{
+           position: absolute;
+           left: 0;
+           width: 30px;
+           height: 2px;
+           border-right: 5px;
+           background-color: #ffffff;
+        }
+        .tki .close-sidebar span:nth-child(1){
+           transform: rotate(45deg);
+        }
+        .tki .close-sidebar span:nth-child(2){
+           transform: rotate(-45deg);
+        }
+        .tki amp-img{
+           width: 50px;
+           display: flex;
+           align-items: center;
+        }
+        @media (max-width: 768px){
+           .tki amp-img{
+               max-height: 55px;
+               max-width: 55px;
+           }
+        }
+        .display-7{
+           font-family: 'Source Sans Pro',sans-serif;
+           font-size: 0.8rem;
+        }
+        .text-white{
+           color: #ffffff;
+        }
+        a.text-white:hover,a.text-white:focus{
+           color: #b3b3b3;
+        }
+        .container{
+           padding-right: 15px;
+           padding-left: 15px;
+           width: 100%;
+           margin-right: auto;
+           margin-left: auto;
+        }
+        @media (max-width: 767px){
+           .container{
+               max-width: 540px;
+           }
+        }
+        @media (min-width: 768px){
+           .container{
+               max-width: 720px;
+           }
+        }
+        @media (min-width: 992px){
+           .container{
+               max-width: 960px;
+           }
+        }
+        @media (min-width: 1200px){
+           .container{
+               max-width: 1140px;
+           }
+        }
+    </style>
     <!-- amp-boilerplate -->
-    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
+    <noscript>
+       <style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style>
+    </noscript>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
   </head>
 
   <body>
     <!-- NAV -->
     <!-- NAV -->
     <!-- NAV -->
-    dnl<button class="tab hamburger" id="menu-button" on='tap:sidebar.toggle'></button>
-    <nav>
-      <ul>
-        <li class="current">
-          <a class="flag-__LANG__"><span>__LANG_NAME__</span></a>
-        </li>
-        m4_ifdef([__ALTERNATE__],[
-        __FOREACH_LANG_EXCEPT([__LANG__],[__L__],[__N__],[
-        <li>
-          <a href="__HREF(__ROOT__/__L__/__FNAME__)"
-             class="flag-__L__">
-            <span>__N__</span>
-          </a>
-        </li>
-        ])])dnl
-      </ul>
-      <ul>
-        m4_define([__SECTION],[
-        <div class="menuitem-class" m4_if($1,__FNAME__,[expanded id="bcb" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"]) >
-          dnl<h3>$2</h3>
-          <li>
-            <a href="__HREF(__ROOT__/__LANG__/$1)" m4_if($1,__FNAME__,[itemprop="url"])>
-              <span m4_if($1,__FNAME__,[itemprop="title"])>$2</span>
-            </a>
-          </li>
-        </div>])[]dnl
-        __SECTION([about.html],__ESEN([Acerca de],[About]))
-        __SECTION([contact.html],__ESEN([Contacto],[Contact]))
-        m4_undefine([__SECTION])
-      </ul>
-    </nav>
+    <amp-sidebar id="sidebar" class="tki" layout="nodisplay" side="right">
+       <div class="builder-sidebar" id="builder-sidebar">
+          <button on="tap:sidebar.close" class="close-sidebar">
+          <span></span>
+          <span></span>
+          </button>
+          <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
+             <li class="nav-item">
+                <a class="nav-link link text-white display-7" href="/">
+                <strong>HOME</strong>
+                </a>
+             </li>
+             <li class="nav-item"><a class="nav-link link text-white display-7" href="/en/about.html">
+                <strong>SERVICES</strong>
+                </a>
+             </li>
+             <li class="nav-item"><a class="nav-link link text-white display-7" href="/en/about.html">
+                <strong>ABOUT US</strong>
+                </a>
+             </li>
+             <li class="nav-item"><a class="nav-link link text-white display-7" href="/en/contact.html">
+                <strong>CONTACT</strong>
+                </a>
+             </li>
+          </ul>
+       </div>
+    </amp-sidebar>
+    <section class="menu horizontal-menu tki" id="menu1-h">
+       <nav class="navbar navbar-dropdown  navbar-fixed-top navbar-expand-lg">
+          <div class="container">
+             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
+                   <li class="nav-item">
+                      <a class="nav-link link text-white display-7" href="/">
+                      <strong>HOME</strong>
+                      </a>
+                   </li>
+                   <li class="nav-item"><a class="nav-link link text-white display-7" href="/en/about.html">
+                      <strong>SERVICES</strong>
+                      </a>
+                   </li>
+                   <li class="nav-item"><a class="nav-link link text-white display-7" href="/en/about.html">
+                      <strong>ABOUT US</strong>
+                      </a>
+                   </li>
+                   <li class="nav-item"><a class="nav-link link text-white display-7" href="/en/contact.html">
+                      <strong>CONTACT</strong>
+                      </a>
+                   </li>
+                </ul>
+             </div>
+          </div>
+       </nav>
+       <!-- AMP plug -->
+       <button on="tap:sidebar.toggle" class="ampstart-btn hamburger sticky-but">
+       <span></span>
+       <span></span>
+       <span></span>
+       <span></span>
+       </button>
+    </section>
 
+    dnl<button class="tab hamburger" id="menu-button" on='tap:sidebar.toggle'></button>
+    dnl<nav>
+    dnl  <ul>
+    dnl    <li class="current">
+    dnl      <a class="flag-__LANG__"><span>__LANG_NAME__</span></a>
+    dnl    </li>
+    dnl    m4_ifdef([__ALTERNATE__],[
+    dnl    __FOREACH_LANG_EXCEPT([__LANG__],[__L__],[__N__],[
+    dnl    <li>
+    dnl      <a href="__HREF(__ROOT__/__L__/__FNAME__)"
+    dnl         class="flag-__L__">
+    dnl        <span>__N__</span>
+    dnl      </a>
+    dnl    </li>
+    dnl    ])])dnl
+    dnl  </ul>
+    dnl  <ul>
+    dnl    m4_define([__SECTION],[
+    dnl    <div class="menuitem-class" m4_if($1,__FNAME__,[expanded id="bcb" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"]) >
+    dnl      dnl<h3>$2</h3>
+    dnl      <li>
+    dnl        <a href="__HREF(__ROOT__/__LANG__/$1)" m4_if($1,__FNAME__,[itemprop="url"])>
+    dnl          <span m4_if($1,__FNAME__,[itemprop="title"])>$2</span>
+    dnl        </a>
+    dnl      </li>
+    dnl    </div>])[]dnl
+    dnl    __SECTION([about.html],__ESEN([Acerca de],[About]))
+    dnl    __SECTION([contact.html],__ESEN([Contacto],[Contact]))
+    dnl    m4_undefine([__SECTION])
+    dnl  </ul>
+    dnl</nav>
     <!-- HEADER -->
     <!-- HEADER -->
     <!-- HEADER -->
