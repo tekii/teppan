@@ -23,7 +23,7 @@ AMP__EXT:=.amp.html
 
 GLYPH:=glyphicons-halflings-regular
 
-PAGES := 404.html index.html about.html contact.html
+PAGES := 404.html index.html about.html contact.html services.html customers.html home.html
 
 ##
 ##

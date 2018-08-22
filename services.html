@@ -1,0 +1,31 @@
+__BUILD_LANG([__EN__])
+__BUILD_LANG([__ES__])
+
+m4_divert_text([SITEMAP],[
+weekly
+en
+###
+])
+
+m4_divert_text([HEADER],[
+<title>TEKii SRL - __ENES([Services],[Servicios])</title>
+<meta name="keywords" content="tekii,teky,trazabilidad,traceability,anmat">
+])
+
+
+m4_divert_push([BODY])dnl
+<div id="dev_page_content_wrap" class=" ">
+
+  <h1 id="dev_page_title">__ENES([Services],[Servicios])</h1>
+
+  m4_case(__LANG__,__EN__,[
+
+  <p>Pagina de servicios en Ingles</p>
+
+  ],__ES__,[
+
+  <p>Pagina de serivicios en Español</p>
+
+  ])dnl
+</div>
+m4_divert_pop([BODY])[]dnl
