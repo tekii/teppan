@@ -6,6 +6,9 @@ __BUILD_COPY([img/logo-blue.svg])
 __BUILD_COPY([img/lang-icon.svg])
 __BUILD_COPY([img/lang-icon-inverted.svg])
 
+__BUILD_COPY([img/flag-us.gif])
+__BUILD_COPY([img/flag-es.gif])
+
 m4_divert_push([BUILD])dnl
 <!DOCTYPE html>
 <html ⚡ lang="__LANG__">
@@ -400,6 +403,12 @@ m4_divert_push([BUILD])dnl
                max-width: 55px;
            }
         }
+        .lang-sel{
+           display: inline-block !important;
+        }
+        .nav-item span {
+           margin: 0.667em 1em;
+        }
         .display-7{
            font-family: 'Source Sans Pro',sans-serif;
            font-size: 0.8rem;
@@ -457,14 +466,14 @@ m4_divert_push([BUILD])dnl
           <span></span>
           <span></span>
           </button>
-          m4_include([menu.html])
+          __INCL([menu.html])
        </div>
     </amp-sidebar>
     <section class="menu horizontal-menu tki" id="menu1-h">
        <nav class="navbar navbar-dropdown  navbar-fixed-top navbar-expand-lg">
           <div class="container">
              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                m4_include([menu.html])
+                __INCL([menu.html])
              </div>
           </div>
        </nav>
