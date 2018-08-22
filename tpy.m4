@@ -14,6 +14,7 @@ m4_define([_m4_divert(BODY)], 4)
 m4_define([_m4_divert(AMP_CUSTOM_STYLES)], 5)
 m4_define([_m4_divert(AMP_CUSTOM_ELEMENTS)], 6)
 m4_define([_m4_divert(BUILD)], 7)
+m4_define([_m4_divert(PAPER)], 8)
 #
 # constants
 #
@@ -23,7 +24,7 @@ m4_define([__TEKII_SRL_]_,__TEKII__([ SRL]))
 #
 # LANG conditionals
 #
-m4_define([__LANGS__],[ [en,[English]], [es,[Español]] ])
+m4_define([__LANGS__],[[en,[English]],[es,[Español]]])
 
 m4_define([__FOREACH_LANG],
 [m4_foreach([Iter], [__LANGS__],
@@ -42,9 +43,6 @@ m4_define([__LOOKUP_LANG_NAME],
 m4_define([__LANG_NAME], [__LOOKUP_LANG_NAME($1,m4_unquote(__LANGS__))])
 m4_define([__LANG_NAME__], __LANG_NAME(__LANG__))
 
-m4_define([TPY_LANG],
-[m4_if(__LANG__,[$1],[$2],__LANG__,[$3],[$4])])
-
 m4_define([__ESEN],
 m4_case(__LANG__,__ES__,$1,__EN__,$2))
 
@@ -56,7 +54,9 @@ m4_case(__LANG__,__EN__,$1,__ES__,$2))
 # TODO: strip fragments #xxx
 #
 m4_define([__HREF],
-[m4_esyscmd_s(__RP__ --canonicalize-missing --relative-to=m4_default([$2],[__BASE__]) $1 )])
+[m4_esyscmd_s(__RP__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__BASE__]))])
+
+dnl[m4_divert_text([PAPER],[<!-- __file__ __line__ --$1-- -->])[]
 
 m4_define([__FNAME],
 [m4_bregexp($1,[\([^/]+\..+\)$], [\1])])
@@ -90,6 +90,11 @@ build: __ROOT__/static/$1
 clean:: ; [$(RM)] __ROOT__/[$(__STATIC__)]/$1
 ])])
 
+m4_define([__INCL],[
+m4_divert_text([DEPEND],[
+__SRC__/__FNAME__ : $1
+])[]m4_include([$1])])
+
 dnl
 dnl PAGE PROCESS STARTS HERE
 dnl
@@ -108,6 +113,10 @@ m4_cleardivert([SITEMAP])
 m4_cleardivert([DEPEND])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
+m4_divert_text([DEFAULT],[
+<!-- PAPER TRAIL -------------------------------- -->
+m4_undivert([PAPER])
+<!-- PAPER TRAIL--------------------------------- -->])
 ],
 [MAKEDEPEND],[
 m4_divert_text([DEFAULT],[m4_undivert([DEPEND])])
@@ -117,6 +126,7 @@ m4_cleardivert([BODY])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([BUILD])
+m4_cleardivert([PAPER])
 ],
 [
 m4_fatal([Unmached [__DO__]:__DO__],[1])
@@ -126,6 +136,6 @@ m4_cleardivert([HEADER])
 m4_cleardivert([BODY])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
-m4_cleardivert([BUILD])]
-
-)
+m4_cleardivert([BUILD])
+m4_cleardivert([PAPER])
+])

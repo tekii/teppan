@@ -15,24 +15,23 @@ m4_divert_push([BUILD])dnl
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
     <meta name="msvalidate.01" content="62098880540BA63FB5E4BCEED0264D10" />
     <link rel="shortcut icon" href="__HREF(__ROOT__/favicon.ico)" type="image/x-icon" />
-    m4_ifdef([__ALTERNATE__],[<link
-                                rel="alternate"
-                                hreflang="__ESEN(__EN__,__ES__)"
-                                href="__HREF(__ROOT__/__ESEN(__EN__,__ES__)/__FNAME__)"/>])
+    m4_ifdef([__ALTERNATE__],
+    [<link rel="alternate"
+           hreflang="__ESEN(__EN__,__ES__)"
+           href="__HREF(__ROOT__/__ESEN(__EN__,__ES__)/__FNAME__)"/>])
     <!-- -->
     <style>
-      dnl[]m4_include([css/amp--.css])
-
       m4_changequote(«,»)
       <!-- local headeer stuff here  -->
       m4_changequote([,])
     </style>
 
     m4_undivert(HEADER)[]dnl <!-- header content -->
-    m4_include([meta.json])[]dnl <!-- -->
+
+    __INCL([meta.json])[]dnl <!-- -->
     <!-- amp-custom elements -->
     m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
-   <!-- amp-custom styles -->
+    <!-- amp-custom styles -->
     <style>
       /* amp custom styles */
       m4_undivert(AMP_CUSTOM_STYLES)[]dnl
@@ -544,11 +543,12 @@ m4_divert_push([BUILD])dnl
         <div class="twelve columns col-xs-12 col-md-8 footer_col">
           <h5>__TEKII_SRL__</h5>
           <p>
-            TPY_LANG(
-            __EN__,[Since 2006 __TEKII__ delivers solutions and large scale web applications
-            that are secure and ready for high traffic.],
-            __ES__,[<strong>CONTINUIDAD + INNOVACIÓN</strong><br>Desde 2006 __TEKII__ provee soluciones con altos niveles de seguridad y un excelente historial de continuidad.]
-            )
+            __ENES([Since 2006 __TEKII__ delivers solutions and large
+            scale web applications that are secure and ready for high
+            traffic.],[<strong>CONTINUIDAD +
+            INNOVACIÓN</strong><br>Desde 2006 __TEKII__ provee
+            soluciones con altos niveles de seguridad y un excelente
+            historial de continuidad.])
           </p>
         </div>
         <div class="twelve columns col-xs-12 col-md-2 footer_col">

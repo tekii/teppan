@@ -76,7 +76,7 @@ $(__ROOT__)/%/:
 #$(addprefix $(__SRC__)/, $(PAGES)): $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 #$(__SRC__)/%.html: $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 ##
-LAYOUT_FILES:= $(__SRC__)/layout.html $(__SRC__)/tpy.m4 $(__SRC__)/css/amp--.css
+LAYOUT_FILES:= $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 
 $(__SRC__)/%.html: EXTRA_BUILD_FLAGS+= -D __IMAGES__=$(__IMG__)
 
@@ -162,6 +162,9 @@ cleangzip:
 PHONY += realclean
 realclean:: clean
 	$(RM) $(patsubst %,$(__DEPS__)/%.d,$(basename $(PAGES)))
+	$(RMDIR) $(__ROOT__)/$(__STATIC__)/$(__IMG__)/
+	$(RMDIR) $(__ROOT__)/$(__STATIC__)/$(__FON__)/
+	$(RMDIR) $(__ROOT__)/$(__STATIC__)
 	$(RMDIR) $(__DEPS__)
 	$(RMDIR) $(__ROOT__)
 #	$(RMDIR) $(__GZIP__)
