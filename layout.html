@@ -39,6 +39,8 @@ m4_divert_push([BUILD])dnl
       /* amp custom styles */
       m4_undivert(AMP_CUSTOM_STYLES)[]dnl
     </style>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,500,600,700&subset=cyrillic" rel="stylesheet"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <style amp-custom>
     __INCL([css/style.css])
     </style>
@@ -55,7 +57,7 @@ m4_divert_push([BUILD])dnl
     <!-- NAV -->
     <!-- NAV -->
     <!-- NAV -->
-    <amp-sidebar id="sidebar" class="tki" layout="nodisplay" side="right">
+    <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="right">
        <div class="builder-sidebar" id="builder-sidebar">
           <button on="tap:sidebar.close" class="close-sidebar">
           <span></span>
@@ -64,7 +66,7 @@ m4_divert_push([BUILD])dnl
           __INCL([menu.html])
        </div>
     </amp-sidebar>
-    <section class="menu horizontal-menu tki" id="menu1-h">
+    <section class="menu horizontal-menu aa" id="menu1-h">
        <nav class="navbar navbar-dropdown  navbar-fixed-top navbar-expand-lg">
           <div class="container">
              <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -80,64 +82,9 @@ m4_divert_push([BUILD])dnl
        <span></span>
        </button>
     </section>
-    <!-- HEADER -->
-    <header class="header fixed">
-      m4_divert_push(KILL)
-      <div class="container">
-        <div class="nav-container">
-          <div class="left-nav">
-            <a href="/"
-               class="tab header-title"><span></span></a>
-          </div>
-          <div class="right alt">
-            <!-- {% for entry in menu %} -->
-            m4_define([N_I],
-            [<div class="tab m4_if($1,__FNAME__,[active]) $3"
-                  m4_if($1,__FNAME__,
-                  [id="bcb" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"])>
-              <a href="__HREF(__ROOT__/__LANG__/$1)" m4_if($1,__FNAME__,[itemprop="url"])>
-                <span m4_if($1,__FNAME__,[itemprop="title"])>$2</span>
-              </a>
-            </div>])
-
-            N_I([about.html],__ESEN([Acerca de],[About]))
-            N_I([contact.html],__ESEN([Contacto],[Contact]))
-            <!-- -->
-            <!-- -->
-            <!-- -->
-            <div class="language desktop">
-              <amp-accordion>
-                <section>
-                  <h6 class="current">
-                    <a class="flag-__LANG__"><span>__LANG_NAME__</span></a>
-                  </h6>
-                  <div class="others">
-                    m4_ifdef([__ALTERNATE__],[
-                    __FOREACH_LANG_EXCEPT([__LANG__],[__L__],[__N__],[
-                    <div>
-                      <a href="__HREF(__ROOT__/__L__/__FNAME__)"
-                         class="flag-__L__">
-                        <span>__N__</span>
-                      </a>
-                    </div>
-                    ])])dnl
-                  </div>
-                </section>
-              </amp-accordion>
-            </div>
-            <button class="tab hamburger" id="menu-button" on='tap:sidebar.toggle'></button>
-          </div>
-        </div>
-      </div>
-      m4_divert_pop(KILL)
-    </header>
-    <!-- -->
-    <!-- -->
-    <!-- -->
-    <div class="container clearfix">
-      m4_undivert([BODY])[]dnl
-    </div>
-
+    dnl <div class="container clearfix">
+    m4_undivert([BODY])[]dnl
+    dnl </div>
     <!-- BEGIN FOOTER -->
     <!-- BEGIN FOOTER -->
     <!-- BEGIN FOOTER -->
