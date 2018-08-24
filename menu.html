@@ -22,53 +22,15 @@
       </a>
    </li>
    <li class="nav-item">
-        <a class="nav-link link text-white display-7 lang-sel" href="/en/home.html">
-           <amp-img src="/static/img/flag-us.gif"
-                    alt="English"
-                    height=18
-                    width=25
-                    layout="fixed"
+        __FOREACH_LANG_EXCEPT([__LANG__],[__L__],[__N__],[
+            <a class="nav-link link text-white display-7 lang-sel" href="__HREF(__ROOT__/__L__/__FNAME__)">
+               <amp-img src="/static/img/flag-__L__.gif"
+                        alt="English"
+                        height=18
+                        width=25
+                        layout="fixed"
                     />
-        </a>
-        <a class="nav-link link text-white display-7 lang-sel" href="/es/home.html">
-            <amp-img src="/static/img/flag-es.gif"
-                     alt="Español"
-                     layout="fixed"
-                     height=18
-                     width=25
-                     />
-        </a>
+            </a>
+       ])
    </li>
 </ul>
-
-dnl<button class="tab hamburger" id="menu-button" on='tap:sidebar.toggle'></button>
-dnl<nav>
-dnl  <ul>
-dnl    <li class="current">
-dnl      <a class="flag-__LANG__"><span>__LANG_NAME__</span></a>
-dnl    </li>
-dnl    m4_ifdef([__ALTERNATE__],[
-dnl    __FOREACH_LANG_EXCEPT([__LANG__],[__L__],[__N__],[
-dnl    <li>
-dnl      <a href="__HREF(__ROOT__/__L__/__FNAME__)"
-dnl         class="flag-__L__">
-dnl        <span>__N__</span>
-dnl      </a>
-dnl    </li>
-dnl    ])])dnl
-dnl  </ul>
-dnl  <ul>
-dnl    m4_define([__SECTION],[
-dnl    <div class="menuitem-class" m4_if($1,__FNAME__,[expanded id="bcb" itemscope itemtype="http://data-vocabulary.org/Breadcrumb"]) >
-dnl      dnl<h3>$2</h3>
-dnl      <li>
-dnl        <a href="__HREF(__ROOT__/__LANG__/$1)" m4_if($1,__FNAME__,[itemprop="url"])>
-dnl          <span m4_if($1,__FNAME__,[itemprop="title"])>$2</span>
-dnl        </a>
-dnl      </li>
-dnl    </div>])[]dnl
-dnl    __SECTION([about.html],__ESEN([Acerca de],[About]))
-dnl    __SECTION([contact.html],__ESEN([Contacto],[Contact]))
-dnl    m4_undefine([__SECTION])
-dnl  </ul>
-dnl</nav>
