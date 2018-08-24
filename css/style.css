@@ -862,3 +862,75 @@ section{
 .ae p{
    line-height: 25px;
 }
+
+.af{
+   padding-top: 4rem;
+   padding-bottom: 5rem;
+   background-color: #0a193b;
+   background: linear-gradient(135deg,#0a193b 0%,#0a57a2 100%);
+}
+.af .tky-overlay{
+   background: linear-gradient(135deg,#000000 0%,#022e93 100%);
+   opacity: 0.5;
+}
+.af amp-img{
+   width: 75px;
+   margin: auto;
+   margin-bottom: 2rem;
+}
+.af ul{
+   display: flex;
+   flex-direction: column;
+   list-style: none;
+   padding: 0;
+}
+.af .link{
+   margin: 1rem;
+   letter-spacing: 2px;
+}
+.af .navbar-logo{
+   width: 100px;
+   height: 100px;
+   margin: auto;
+   margin-bottom: 2rem;
+}
+.af .tky-section-title{
+   color: #ffffff;
+}
+.af .tky-text,.af .tky-section-btn{
+   color: #6394ff;
+}
+.af .ico-wrapper{
+   flex-direction: row;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-wrap: wrap;
+}
+.af .card-img{
+   border: 2px solid #6394ff;
+   border-radius: 0.5rem;
+   width: 45px;
+   margin: 5px;
+   height: 45px;
+   position: relative;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: all 0.3s;
+}
+.af .card-img:hover{
+   background-color: #6394ff;
+}
+.af .tky-iconfont{
+   font-size: 24px;
+   color: #ffffff;
+}
+.af .card-img a{
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
