@@ -14,18 +14,52 @@ m4_divert_text([HEADER],[
 
 
 m4_divert_push([BODY])dnl
-<div id="dev_page_content_wrap" class=" ">
-
-  <h1 id="dev_page_title">__ENES([Services],[Servicios])</h1>
-
-  m4_case(__LANG__,__EN__,[
-
-  <p>Pagina de servicios en Ingles</p>
-
-  ],__ES__,[
-
-  <p>Pagina de serivicios en Español</p>
-
-  ])dnl
-</div>
+<section class="ae">
+    <div class="container">
+        <h1 class="tky-fonts-style tky-section-title display-2">
+            <strong>__ENES([Services],[Servicios])</strong>
+        </h1>
+        <br/><br/>
+        <div class="tky-row tky-justify-content-center">
+            <div class="tky-col-lg-1 tky-col-md-2 align-center">
+                <span class="tky-iconfont fa-lightbulb-o fa"></span>
+            </div>
+            <div class="tky-col-lg-5 tky-col-md-10 vcenter padding">
+                <h2 class="tky-fonts-style tky-section-title display-5">
+                    <strong>__ENES([Data processing],[Procesamiento de Datos])</strong>
+                </h2>
+                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+            </div>
+            <div class="tky-col-lg-1 tky-col-md-2 align-center">
+                <span class="tky-iconfont fa-diamond fa"></span>
+            </div>
+            <div class="tky-col-lg-5 tky-col-md-10 vcenter padding">
+                <h2 class="tky-fonts-style tky-section-title display-5">
+                    <strong>__ENES([Staff Augmentation],[Recursos de IT])</strong>
+                </h2>
+                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+            </div>
+        </div>
+        <div class="tky-row tky-justify-content-center">
+            <div class="tky-col-lg-1 tky-col-md-2 align-center">
+                <span class="tky-iconfont fa-comments-o fa"></span>
+            </div>
+            <div class="tky-col-lg-5 tky-col-md-10 vcenter padding">
+                <h2 class="tky-fonts-style tky-section-title display-5">
+                    <strong>__ENES([Project Outsourcing],[Desarrollos a Medida])</strong>
+                </h2>
+                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+            </div>
+            <div class="tky-col-lg-1 tky-col-md-2 align-center">
+                <span class="tky-iconfont fa-send-o fa"></span>
+            </div>
+            <div class="tky-col-lg-5 tky-col-md-10 vcenter padding">
+                <h2 class="tky-fonts-style tky-section-title display-5">
+                    <strong>__ENES([Dev Ops],[Dev Ops])</strong>
+                </h2>
+                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+            </div>
+        </div>
+    </div>
+</section>
 m4_divert_pop([BODY])[]dnl
