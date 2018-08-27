@@ -8,14 +8,14 @@ en
 ])
 
 m4_divert_text([HEADER],[
-<title>TEKii SRL - __ENES([Customers],[Clientes])</title>
+<title>TEKii SRL - __ENES([Home],[Inicio])</title>
 <meta name="keywords" content="tekii,teky,trazabilidad,traceability,anmat">
 ])
 
 m4_divert_push([BODY])dnl
-dnl <div id="dev_page_content_wrap" class=" ">
-
 __INCL([home-body.html])
-
-dnl </div>
+__INCL([about.html])
+__INCL([services.html])
+__INCL([customers.html])
+__INCL([contact.html])
 m4_divert_pop([BODY])[]dnl

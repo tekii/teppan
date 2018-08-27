@@ -66,8 +66,8 @@ m4_divert_push([BUILD])dnl
           __INCL([menu.html])
        </div>
     </amp-sidebar>
-    <section class="menu horizontal-menu aa" id="menu1-h">
-       <nav class="navbar navbar-dropdown  navbar-fixed-top navbar-expand-lg">
+    <section class="menu horizontal-menu aa">
+       <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg" i-amphtml-fixedid="F0" style="top: calc(0px);">
           <div class="container">
              <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 __INCL([menu.html])
@@ -89,68 +89,6 @@ m4_divert_push([BUILD])dnl
     <!-- BEGIN FOOTER -->
     <!-- BEGIN FOOTER -->
     __INCL([footer.html])
-dnl    <div class="container tpy_footer">
-dnl      <!-- begin desktop footer footer_columns_wrap clearfix -->
-dnl      <div class="row footer_desktop">
-dnl        <div class="twelve columns col-xs-12 col-md-8 footer_col">
-dnl          <h5>__TEKII_SRL__</h5>
-dnl          <p>
-dnl            __ENES([Since 2006 __TEKII__ delivers solutions and large
-dnl            scale web applications that are secure and ready for high
-dnl            traffic.],[<strong>CONTINUIDAD +
-dnl            INNOVACIÓN</strong><br>Desde 2006 __TEKII__ provee
-dnl            soluciones con altos niveles de seguridad y un excelente
-dnl            historial de continuidad.])
-dnl          </p>
-dnl        </div>
-dnl        <div class="twelve columns col-xs-12 col-md-2 footer_col">
-dnl          <h5>
-dnl	    <a href="__HREF(__ROOT__/__LANG__/about.html)">__ENES(About,[Acerca de])</a>
-dnl          </h5>
-dnl          m4_divert_push(KILL)
-dnl          <ul>
-dnl            <li><a href="blog.html">Blog</a></li>
-dnl          </ul>
-dnl          m4_divert_pop
-dnl        </div>
-dnl        <div class="twelve columns col-xs-12 col-md-2 footer_col">
-dnl          <h5>
-dnl	    <a href="__HREF(__ROOT__/__LANG__/contact.html)">__ENES(Contact,Contacto)</a>
-dnl	  </h5>
-dnl          m4_divert_push(KILL)
-dnl          <ul>
-dnl            <li><a href=""></a></li>
-dnl          </ul>
-dnl          m4_divert_pop
-dnl        </div>
-dnl      </div>
-dnl      <!-- end desktop footer -->
-dnl      <!-- begin mobile footer -->
-dnl      <div class="row clearfix footer_mobile">
-dnl        <div class="col-xs-6">
-dnl          <h5>
-dnl            <a href="__HREF(__ROOT__/__LANG__/about.html)">__ENES(About,[Acerca de])</a>
-dnl          </h5>
-dnl        </div>
-dnl        <div class="col-xs-6">
-dnl          <h5>
-dnl            <a href="__HREF(__ROOT__/__LANG__/contact.html)">__ENES(Contact,Contacto)</a>
-dnl          </h5>
-dnl        </div>
-dnl        m4_divert_push(KILL)
-dnl        <div class="footer_col">
-dnl          <h5><a href="https://twitter.com/talonariomovil" target="_blank" data-track="Follow/Twitter" onclick="trackDlClick(this, event)">Twitter</a></h5>
-dnl        </div>
-dnl        m4_divert_pop(KILL)
-dnl      </div>
-      <!--      </div>-->
-
-      <!-- END FOOTER -->
-      <!-- END FOOTER -->
-      <!-- END FOOTER -->
-
-      <!-- BEGIN ANALITICS -->
-      dnl<script src="../js/main.js"></script>
       m4_divert_push(KILL)
       <!--<script>m4_changequote(«,»)«»dnl
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

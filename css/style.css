@@ -201,6 +201,12 @@ a.btn{
    margin: 0.667em 1em;
    font-weight: normal;
 }
+
+.aa .navbar-dropdown{
+   padding: 0.5rem 1rem;
+   position: fixed;
+}
+
 .aa .container{
    display: flex;
 }
