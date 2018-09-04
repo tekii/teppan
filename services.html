@@ -22,34 +22,56 @@ m4_divert_push([BODY])dnl
         <br/><br/>
         <div class="tky-row tky-justify-content-center">
             <div class="tky-col-lg-1 tky-col-md-2 align-center">
-                <span class="tky-iconfont fa-lightbulb-o fa"></span>
+                <span class="tky-iconfont fa-comments-o fa"></span>
             </div>
             <div class="tky-col-lg-5 tky-col-md-10 vcenter padding">
                 <h2 class="tky-fonts-style tky-section-title display-5">
-                    <strong>__ENES([Data processing],[Procesamiento de Datos])</strong>
+                    <strong>__ENES([Software Outsourcing],[Desarrollos a Medida])</strong>
                 </h2>
-                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+                m4_case(__LANG__,__EN__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__ specializes in the provision of Software Outsourcing Solutions for companies around the world.
+                        From smart customization of pre-developed platforms to full-cycle custom software development.</p>
+                ],__ES__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__ se expecializa en proveer desarrollos a medida a clientes en diferentes partes del mundo.
+                        Desde pequeñas personalizaciones de sistemas existentes hasta el desarrollo desde cero de software a medida.</p>
+                ])dnl                
             </div>
             <div class="tky-col-lg-1 tky-col-md-2 align-center">
                 <span class="tky-iconfont fa-diamond fa"></span>
             </div>
             <div class="tky-col-lg-5 tky-col-md-10 vcenter padding">
                 <h2 class="tky-fonts-style tky-section-title display-5">
-                    <strong>__ENES([Staff Augmentation],[Recursos de IT])</strong>
+                    <strong>__ENES([Offshore Development Team],[Equipo de Desarrollo Remoto])</strong>
                 </h2>
-                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+                m4_case(__LANG__,__EN__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__ can set up your custom-recruited software development team that will work from our offices in Buenos Aires.
+                        Focus on your product, while we handle office space, support staff, back office operations, HR, and retention.</p>
+                ],__ES__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__ selecciona especificamente un equipo de desarrollo que trabajara desde nuestras oficinas en Buenos Aires.
+                        Ponga el foco en su producto, mientras nosotros nos ocupamos de los puestos de trabajo, soporte y los RRHH</p>
+                ])dnl                
+
             </div>
         </div>
         <div class="tky-row tky-justify-content-center">
             <div class="tky-col-lg-1 tky-col-md-2 align-center">
-                <span class="tky-iconfont fa-comments-o fa"></span>
+                <span class="tky-iconfont fa-lightbulb-o fa"></span>
             </div>
             <div class="tky-col-lg-5 tky-col-md-10 vcenter padding">
                 <h2 class="tky-fonts-style tky-section-title display-5">
-                    <strong>__ENES([Project Outsourcing],[Desarrollos a Medida])</strong>
+                    <strong>__ENES([Data processing],[Procesamiento de Datos])</strong>
                 </h2>
-                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+                m4_case(__LANG__,__EN__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__’s data migration, integration, and Extract-Transform-Load (ETL) experts have extensive experience planning, developing, implementing, 
+                        and tuning comprehensive and effective data warehousing and data migration solutions using multiples technologies and platforms.</p>
+                ],__ES__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__ posee expertos en migraci&oacute;n de datos, integraci&oacute;n y t&eacute;cnicas de ETL, siendo capaces de analizar, desarrollar, implementar 
+                        y optimizar data warehouses y soluciones de Big Data usando multiples tecnologias y plataformas.  
+                    </p>
+                ])dnl                
+
             </div>
+
             <div class="tky-col-lg-1 tky-col-md-2 align-center">
                 <span class="tky-iconfont fa-send-o fa"></span>
             </div>
@@ -57,7 +79,14 @@ m4_divert_push([BODY])dnl
                 <h2 class="tky-fonts-style tky-section-title display-5">
                     <strong>__ENES([Dev Ops],[Dev Ops])</strong>
                 </h2>
-                <p class="tky-fonts-style tky-text display-6">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...</p>
+                m4_case(__LANG__,__EN__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__ provides DevOps-as-a-Service, automating end-to-end software delivery
+                            processes and ensuring the scalability and security of large enterprises and startups infrastructure.</p>
+                ],__ES__,[
+                    <p class="tky-fonts-style tky-text display-6">__TEKII_SRL__ provee servicios de "DevOps" automatizando de punta a punta el proceso 
+                        de implementacion de aplicaciones asegurando escalabilidad y seguridad en la infraestructura tanto a grandes empresas como a startups 
+                    </p>
+                ])dnl                
             </div>
         </div>
     </div>

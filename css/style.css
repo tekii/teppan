@@ -1028,6 +1028,7 @@ section{
 }
 .ag .card .card-img{
     overflow: hidden;
+    padding: 0.5em;
 }
 .ag .card .card-img amp-img{
     transition: all .4s;
