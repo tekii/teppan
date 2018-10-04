@@ -23,7 +23,7 @@ AMP__EXT:=.amp.html
 
 GLYPH:=glyphicons-halflings-regular
 
-PAGES := 404.html index.html about.html contact.html services.html customers.html home.html
+PAGES := 404.html index.html main.html
 
 ##
 ##
@@ -175,7 +175,12 @@ realclean:: clean
 #gsutil acl ch -r -u AllUsers:R gs://www.teky.io/
 # mimetype --brief /tmp/bucketgz/favicon.ico | tr -d '\n'
 
-.IGNORE: clean cleangzip realclean
+PHONY += obliterate
+obliterate:
+	$(RMDIR) $(__ROOT__)
+	@echo [[[ DONE $@ ]]]
+
+.IGNORE: clean cleangzip realclean obliterate
 .PHONY: $(PHONY)
 .DEFAULT_GOAL := build
 ##
