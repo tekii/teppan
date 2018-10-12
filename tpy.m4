@@ -1,10 +1,5 @@
 #
 # diverts
-# 1 sitemap
-# 2 header
-# 3 body
-# 5 amp custom styles
-# 6 amp custom elements
 #
 m4_define([_m4_divert(DEFAULT)], 0)
 m4_define([_m4_divert(DEPEND)], 1)
@@ -13,8 +8,9 @@ m4_define([_m4_divert(HEADER)], 3)
 m4_define([_m4_divert(BODY)], 4)
 m4_define([_m4_divert(AMP_CUSTOM_STYLES)], 5)
 m4_define([_m4_divert(AMP_CUSTOM_ELEMENTS)], 6)
-m4_define([_m4_divert(BUILD)], 7)
-m4_define([_m4_divert(PAPER)], 8)
+m4_define([_m4_divert(NAVIGATION)], 7)
+m4_define([_m4_divert(BUILD)], 8)
+m4_define([_m4_divert(PAPER)], 9)
 #
 # constants
 #
@@ -68,37 +64,70 @@ m4_define([__RDATE],
 # BUILD MACROS
 #
 m4_define([__BUILD_LANG],[
+m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/$1/__NODIR_FIRST__])dnl
 m4_divert_text([DEPEND],[
-__ROOT__/$1/__FNAME__: EXTRA_BUILD_FLAGS+= -D __LANG__=$1 -D __ALTERNATE__
-[#] __ROOT__/$1/__FNAME__: __SRC__/__FNAME__
-build: __ROOT__/$1/__FNAME__
-clean:: ; [$(RM)] __ROOT__/$1/__FNAME__
-realclean:: ; [$(RMDIR)] __ROOT__/$1
+__ROOT__/$1/__NODIR_FIRST__ : EXTRA_BUILD_FLAGS+= -D __LANG__=$1 -D __ALTERNATE__
+[# move this to the navigation macro]
+__ROOT__/$1/__NODIR_FIRST__ : __ROOT__/navigation.txt
+build : __ROOT__/$1/__NODIR_FIRST__
+clean     :: ; [$(RM)] __ROOT__/$1/__NODIR_FIRST__
+realclean :: ; [$(RM)] __TARGET__
+realclean :: ; [$(RMDIR)] __ROOT__/$1
 ])])
 
 m4_define([__BUILD_TOP],[
+m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__NODIR_FIRST__])dnl
 m4_divert_text([DEPEND],[
-__ROOT__/__FNAME__: EXTRA_BUILD_FLAGS+= -D __LANG__=$1
-build: __ROOT__/__FNAME__
-clean:: ; [$(RM)] __ROOT__/__FNAME__
+__ROOT__/__NODIR_FIRST__ : EXTRA_BUILD_FLAGS+= -D __LANG__=$1
+build : __ROOT__/__NODIR_FIRST__
+clean     :: ; [$(RM)] __ROOT__/__NODIR_FIRST__
+realclean :: ; [$(RM)] __TARGET__
 ])])
 
 m4_define([__BUILD_COPY],[
 m4_divert_text([DEPEND],[
-__SRC__/__FNAME__ : $1
+[#]__FIRST__ : $1
+m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
+__BUILD_TARGET__ : $1
+])dnl
 build: __ROOT__/static/$1
-clean:: ; [$(RM)] __ROOT__/[$(__STATIC__)]/$1
+clean:: ; [$(RM)] __ROOT__/static/$1 
+dnl clean:: ; -[[ -e $(__ROOT__)/static/$1 ] && rm $(__ROOT__)/static/$1]
 ])])
 
 m4_define([__INCL],[
 m4_divert_text([DEPEND],[
-__SRC__/__FNAME__ : $1
+[# borrar]__FIRST__ : $1
+m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
+__BUILD_TARGET__ : $1
+])dnl
 ])[]m4_include([$1])])
+
+m4_define([__NAVIGATION_ITEM],[$1[]dnl
+m4_divert_text([NAVIGATION],[__NAVIGATION_ITEM_TEMPLATE([$1],$2,$3)])dnl
+])
+
+dnl
+dnl TODO move some dependencies to the item instead 
+dnl
+m4_define([__NAVIGATION],[dnl
+m4_divert_text([DEPEND],[
+[# NAVIGATION BEGIN]
+__ROOT__/__NODIR_BASENAME_FIRST__.txt : __FIRST__
+clean:: ; [$(RM)] __ROOT__/__NODIR_BASENAME_FIRST__.txt
+__ROOT__/navigation.txt : __ROOT__/__NODIR_BASENAME_FIRST__.txt
+m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
+__BUILD_TARGET__ : __ROOT__/navigation.txt
+])dnl
+[# NAVIGATION END]
+])dnl
+m4_if(__DO__,[MAKEBUILD],[m4_include(__ROOT__/navigation.txt)],[])dnl
+])
 
 dnl
 dnl PAGE PROCESS STARTS HERE
 dnl
-m4_include(__FNAME__)
+m4_include(__FIRST__)
 dnl
 dnl NOW THE LAYOUT
 dnl
@@ -113,6 +142,7 @@ m4_cleardivert([SITEMAP])
 m4_cleardivert([DEPEND])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
+m4_cleardivert([NAVIGATION])
 m4_divert_text([DEFAULT],[
 <!-- PAPER TRAIL -------------------------------- -->
 m4_undivert([PAPER])
@@ -125,6 +155,18 @@ m4_cleardivert([HEADER])
 m4_cleardivert([BODY])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
+m4_cleardivert([NAVIGATION])
+m4_cleardivert([BUILD])
+m4_cleardivert([PAPER])
+],
+[MAKENAV],[
+m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])
+m4_cleardivert([SITEMAP])
+m4_cleardivert([HEADER])
+m4_cleardivert([BODY])
+m4_cleardivert([AMP_CUSTOM_STYLES])
+m4_cleardivert([AMP_CUSTOM_ELEMENTS])
+m4_cleardivert([DEPEND])
 m4_cleardivert([BUILD])
 m4_cleardivert([PAPER])
 ],
@@ -136,6 +178,7 @@ m4_cleardivert([HEADER])
 m4_cleardivert([BODY])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
+m4_cleardivert([NAVIGATION])
 m4_cleardivert([BUILD])
 m4_cleardivert([PAPER])
 ])
