@@ -9,4 +9,6 @@ toolchain
 www/public
 bucket
 *~
+.vscode/*
+www.code-workspace
 
