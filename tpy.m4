@@ -84,15 +84,13 @@ clean     :: ; [$(RM)] __ROOT__/__NODIR_FIRST__
 realclean :: ; [$(RM)] __TARGET__
 ])])
 
-m4_define([__COPY],[
-m4_divert_text([DEPEND],[
-
-__ROOT__/$1: __SRC__/$1 | $$(@D)/ ; echo $[]< $[]@
-
+m4_define([__ASSET],[
+m4_divert_text([DEPEND],[dnl
+__ROOT__/$1: __SRC__/$1 | $$(@D)/ ; cp $[]< $[]@
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
-__BUILD_TARGET__ : __SRC__/$1
+__BUILD_TARGET__ : __ROOT__/$1
 ])dnl
-build: __ROOT__/$1
+[#] build: __ROOT__/$1
 clean:: ; [$(RM)] __ROOT__/$1 
 ])])
 
