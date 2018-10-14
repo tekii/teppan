@@ -140,10 +140,23 @@ $(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $(__ROOT__)/
 		-D __FNAME__=$(@F) \
 		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 ##
-## COPY STATICS
+## COPY ASSETS
 ##
 $(__ROOT__)/$(__STATIC__)/% : $(__SRC__)/% | $$(@D)/
 	cp $< $@
+
+$(__ROOT__)/%.png : $(__SRC__)/%.png | $$(@D)/
+	cp $< $@
+
+$(__ROOT__)/%.gif : $(__SRC__)/%.gif | $$(@D)/
+	cp $< $@
+
+$(__ROOT__)/%.svg : $(__SRC__)/%.svg | $$(@D)/
+	cp $< $@
+
+$(__ROOT__)/%.jpg : $(__SRC__)/%.jpg | $$(@D)/
+	cp $< $@	
+
 ##
 ## GZIPED TARGETS
 ##

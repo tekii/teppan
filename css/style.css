@@ -571,8 +571,8 @@ a.text-white:hover,a.text-white:focus{
 .ab{
    padding-top: 11rem;
    padding-bottom: 11rem;
-   background: linear-gradient(135deg,"/static/img/foto4.jpg" 0%,#19a3c1 100%);
-   background-image: url("/static/img/foto4.jpg");
+   background: linear-gradient(135deg,"__ASSET(img/foto4.jpg)" 0%,#19a3c1 100%);
+   background-image: url("__ASSET(img/foto4.jpg)");
 }
 .ab .tky-overlay{
    background-color: #000000;
