@@ -86,28 +86,15 @@ realclean :: ; [$(RM)] __TARGET__
 
 m4_define([__ASSET],[__HREF([__ROOT__/$1])[]dnl
 m4_divert_text([DEPEND],[dnl
-__ROOT__/$1: __SRC__/$1 [#]  | $$(@D)/ ; cp $[]< $[]@
+__ROOT__/$1: __SRC__/$1 
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
 __BUILD_TARGET__ : __ROOT__/$1
 ])dnl
-[#] build: __ROOT__/$1
 clean:: ; [$(RM)] __ROOT__/$1 
 ])])
 
-m4_define([__BUILD_COPY],[
-m4_divert_text([DEPEND],[
-[#]__FIRST__ : $1
-m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
-__BUILD_TARGET__ : $1
-])dnl
-build: __ROOT__/static/$1
-clean:: ; [$(RM)] __ROOT__/static/$1 
-dnl clean:: ; -[[ -e $(__ROOT__)/static/$1 ] && rm $(__ROOT__)/static/$1]
-])])
-
 m4_define([__INCL],[
-m4_divert_text([DEPEND],[
-[# borrar]__FIRST__ : $1
+m4_divert_text([DEPEND],[dnl
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
 __BUILD_TARGET__ : $1
 ])dnl
