@@ -142,9 +142,6 @@ $(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $(__ROOT__)/
 ##
 ## COPY ASSETS
 ##
-##$(__ROOT__)/$(__STATIC__)/% : $(__SRC__)/% | $$(@D)/
-##	cp $< $@
-
 $(__ROOT__)/%.png : $(__SRC__)/%.png | $$(@D)/
 	cp $< $@
 
