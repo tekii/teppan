@@ -142,8 +142,8 @@ $(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $(__ROOT__)/
 ##
 ## COPY ASSETS
 ##
-$(__ROOT__)/$(__STATIC__)/% : $(__SRC__)/% | $$(@D)/
-	cp $< $@
+##$(__ROOT__)/$(__STATIC__)/% : $(__SRC__)/% | $$(@D)/
+##	cp $< $@
 
 $(__ROOT__)/%.png : $(__SRC__)/%.png | $$(@D)/
 	cp $< $@
@@ -157,6 +157,8 @@ $(__ROOT__)/%.svg : $(__SRC__)/%.svg | $$(@D)/
 $(__ROOT__)/%.jpg : $(__SRC__)/%.jpg | $$(@D)/
 	cp $< $@	
 
+$(__ROOT__)/%.ttf : $(__SRC__)/%.ttf | $$(@D)/
+	cp $< $@
 ##
 ## GZIPED TARGETS
 ##
