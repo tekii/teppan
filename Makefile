@@ -1,8 +1,6 @@
-##
-## NICE HEADER
-##
-#.SUFFIXES:
-#.SUFFIXES: .html .amp.html .m4 .d
+#!/usr/bin/make -rsf
+
+#.SUFFIXES: .html .m4 .png .gif
 
 __EN__ 	:=en
 __ES__ 	:=es
@@ -129,6 +127,10 @@ $(__ROOT__)/$(__EN__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
 
 $(__ROOT__)/$(__ES__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
 	$(build-page)
+
+#%.html : %.in.html $(LAYOUT_FILES) | $$(@D)/
+#	$(build-page)
+
 ##
 ## SITEMAP.XML
 ##
@@ -142,20 +144,30 @@ $(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $(__ROOT__)/
 ##
 ## COPY ASSETS
 ##
-$(__ROOT__)/%.png : $(__SRC__)/%.png | $$(@D)/
+$(__ROOT__)/%.png : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.gif : $(__SRC__)/%.gif | $$(@D)/
+$(__ROOT__)/%.gif : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.svg : $(__SRC__)/%.svg | $$(@D)/
+$(__ROOT__)/%.svg : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.jpg : $(__SRC__)/%.jpg | $$(@D)/
+$(__ROOT__)/%.jpg : | $$(@D)/
 	cp $< $@	
 
-$(__ROOT__)/%.ttf : $(__SRC__)/%.ttf | $$(@D)/
+$(__ROOT__)/%.ttf : | $$(@D)/
 	cp $< $@
+
+$(__ROOT__)/%.eot : | $$(@D)/
+	cp $< $@
+
+$(__ROOT__)/%.woff : | $$(@D)/
+	cp $< $@
+
+$(__ROOT__)/%.woff2 : | $$(@D)/
+	cp $< $@
+
 ##
 ## GZIPED TARGETS
 ##
