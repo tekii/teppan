@@ -128,8 +128,8 @@ $(__ROOT__)/$(__EN__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
 $(__ROOT__)/$(__ES__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
 	$(build-page)
 
-#%.html : %.in.html $(LAYOUT_FILES) | $$(@D)/
-#	$(build-page)
+%.html : %.in.html $(LAYOUT_FILES) | $$(@D)/
+	echo $< $@
 
 ##
 ## SITEMAP.XML
@@ -243,7 +243,9 @@ realclean:: clean
 ## 
 $(__DEPS__)/%.d: $(__SRC__)/%.html $(LAYOUT_FILES) Makefile | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __DO__=MAKEDEPEND \
-		-D __TARGET__=$@ -D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
+		-D __STEM__=$* \
+		-D __TARGET__=$@ -D __T_DIR__=$(@D) \
+		-D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
 		-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
 		-D __BASE__=$(@D) \
 		-D __ROOT__=$(__ROOT__) -D __SRC__=$(__SRC__) \
