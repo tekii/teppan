@@ -100,7 +100,7 @@ $(__ROOT__)/%.txt: $(__SRC__)/%.html | $$(@D)/
 $(__ROOT__)/navigation.txt: | $$(@D)/
 	cat $^ > $@
 
-PHONY += clean
+.PHONY: clean
 clean:: 
 	$(RM) $(__ROOT__)/navigation.txt
 
@@ -185,39 +185,38 @@ $(__GZIP__)/%: $(__ROOT__)/% | $$(@D)/
 ##
 ## COMMANDS --debug=aeqt
 ##
-PHONY += testm4
+.PHONY: testm4
 testm4:
 	$(M4) $(M4_FLAGS) --debug= -D __FNAME__="test_tpy.m4" -D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __LIST__="$(filter-out 404.html,$(PAGES))" test_tpy.m4
 
-PHONY += build
+.PHONY: build
 build: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar
 build:
 	@echo [[[ DONE $@ ]]]
 
-PHONY += publish
+.PHONY: publish
 publish: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar
 publish: build #$(ALL_GZIP)
 #	gsutil web set -m en/index.html -e en/404.html gs://www.teky.io
 	echo $^
 	@echo [[[ DONE $@ ]]]
 
-
-PHONY += all
+.PHONY: all
 all: build
 
 ##
 ## mmm... this rule will attemp to build everything first in order to
 ## make the dep list then delete all
 ##
-PHONY += clean
+.PHONY: clean
 clean:: 
 	@echo [[[ DONE $@ ]]]
 
-PHONY += cleangzip
+.PHONY: cleangzip
 cleangzip:
 	rm -f $(ALL_GZIP)
 
-PHONY += realclean
+.PHONY: realclean
 realclean:: clean
 	$(RM) $(patsubst %,$(__DEPS__)/%.d,$(basename $(PAGES)))
 	$(RMDIR) $(__ROOT__)/$(__STATIC__)/$(__IMG__)/
@@ -234,7 +233,6 @@ realclean:: clean
 # mimetype --brief /tmp/bucketgz/favicon.ico | tr -d '\n'
 
 .IGNORE: clean cleangzip realclean obliterate  
-.PHONY: $(PHONY)
 .DEFAULT_GOAL := build
 ##
 ## MAKEDEPEND
@@ -250,6 +248,7 @@ $(__DEPS__)/%.d: $(__SRC__)/%.html $(LAYOUT_FILES) Makefile | $$(@D)/
 		-D __BASE__=$(@D) \
 		-D __ROOT__=$(__ROOT__) -D __SRC__=$(__SRC__) \
 		tpy.m4 >$@ || rm $@
+
 # TODO: check what abaut this .PRECIOUS
 #.PRECIOUS: $(__DEPS__)/%.d
 # ignoring error here its important (PLEASE DOCUMENT WHY...) 
