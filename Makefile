@@ -83,14 +83,16 @@ LAYOUT_FILES:= $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 ##
 ## NAVIGATION MAP
 ##
-$(__DEPS__)/%.d:   EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-$(__DEPS__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+##$(__DEPS__)/%.d:   EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+##$(__DEPS__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+##%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
 
 ## this rule matches the ones __NAVIGATION insert
 ##
-$(__ROOT__)/%.txt: $(__SRC__)/%.html | $$(@D)/
-	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __DO__=MAKENAV \
+$(__ROOT__)/%.txt: | $$(@D)/
+	$(M4) -D __DO__=MAKENAV \
+	$(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+	-D __STEM__=$* \
 	-D __TARGET__=$@ -D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
 	-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
 	-D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __FNAME__=$(@F) \
@@ -120,17 +122,25 @@ $(M4) $(M4_FLAGS) -D __DO__=MAKEBUILD \
 	tpy.m4 >$@
 endef
 
-$(__ROOT__)/%.html : $(__SRC__)/%.in.html $(LAYOUT_FILES) | $$(@D)/
-	$(build-page)
+#$(__ROOT__)/%.html : $(__SRC__)/%.in.html $(LAYOUT_FILES) | $$(@D)/
+#	$(build-page)
 
 #$(__ROOT__)/$(__EN__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
 #	$(build-page)
 
 #$(__ROOT__)/$(__ES__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
-	$(build-page)
+#	$(build-page)
 
-#%.html : %.in.html $(LAYOUT_FILES) | $$(@D)/
-#	echo $< $@
+#$(__ROOT__)/%.html: $(__SRC__)/layout.html $(__SRC__)/tpy.m4 
+
+$(__ROOT__)/%.html: $(__SRC__)/$$(notdir %).in.html $(LAYOUT_FILES) | $$(@D)/
+	$(M4) -D __DO__=MAKEBUILD \
+	$(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+	-D __STEM__=$* \
+	-D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __FNAME__=$(@F) \
+	-D __TARGET__=$@ -D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
+	-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
+	tpy.m4 >$@
 
 ##
 ## SITEMAP.XML
@@ -242,12 +252,9 @@ realclean:: clean
 ## 
 $(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) Makefile | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __DO__=MAKEDEPEND \
-		-D __STEM__=$* \
-		-D __TARGET__=$@ -D __T_DIR__=$(@D) \
-		-D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
-		-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
-		-D __BASE__=$(@D) \
 		-D __ROOT__=$(__ROOT__) -D __SRC__=$(__SRC__) \
+		-D __STEM__=$* \
+		-D __TARGET__=$@ -D __FIRST__=$< \
 		tpy.m4 >$@ || rm $@
 
 # TODO: check what abaut this .PRECIOUS

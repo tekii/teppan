@@ -11,4 +11,4 @@ bucket
 *~
 .vscode/*
 www.code-workspace
-
+*.patch

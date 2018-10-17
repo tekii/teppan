@@ -113,9 +113,9 @@ dnl
 m4_define([__NAVIGATION],[dnl
 m4_divert_text([DEPEND],[
 [# NAVIGATION BEGIN]
-__ROOT__/__NODIR_BASENAME_FIRST__.txt : __FIRST__
-clean:: ; [$(RM)] __ROOT__/__NODIR_BASENAME_FIRST__.txt
-__ROOT__/navigation.txt : __ROOT__/__NODIR_BASENAME_FIRST__.txt
+__ROOT__/__STEM__.txt : __FIRST__
+clean:: ; [$(RM)] __ROOT__/__STEM__.txt
+__ROOT__/navigation.txt : __ROOT__/__STEM__.txt
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
 __BUILD_TARGET__ : __ROOT__/navigation.txt
 ])dnl
