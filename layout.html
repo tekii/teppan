@@ -3,14 +3,14 @@ m4_divert_push([BUILD])dnl
 <html ⚡ lang="__LANG__">
   <head>
     <meta charset="utf-8">
-    <link rel="canonical" href="__HREF([__BASE__/__FNAME__],[__ROOT__])">
+    <link rel="canonical" href="__HREF([__TARGET__],[__ROOT__])">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
     <meta name="msvalidate.01" content="62098880540BA63FB5E4BCEED0264D10" />
     <link rel="shortcut icon" href="__HREF(__ROOT__/favicon.ico)" type="image/x-icon" />
     m4_ifdef([__ALTERNATE__],
     [<link rel="alternate"
            hreflang="__ESEN(__EN__,__ES__)"
-           href="__HREF(__ROOT__/__ESEN(__EN__,__ES__)/__FNAME__)"/>])
+           href="__HREF(__ROOT__/__ESEN(__EN__,__ES__)/__TNAME__)"/>])
     <!-- -->
     <style>
       m4_changequote(«,»)
@@ -65,7 +65,7 @@ m4_divert_push([BUILD])dnl
                 <!-- AAA -->
                 <li class="nav-item">
                     __FOREACH_LANG_EXCEPT([__LANG__],[__L__],[__N__],[
-                        <a class="nav-link link text-white display-7 lang-sel" href="__HREF(__ROOT__/__L__/__NODIR_FIRST__)">
+                        <a class="nav-link link text-white display-7 lang-sel" href="__HREF(__ROOT__/__L__/__TNAME__)">
                            <amp-img src="__ASSET(img/flag-__L__.gif)"
                                     alt="English"
                                     height=18

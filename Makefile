@@ -43,20 +43,22 @@ RMDIR:= @-rmdir
 ## M4
 ##
 M4= $(shell which m4)
-ifeq ($(__UNAME__),Linux)
 M4_FLAGS:= \
+	-I $(__SRC__)
+ifeq ($(__UNAME__),Linux)
+M4_FLAGS+= \
 	-I /usr/share/autoconf \
 	-R /usr/share/autoconf/m4sugar/m4sugar.m4f \
 	-D __RP__=$(shell which realpath)
 else
-M4_FLAGS:= \
+M4_FLAGS+= \
 	-I /usr/local/Cellar/autoconf/2.69/share/autoconf \
 	-R /usr/local/Cellar/autoconf/2.69/share/autoconf/m4sugar/m4sugar.m4f \
 	-D __RP__=$(shell which grealpath)
 endif
 M4_FLAGS+= \
 	-D __EN__=$(__EN__) -D __ES__=$(__ES__) \
-	-I $(__SRC__) 
+	-D __ROOT__=$(__ROOT__) -D __SRC__=$(__SRC__) 
 ##
 ## RULES START HERE
 ##
@@ -90,17 +92,11 @@ LAYOUT_FILES:= $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 ## this rule matches the ones __NAVIGATION insert
 ##
 $(__ROOT__)/%.txt: | $$(@D)/
-	$(M4) -D __DO__=MAKENAV \
-	$(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-	-D __STEM__=$* \
-	-D __TARGET__=$@ -D __FIRST__=$< \
-	-D __NODIR_FIRST__=$(notdir $<) \
-	-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
-	-D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __FNAME__=$(@F) \
+	$(M4) -D __DO__=MAKENAV $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+	-D __STEM__=$* -D __TARGET__=$@ -D __FIRST__=$< \
 	tpy.m4 >$@
 
-## this rule collects all prerequisites declared on the *.d
-##
+## this rule collects all prerequisites declared on the *.d generates above
 $(__ROOT__)/navigation.txt: | $$(@D)/
 	cat $^ > $@
 
@@ -108,39 +104,17 @@ $(__ROOT__)/navigation.txt: | $$(@D)/
 clean:: 
 	$(RM) $(__ROOT__)/navigation.txt
 
-
 ##
 ## ACTUAL PAGES
 ##
-$(__SRC__)/%.html: EXTRA_BUILD_FLAGS+= -D __IMAGES__=$(__IMG__)
-
-define build-page
-$(M4) $(M4_FLAGS) -D __DO__=MAKEBUILD \
-	$(EXTRA_BUILD_FLAGS) \
-	-D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __FNAME__=$(@F) \
-	-D __TARGET__=$@ -D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
-	-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
-	tpy.m4 >$@
-endef
-
-#$(__ROOT__)/%.html : $(__SRC__)/%.in.html $(LAYOUT_FILES) | $$(@D)/
-#	$(build-page)
-
-#$(__ROOT__)/$(__EN__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
-#	$(build-page)
-
-#$(__ROOT__)/$(__ES__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
-#	$(build-page)
-
 #$(__ROOT__)/%.html: $(__SRC__)/layout.html $(__SRC__)/tpy.m4 
+#$(__SRC__)/%.in.html: $(__SRC__)/layout.html $(__SRC__)/tpy.m4 
 
-$(__ROOT__)/%.html: $(__SRC__)/$$(notdir %).in.html $(LAYOUT_FILES) | $$(@D)/
-	$(M4) -D __DO__=MAKEBUILD \
-	$(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+$(__ROOT__)/%.html: $(__SRC__)/$$(notdir %).in.html  | $$(@D)/
+	$(M4) -D __DO__=MAKEBUILD $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=$* \
-	-D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __FNAME__=$(@F) \
-	-D __TARGET__=$@ -D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
-	-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
+	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
+	-D __TARGET__=$@ -D __FIRST__=$< \
 	tpy.m4 >$@
 
 ##
@@ -149,9 +123,9 @@ $(__ROOT__)/%.html: $(__SRC__)/$$(notdir %).in.html $(LAYOUT_FILES) | $$(@D)/
 # contemplar el uso de $^, falta la dependencia con los
 # sources de los htmls (puede que esto no sea necesario y no haya problema
 # en regenerarlo siempre que tomemos la fecha del source
-$(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $(__ROOT__)/
+$(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-		-D __FNAME__=$(@F) \
+		-D __TNAME__=$(@F) \
 		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 ##
 ## COPY ASSETS
@@ -199,7 +173,7 @@ $(__GZIP__)/%: $(__ROOT__)/% | $$(@D)/
 ##
 .PHONY: testm4
 testm4:
-	$(M4) $(M4_FLAGS) --debug= -D __FNAME__="test_tpy.m4" -D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __LIST__="$(filter-out 404.html,$(PAGES))" test_tpy.m4
+	$(M4) $(M4_FLAGS) --debug= -D __TNAME__="test_tpy.m4" -D __TDIR__=$(@D) -D __ROOT__=$(__ROOT__) -D __LIST__="$(filter-out 404.html,$(PAGES))" test_tpy.m4
 
 .PHONY: build
 build: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar
@@ -230,10 +204,6 @@ cleangzip:
 
 .PHONY: realclean
 realclean:: clean
-	$(RM) $(patsubst %,$(__DEPS__)/%.d,$(basename $(PAGES)))
-	$(RMDIR) $(__ROOT__)/$(__STATIC__)/$(__IMG__)/
-	$(RMDIR) $(__ROOT__)/$(__STATIC__)/$(__FON__)/
-	$(RMDIR) $(__ROOT__)/$(__STATIC__)
 	$(RMDIR) $(__DEPS__)
 	$(RMDIR) $(__ROOT__)
 #	$(RMDIR) $(__GZIP__)
@@ -253,14 +223,12 @@ realclean:: clean
 ## 
 $(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) Makefile | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __DO__=MAKEDEPEND \
-		-D __ROOT__=$(__ROOT__) -D __SRC__=$(__SRC__) \
 		-D __STEM__=$* \
 		-D __TARGET__=$@ -D __FIRST__=$< \
 		tpy.m4 >$@ || rm $@
 
 # TODO: check what abaut this .PRECIOUS
 #.PRECIOUS: $(__DEPS__)/%.d
-# ignoring error here its important (PLEASE DOCUMENT WHY...) 
 ## THIS FIRES THE RULE ABOVE
 -include $(patsubst %.in.html,$(__DEPS__)/%.d,$(notdir $(wildcard $(__SRC__)/*.in.html)))
 

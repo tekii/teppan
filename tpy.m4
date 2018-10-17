@@ -46,11 +46,11 @@ m4_define([__ENES],
 m4_case(__LANG__,__EN__,$1,__ES__,$2))
 
 #
-# calculate path jump relative to __BASE__ or $2
+# calculate path jump relative to __TDIR__ or $2
 # TODO: strip fragments #xxx
 #
 m4_define([__HREF],
-[m4_esyscmd_s(__RP__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__BASE__]))])
+[m4_esyscmd_s(__RP__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__TDIR__]))])
 
 dnl[m4_divert_text([PAPER],[<!-- __file__ __line__ --$1-- -->])[]
 
@@ -68,27 +68,28 @@ m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/$1/__STEM__.html])dnl
 m4_divert_text([DEPEND],[
 __ROOT__/$1/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=$1 -D __ALTERNATE__
 __ROOT__/$1/__STEM__.html : __FIRST__
-[# move this to the navigation macro]
-__ROOT__/$1/__STEM__.html : __ROOT__/navigation.txt
+__ROOT__/$1/__STEM__.html : __SRC__/layout.html
+__ROOT__/$1/__STEM__.html : __SRC__/tpy.m4
 build : __ROOT__/$1/__STEM__.html
-clean     :: ; [$(RM)] __ROOT__/$1/__STEM__.html
+clean :: ; [$(RM)] __ROOT__/$1/__STEM__.html
 realclean :: ; [$(RM)] __TARGET__
-realclean :: ; [$(RMDIR)] __ROOT__/$1
 ])])
 
 m4_define([__BUILD_TOP],[
 m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__STEM__.html])dnl
 m4_divert_text([DEPEND],[
 __ROOT__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=$1
-[# ]__ROOT__/__STEM__.html : __FIRST__
+__ROOT__/__STEM__.html : __FIRST__
+__ROOT__/__STEM__.html : __SRC__/layout.html
+__ROOT__/__STEM__.html : __SRC__/tpy.m4
 build : __ROOT__/__STEM__.html
-clean     :: ; [$(RM)] __ROOT__/__STEM__.html
+clean :: ; [$(RM)] __ROOT__/__STEM__.html
 realclean :: ; [$(RM)] __TARGET__
 ])])
 
 m4_define([__ASSET],[__HREF([__ROOT__/$1])[]dnl
 m4_divert_text([DEPEND],[dnl
-__ROOT__/$1: __SRC__/$1 
+__ROOT__/$1 : __SRC__/$1 
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
 __BUILD_TARGET__ : __ROOT__/$1
 ])dnl
@@ -114,11 +115,12 @@ m4_define([__NAVIGATION],[dnl
 m4_divert_text([DEPEND],[
 [# NAVIGATION BEGIN]
 __ROOT__/__STEM__.txt : __FIRST__
-clean:: ; [$(RM)] __ROOT__/__STEM__.txt
 __ROOT__/navigation.txt : __ROOT__/__STEM__.txt
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
 __BUILD_TARGET__ : __ROOT__/navigation.txt
 ])dnl
+clean :: ; [$(RM)] __ROOT__/__STEM__.txt
+clean :: ; [$(RM)] __ROOT__/navigation.txt 
 [# NAVIGATION END]
 ])dnl
 m4_if(__DO__,[MAKEBUILD],[m4_include(__ROOT__/navigation.txt)],[])dnl
