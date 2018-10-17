@@ -64,23 +64,25 @@ m4_define([__RDATE],
 # BUILD MACROS
 #
 m4_define([__BUILD_LANG],[
-m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/$1/__NODIR_FIRST__])dnl
+m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/$1/__STEM__.html])dnl
 m4_divert_text([DEPEND],[
-__ROOT__/$1/__NODIR_FIRST__ : EXTRA_BUILD_FLAGS+= -D __LANG__=$1 -D __ALTERNATE__
+__ROOT__/$1/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=$1 -D __ALTERNATE__
+__ROOT__/$1/__STEM__.html : __FIRST__
 [# move this to the navigation macro]
-__ROOT__/$1/__NODIR_FIRST__ : __ROOT__/navigation.txt
-build : __ROOT__/$1/__NODIR_FIRST__
-clean     :: ; [$(RM)] __ROOT__/$1/__NODIR_FIRST__
+__ROOT__/$1/__STEM__.html : __ROOT__/navigation.txt
+build : __ROOT__/$1/__STEM__.html
+clean     :: ; [$(RM)] __ROOT__/$1/__STEM__.html
 realclean :: ; [$(RM)] __TARGET__
 realclean :: ; [$(RMDIR)] __ROOT__/$1
 ])])
 
 m4_define([__BUILD_TOP],[
-m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__NODIR_FIRST__])dnl
+m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__STEM__.html])dnl
 m4_divert_text([DEPEND],[
-__ROOT__/__NODIR_FIRST__ : EXTRA_BUILD_FLAGS+= -D __LANG__=$1
-build : __ROOT__/__NODIR_FIRST__
-clean     :: ; [$(RM)] __ROOT__/__NODIR_FIRST__
+__ROOT__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=$1
+[# ]__ROOT__/__STEM__.html : __FIRST__
+build : __ROOT__/__STEM__.html
+clean     :: ; [$(RM)] __ROOT__/__STEM__.html
 realclean :: ; [$(RM)] __TARGET__
 ])])
 
@@ -95,6 +97,7 @@ clean:: ; [$(RM)] __ROOT__/$1
 
 m4_define([__INCL],[
 m4_divert_text([DEPEND],[dnl
+[# from INCL]
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
 __BUILD_TARGET__ : $1
 ])dnl

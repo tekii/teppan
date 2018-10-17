@@ -1,5 +1,6 @@
 #!/usr/bin/make -rsf
 
+.SUFFIXES:
 #.SUFFIXES: .html .m4 .png .gif
 
 __EN__ 	:=en
@@ -119,17 +120,17 @@ $(M4) $(M4_FLAGS) -D __DO__=MAKEBUILD \
 	tpy.m4 >$@
 endef
 
-$(__ROOT__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
+$(__ROOT__)/%.html : $(__SRC__)/%.in.html $(LAYOUT_FILES) | $$(@D)/
 	$(build-page)
 
-$(__ROOT__)/$(__EN__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
+#$(__ROOT__)/$(__EN__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
+#	$(build-page)
+
+#$(__ROOT__)/$(__ES__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
 	$(build-page)
 
-$(__ROOT__)/$(__ES__)/%.html : $(__SRC__)/%.html $(LAYOUT_FILES) | $$(@D)/
-	$(build-page)
-
-%.html : %.in.html $(LAYOUT_FILES) | $$(@D)/
-	echo $< $@
+#%.html : %.in.html $(LAYOUT_FILES) | $$(@D)/
+#	echo $< $@
 
 ##
 ## SITEMAP.XML
@@ -239,7 +240,7 @@ realclean:: clean
 ## 
 ## THIS MUST BE THE FIRST RULE TO RUN, PLEASE ALL PREREQUISITES MUST PRE-EXIST
 ## 
-$(__DEPS__)/%.d: $(__SRC__)/%.html $(LAYOUT_FILES) Makefile | $$(@D)/
+$(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) Makefile | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __DO__=MAKEDEPEND \
 		-D __STEM__=$* \
 		-D __TARGET__=$@ -D __T_DIR__=$(@D) \
@@ -253,5 +254,5 @@ $(__DEPS__)/%.d: $(__SRC__)/%.html $(LAYOUT_FILES) Makefile | $$(@D)/
 #.PRECIOUS: $(__DEPS__)/%.d
 # ignoring error here its important (PLEASE DOCUMENT WHY...) 
 ## THIS FIRES THE RULE ABOVE
--include $(patsubst %,$(__DEPS__)/%.d,$(basename $(PAGES)))
+-include $(patsubst %.in.html,$(__DEPS__)/%.d,$(notdir $(wildcard $(__SRC__)/*.in.html)))
 
