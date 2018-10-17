@@ -93,7 +93,8 @@ $(__ROOT__)/%.txt: | $$(@D)/
 	$(M4) -D __DO__=MAKENAV \
 	$(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=$* \
-	-D __TARGET__=$@ -D __FIRST__=$< -D __NODIR_FIRST__=$(notdir $<) \
+	-D __TARGET__=$@ -D __FIRST__=$< \
+	-D __NODIR_FIRST__=$(notdir $<) \
 	-D __NODIR_BASENAME_FIRST__=$(notdir $(basename $<)) \
 	-D __BASE__=$(@D) -D __ROOT__=$(__ROOT__) -D __FNAME__=$(@F) \
 	tpy.m4 >$@
