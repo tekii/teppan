@@ -18,13 +18,9 @@ __JS__ 	:=js
 __FON__	:=fonts
 __DEPS__:=/tmp/bucket/deps
 
-HTML_EXT:=.html
-AMP__EXT:=.amp.html
-
 GLYPH:=glyphicons-halflings-regular
 
-PAGES := 404.html index.html main.html careers.html
-
+__LAYOUT__:=$(__SRC__)/layout.html
 
 ##
 ##
@@ -77,7 +73,7 @@ $(__ROOT__)/%/:
 #$(addprefix $(__SRC__)/, $(PAGES)): $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 #$(__SRC__)/%.html: $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 ##
-LAYOUT_FILES:= $(__SRC__)/layout.html $(__SRC__)/tpy.m4 
+LAYOUT_FILES:= $(__LAYOUT__) $(__SRC__)/tpy.m4 
 
 #$(__ROOT__)/navigation.txt
 
@@ -92,6 +88,7 @@ LAYOUT_FILES:= $(__SRC__)/layout.html $(__SRC__)/tpy.m4
 ## this rule matches the ones __NAVIGATION insert
 ##
 $(__ROOT__)/%.txt: | $$(@D)/
+	echo ----------------------->$(EXTRA_BUILD_FLAGS)
 	$(M4) -D __DO__=MAKENAV $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=$* -D __TARGET__=$@ -D __FIRST__=$< \
 	tpy.m4 >$@
@@ -123,10 +120,10 @@ $(__ROOT__)/%.html: $(__SRC__)/$$(notdir %).in.html  | $$(@D)/
 # contemplar el uso de $^, falta la dependencia con los
 # sources de los htmls (puede que esto no sea necesario y no haya problema
 # en regenerarlo siempre que tomemos la fecha del source
-$(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $$(@D)/
-	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-		-D __TNAME__=$(@F) \
-		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
+#$(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $$(@D)/
+#	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+#		-D __TNAME__=$(@F) \
+#		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 ##
 ## COPY ASSETS
 ##
@@ -171,17 +168,22 @@ $(__GZIP__)/%: $(__ROOT__)/% | $$(@D)/
 ##
 ## COMMANDS --debug=aeqt
 ##
-.PHONY: testm4
-testm4:
-	$(M4) $(M4_FLAGS) --debug= -D __TNAME__="test_tpy.m4" -D __TDIR__=$(@D) -D __ROOT__=$(__ROOT__) -D __LIST__="$(filter-out 404.html,$(PAGES))" test_tpy.m4
+.PHONY: test
+test: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
+test: test_tpy.m4
+	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+	--debug= \
+	-D __DO__=MAKEBUILD \
+	-D __TDIR__="/tmp/test" -D __ROOT__=$(__ROOT__) -D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
+	test_tpy.m4
 
 .PHONY: build
-build: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar
+build: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar -D __LAYOUT__=$(__LAYOUT__)
 build:
 	@echo [[[ DONE $@ ]]]
 
 .PHONY: publish
-publish: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar
+publish: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar -D __LAYOUT__=$(__LAYOUT__)
 publish: build #$(ALL_GZIP)
 #	gsutil web set -m en/index.html -e en/404.html gs://www.teky.io
 	echo $^
@@ -221,6 +223,7 @@ realclean:: clean
 ## 
 ## THIS MUST BE THE FIRST RULE TO RUN, PLEASE ALL PREREQUISITES MUST PRE-EXIST
 ## 
+$(__DEPS__)/%.d: EXTRA_BUILD_FLAGS= -D __LAYOUT__=$(__LAYOUT__)
 $(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) Makefile | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __DO__=MAKEDEPEND \
 		-D __STEM__=$* \

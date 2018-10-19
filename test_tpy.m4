@@ -55,13 +55,18 @@ m4_define([__L],
        [m4_if($1,$2,$3,[__L($1,m4_shift(m4_shift(m4_shift($@))))])])])
 
 
-m4_traceon([__LANG_NAME3])
+dnl m4_traceon([__LANG_NAME3])
 ---------------------------------------
->>>>>__LOOKUP_LANG_NAME(en,m4_unquote(__LANGS__))<<<<<
->>>>>__LOOKUP_LANG_NAME(es,m4_unquote(__LANGS__))<<<<<
->>>>>__LOOKUP_LANG_NAME(pt,m4_unquote(__LANGS__))<<<<<
->>>>>__LOOKUP_LANG_NAME(nn,m4_unquote(__LANGS__))<<<<<
->>>>>__LANG_NAME(en)<<<<<
->>>>>__LOOKUP_LANG_NAME(nn)<<<<<
+dnl >>>>>__LOOKUP_LANG_NAME(en,m4_unquote(__LANGS__))<<<<<
+dnl >>>>>__LOOKUP_LANG_NAME(es,m4_unquote(__LANGS__))<<<<<
+dnl >>>>>__LOOKUP_LANG_NAME(pt,m4_unquote(__LANGS__))<<<<<
+dnl >>>>>__LOOKUP_LANG_NAME(nn,m4_unquote(__LANGS__))<<<<<
+dnl >>>>>__LANG_NAME(en)<<<<<
+dnl >>>>>__LOOKUP_LANG_NAME(nn)<<<<<
 ---------------------------------------
-m4_traceoff([__LANG_NAME3])
+m4_traceoff([__LANG_NAME3])dnl
+m4_traceon([__LOCALIZE_NAME])dnl
+---------------------------------------
+__LOCALIZE_NAME([dummy],[en])
+---------------------------------------
+m4_traceoff([__LOCALIZE_NAME])dnl

@@ -60,6 +60,29 @@ m4_define([__FNAME],
 m4_define([__RDATE],
 [m4_chomp_all(m4_esyscmd(date --reference=$1 +%Y-%m-%d))])
 
+dnl
+dnl LOCALIZE MACROS
+dnl $1 page key
+dnl $2 lang key
+dnl
+m4_define([__LOCALIZE_NAME],[dnl
+$1-$2[]dnl
+])
+
+m4_define([__LOCALIZE_PATH],[dnl
+])
+
+dnl
+dnl PAGE MACRO
+dnl $1 lang keys list
+dnl $2 localization strategy
+dnl $3 (optional) page key, defaults to __TNAME__
+dnl
+m4_define([__PAGE],[
+
+])
+
+
 #
 # BUILD MACROS
 #
@@ -133,7 +156,7 @@ m4_include(__FIRST__)
 dnl
 dnl NOW THE LAYOUT
 dnl
-m4_include(layout.html)
+m4_include(__LAYOUT__)
 dnl
 dnl AND FINALLY CHOOSE WHAT TO EMIT
 dnl
