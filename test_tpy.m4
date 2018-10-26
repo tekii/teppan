@@ -68,9 +68,11 @@ m4_traceoff([__LANG_NAME3])dnl
 m4_traceon([__PAGE])dnl
 m4_traceon([__LOCALIZE_URL_NAME])dnl
 m4_traceon([__LOCALIZE_URL_PATH])dnl
+m4_traceon([__LOCALIZE_URL_NULL])dnl
 ---------------------------------------
 |__PAGE([some/main],[en,es],[__LOCALIZE_URL_PATH])|
 ---------------------------------------
+m4_traceoff([__LOCALIZE_URL_NULL])dnl
 m4_traceoff([__LOCALIZE_URL_PATH])dnl
 m4_traceoff([__LOCALIZE_URL_NAME])dnl
 m4_traceoff([__PAGE])dnl
