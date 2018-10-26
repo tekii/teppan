@@ -88,7 +88,7 @@ LAYOUT_FILES:= $(__LAYOUT__) $(__SRC__)/tpy.m4
 ## this rule matches the ones __NAVIGATION insert
 ##
 $(__ROOT__)/%.txt: | $$(@D)/
-	echo ----------------------->$(EXTRA_BUILD_FLAGS)
+	echo --txt------------------ $(EXTRA_BUILD_FLAGS)
 	$(M4) -D __DO__=MAKENAV $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=$* -D __TARGET__=$@ -D __FIRST__=$< \
 	tpy.m4 >$@

@@ -65,12 +65,9 @@ dnl LOCALIZE MACROS
 dnl $1 page key
 dnl $2 lang key
 dnl
-m4_define([__LOCALIZE_NAME],[dnl
-$1-$2[]dnl
-])
-
-m4_define([__LOCALIZE_PATH],[dnl
-])
+m4_define([__LOCALIZE_URL_NAME],[$1-$2])
+m4_define([__LOCALIZE_URL_PATH],[$2/$1])
+m4_define([__LOCALIZE_URL_NULL],[$1])
 
 dnl
 dnl PAGE MACRO
@@ -78,9 +75,25 @@ dnl $1 lang keys list
 dnl $2 localization strategy
 dnl $3 (optional) page key, defaults to __TNAME__
 dnl
-m4_define([__PAGE],[
-
-])
+m4_define([__PAGE],[dnl
+m4_foreach([__I__], [$2],[m4_pushdef([__STEM__],$3([$1],__I__))dnl
+m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__STEM__.html])dnl
+m4_divert_text([DEPEND],[dnl
+[#] __STEM__
+__ROOT__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=__I__ -D __ALTERNATE__
+__ROOT__/__STEM__.html : __FIRST__
+__ROOT__/__STEM__.html : __SRC__/layout.html
+__ROOT__/__STEM__.html : __SRC__/tpy.m4
+build : __ROOT__/__STEM__.html
+clean :: ; [$(RM)] __ROOT__/__STEM__.html
+realclean :: ; [$(RM)] __TARGET__
+])dnl DEPEND
+m4_divert_text([NAVIGATION],[dnl
+nothing to see here
+])dnl NAVIGATION
+m4_popdef([__STEM__])dnl
+])dnl foreach
+])dnl
 
 
 #

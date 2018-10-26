@@ -65,8 +65,18 @@ dnl >>>>>__LANG_NAME(en)<<<<<
 dnl >>>>>__LOOKUP_LANG_NAME(nn)<<<<<
 ---------------------------------------
 m4_traceoff([__LANG_NAME3])dnl
-m4_traceon([__LOCALIZE_NAME])dnl
+m4_traceon([__PAGE])dnl
+m4_traceon([__LOCALIZE_URL_NAME])dnl
+m4_traceon([__LOCALIZE_URL_PATH])dnl
 ---------------------------------------
-__LOCALIZE_NAME([dummy],[en])
+|__PAGE([some/main],[en,es],[__LOCALIZE_URL_PATH])|
 ---------------------------------------
-m4_traceoff([__LOCALIZE_NAME])dnl
+m4_traceoff([__LOCALIZE_URL_PATH])dnl
+m4_traceoff([__LOCALIZE_URL_NAME])dnl
+m4_traceoff([__PAGE])dnl
+DEPEND---------------------------------
+m4_undivert([DEPEND])dnl
+DEPEND---------------------------------
+NAVIGATION-----------------------------
+m4_undivert([NAVIGATION])dnl
+NAVIGATION-----------------------------
