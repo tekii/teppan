@@ -81,7 +81,7 @@ m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__STEM__.html])dnl
 m4_divert_text([DEPEND],[dnl
 [#] __STEM__
 __ROOT__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=__I__ -D __ALTERNATE__
-__ROOT__/__STEM__.html : __FIRST__
+__ROOT__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
 __ROOT__/__STEM__.html : __SRC__/layout.html
 __ROOT__/__STEM__.html : __SRC__/tpy.m4
 build : __ROOT__/__STEM__.html
@@ -89,7 +89,7 @@ clean :: ; [$(RM)] __ROOT__/__STEM__.html
 realclean :: ; [$(RM)] __TARGET__
 ])dnl DEPEND
 m4_divert_text([NAVIGATION],[dnl
-nothing to see here
+nothing to see here yet
 ])dnl NAVIGATION
 m4_popdef([__STEM__])dnl
 ])dnl foreach
