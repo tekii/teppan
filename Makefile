@@ -103,17 +103,17 @@ clean::
 
 ##
 ## ACTUAL PAGES
-## 	-D __STEM__=$(notdir $(basename $@))
 ##
 define do-build
 $(M4) -D __DO__=MAKEBUILD $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+	-D __STEM__=__UNDEF__ \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	tpy.m4 >$@
 endef
 
 #$(__ROOT__)/%.html: $(__SRC__)/$$(notdir %).in.html  | $$(@D)/
-#	$(do-builg)
+#	$(do-build)
 
 ##
 ## SITEMAP.XML

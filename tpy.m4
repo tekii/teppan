@@ -95,43 +95,23 @@ m4_popdef([__STEM__])dnl
 ])dnl foreach
 ])dnl
 
-
-#
-# BUILD MACROS
-#
-m4_define([__BUILD_LANG],[
-m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/$1/__STEM__.html])dnl
-m4_divert_text([DEPEND],[
-__ROOT__/$1/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=$1 -D __ALTERNATE__
-__ROOT__/$1/__STEM__.html : __FIRST__
-__ROOT__/$1/__STEM__.html : __SRC__/layout.html
-__ROOT__/$1/__STEM__.html : __SRC__/tpy.m4
-build : __ROOT__/$1/__STEM__.html
-clean :: ; [$(RM)] __ROOT__/$1/__STEM__.html
-realclean :: ; [$(RM)] __TARGET__
-])])
-
-m4_define([__BUILD_TOP],[
-m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__STEM__.html])dnl
-m4_divert_text([DEPEND],[
-__ROOT__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=$1
-__ROOT__/__STEM__.html : __FIRST__
-__ROOT__/__STEM__.html : __SRC__/layout.html
-__ROOT__/__STEM__.html : __SRC__/tpy.m4
-build : __ROOT__/__STEM__.html
-clean :: ; [$(RM)] __ROOT__/__STEM__.html
-realclean :: ; [$(RM)] __TARGET__
-])])
-
+dnl
+dnl ASSET MACRO
+dnl $1 source relative asset URI
+dnl
 m4_define([__ASSET],[__HREF([__ROOT__/$1])[]dnl
 m4_divert_text([DEPEND],[dnl
 __ROOT__/$1 : __SRC__/$1 
-m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
-__BUILD_TARGET__ : __ROOT__/$1
+m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__I__],[dnl
+__I__ : __ROOT__/$1
 ])dnl
 clean:: ; [$(RM)] __ROOT__/$1 
 ])])
 
+dnl
+dnl INCL MACRO
+dnl source relative filename
+dnl
 m4_define([__INCL],[
 m4_divert_text([DEPEND],[dnl
 [# from INCL]
@@ -140,6 +120,9 @@ __BUILD_TARGET__ : $1
 ])dnl
 ])[]m4_include([$1])])
 
+dnl
+dnl NAVIGATION_ITEM
+dnl
 m4_define([__NAVIGATION_ITEM],[$1[]dnl
 m4_divert_text([NAVIGATION],[__NAVIGATION_ITEM_TEMPLATE([$1],$2,$3)])dnl
 ])
@@ -164,10 +147,14 @@ m4_if(__DO__,[MAKEBUILD],[m4_include(__ROOT__/navigation.txt)],[])dnl
 
 dnl
 dnl PAGE PROCESS STARTS HERE
+dnl PAGE PROCESS STARTS HERE
+dnl PAGE PROCESS STARTS HERE
+dnl
+dnl HERE WE LOAD THE DIVERSIONS
 dnl
 m4_include(__FIRST__)
 dnl
-dnl NOW THE LAYOUT
+dnl NOW THE LAYOUT CONSUME THE DIVERSIONS
 dnl
 m4_include(__LAYOUT__)
 dnl
