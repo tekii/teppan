@@ -10,13 +10,14 @@ __SRC__	:=$(PWD)
 
 __TMP__:=/tmp
 __ROOT__:=/tmp/bucket
-__GZIP__:=/tmp/bucketgz
+__GZIP__:=/tmp/gzip
 __STATIC__:=static
 __CSS__	:=css
 __IMG__	:=img
 __JS__ 	:=js
 __FON__	:=fonts
 __DEPS__:=/tmp/bucket/deps
+__ZIP__:=/tmp/gzip
 
 GLYPH:=glyphicons-halflings-regular
 
@@ -64,7 +65,14 @@ M4_FLAGS+= \
 ##
 .PRECIOUS: $(__ROOT__)/%/
 $(__ROOT__)/%/:
+	@echo +++++++++++++++++++++  $@
 	mkdir -p $@
+
+.PRECIOUS: $(__TMP__)/%/
+$(__TMP__)/%/:
+	@echo --------------------- $@
+	mkdir -p $@
+
 ##
 ## as first target build marks all langs as done one rule doesn't
 ## work, for now I will generate a normal rule in the dependencies or
@@ -159,18 +167,16 @@ GSUTIL_EXTRA_FLAGS:=
 #$(__GZIP__)/$(__IMG__)/logo.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=3600"
 #$(__GZIP__)/$(__IMG__)/es.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=86400"
 #$(__GZIP__)/$(__IMG__)/us.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=86400"
+#$(__GZIP__)/$(__STATIC__)/%: GSUTIL_EXTRA_FLAGS+=-h "Cache-Control:public,max-age=86400"
 
-$(__GZIP__)/$(__STATIC__)/%: GSUTIL_EXTRA_FLAGS+=-h "Cache-Control:public,max-age=86400"
-
-$(__GZIP__)/%: $(__ROOT__)/% | $$(@D)/
+define do-gzip
 	gzip -c --no-name --rsyncable $< >$@
-	#gsutil $(GSUTIL_EXTRA_FLAGS) -h "Content-Encoding:gzip" -h "Content-Type:$(shell mimetype --brief $< | tr -d '\n')" cp -a public-read -r $@  gs://www.tekii.com.ar$(subst $(__GZIP__),,$(dir $@))
-
+endef
 ##
 ## COMMANDS --debug=aeqt
 ##
 .PHONY: test
-test: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
+test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
 test: test_tpy.m4
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	--debug= \
@@ -179,16 +185,28 @@ test: test_tpy.m4
 	test_tpy.m4
 
 .PHONY: build
-build: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar -D __LAYOUT__=$(__LAYOUT__)
+build: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://localhost -D __LAYOUT__=$(__LAYOUT__)
 build:
 	@echo [[[ DONE $@ ]]]
 
+#example.com/% : $(__ZIP__)/%
+#	@echo "gsutil $(GSUTIL_EXTRA_FLAGS) -h "Content-Encoding:gzip" -h "Content-Type:$(shell mimetype --brief $< | tr -d '\n')" cp -a public-read -r $<  gs://$@"
+#	@echo [[[ DONE $@ ]]]
+
+define do-publish
+	@echo "++++++ gsutil $(GSUTIL_EXTRA_FLAGS) -h "Content-Encoding:gzip" cp -a public-read -r $<  gs://$@"
+	@echo [[[ PUBLISHED $@ ]]]
+endef
+
 .PHONY: publish
-publish: EXTRA_BUILD_FLAGS= -D __DOMAIN__=http://www.tekii.com.ar -D __LAYOUT__=$(__LAYOUT__)
-publish: build #$(ALL_GZIP)
+publish: EXTRA_BUILD_FLAGS:= -D __DOMAIN__=http://www.tekii.com.ar -D __LAYOUT__=$(__LAYOUT__)
+publish: GSUTIL_EXTRA_FLAGS:= -D __DOMAIN__=http://www.tekii.com.ar
+publish: #$(ALL_GZIP)
 #	gsutil web set -m en/index.html -e en/404.html gs://www.teky.io
-	echo $^
-	@echo [[[ DONE $@ ]]]
+#	echo $^
+#	echo $(EXTRA_BUILD_FLAGS)
+#	echo $(GSUTIL_EXTRA_FLAGS)
+#	@echo [[[ DONE $@ ]]]
 
 .PHONY: all
 all: build
@@ -228,6 +246,7 @@ $(__DEPS__)/%.d: EXTRA_BUILD_FLAGS= -D __LAYOUT__=$(__LAYOUT__)
 $(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) Makefile | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __DO__=MAKEDEPEND \
 		-D __STEM__=$* \
+		-D __ZIP__=$(__ZIP__) \
 		-D __TARGET__=$@ -D __FIRST__=$< \
 		tpy.m4 >$@ || rm $@
 

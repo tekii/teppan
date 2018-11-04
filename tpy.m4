@@ -78,20 +78,32 @@ dnl
 m4_define([__PAGE],[dnl
 m4_foreach([__I__], [$2],[m4_pushdef([__STEM__],$3([$1],__I__))dnl
 m4_set_add([__CURRENT_BUILD_TARGETS__],[__ROOT__/__STEM__.html])dnl
-m4_divert_text([DEPEND],[dnl
+m4_divert_push([DEPEND])
 [#] __STEM__
 __ROOT__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D __LANG__=__I__ -D __ALTERNATE__
 __ROOT__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
 __ROOT__/__STEM__.html : __SRC__/layout.html
 __ROOT__/__STEM__.html : __SRC__/tpy.m4
+
+.INTERMEDIATE : __ZIP__/__STEM__.html
+__ZIP__/__STEM__.html : GZIP_EXTRA_FLAGS:= 
+__ZIP__/__STEM__.html : __ROOT__/__STEM__.html | $$(@D)/ ;  [$(do-gzip)]
+
+.PHONY : example.com/__STEM__.html
+example.com/__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __ROOT__/__STEM__.html | tr -d '\n')"
+example.com/__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
+example.com/__STEM__.html : __ZIP__/__STEM__.html ; [$(do-publish)]
+
+publish : example.com/__STEM__.html
+
 build : __ROOT__/__STEM__.html
 clean :: ; [$(RM)] __ROOT__/__STEM__.html
 realclean :: ; [$(RM)] __TARGET__
-])dnl DEPEND
-m4_divert_text([NAVIGATION],[dnl
-nothing to see here yet
-])dnl NAVIGATION
-m4_popdef([__STEM__])dnl
+m4_divert_pop([DEPEND])
+m4_divert_push([NAVIGATION])
+<!-- nothing to see here yet -->
+m4_divert_pop([NAVIGATION])
+m4_popdef([__STEM__])
 ])dnl foreach
 ])dnl
 
@@ -100,13 +112,14 @@ dnl ASSET MACRO
 dnl $1 source relative asset URI
 dnl
 m4_define([__ASSET],[__HREF([__ROOT__/$1])[]dnl
-m4_divert_text([DEPEND],[dnl
+m4_divert_push([DEPEND])
 __ROOT__/$1 : __SRC__/$1 
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__I__],[dnl
 __I__ : __ROOT__/$1
 ])dnl
 clean:: ; [$(RM)] __ROOT__/$1 
-])])
+m4_divert_pop([DEPEND])
+])
 
 dnl
 dnl INCL MACRO
