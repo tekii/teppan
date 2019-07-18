@@ -1,0 +1,38 @@
+
+
+
+
+
+
+
+
+https://amp.dev/documentation/guides-and-tutorials/
+https://amp.dev/documentation/guides-and-tutorials/?format=websites
+
+https://amp.dev/documentation/examples/guides/internationalization/?format=websites
+
+/www/somefile.x
+
+.INTERMEDIATE : /zip/% 
+/zip/somefile.x
+
+
+/www/somefile.x : /src/somefile.x
+    do-build
+
+
+
+/zip/% /www/%
+    do zip
+
+
+.PHONY: fake.com/somefile.x
+fake.com/somefile.x : SOMEVAR= -D __SOME__=some
+fake.com/somefile.x : /zip/somefile.x
+
+gsutil xxx
+if ok
+    touch
+
+.PHONY: publish
+publish: fake.com/somefile.x
