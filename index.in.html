@@ -1,4 +1,15 @@
-__PAGE([index],[__EN__],[__LOCALIZE_URL_NULL])
+m4_define([__PAGENAME__],[index])
+
+__PAGE(__BASENAME,[__EN__],[__LOCALIZE_URL_NULL])
+__CANONICAL(__BASENAME,[__EN__],[www.tekii.com],[__LOCALIZE_URL_NULL])
+__ALTERNATE(__BASENAME,[__ES__],[www.tekii.com.ar],[__LOCALIZE_URL_NULL])
+
+<!-- basename,  
+agrega a current targets y a alternates
+__PAG2([amp.tekii.com],   [__PAGENAME__],[__REL_AMPHTML__],  [__EN__],[__LOCALIZE_URL_NULL])
+-->
+__PAG2([www.tekii.com],   [__PAGENAME__],[__REL_CANONICAL__],[__EN__],[__LOCALIZE_URL_NULL])
+__PAG2([www.tekii.com.ar],[__PAGENAME__],[__REL_ALTERNATE__],[__ES__],[__LOCALIZE_URL_NULL])
 
 
 m4_divert_push([HEADER])dnl
