@@ -1,4 +1,4 @@
-m4_include([tpy.m4])dnl
+m4_include([generator.m4])dnl
 
 #m4_changequote(`«', `»')#m4_fatal(«bye»)
 dnlm4_translit(«a.html b.html   c/d.html»,« »,«,»)
@@ -70,7 +70,7 @@ m4_traceon([__LOCALIZE_URL_NAME])dnl
 m4_traceon([__LOCALIZE_URL_PATH])dnl
 m4_traceon([__LOCALIZE_URL_NULL])dnl
 ---------------------------------------
-|__PAGE([some/main],[en,es],[__LOCALIZE_URL_PATH])|
+|__PAGE([test.com],[some/main],[en,es],[__REL_AS_CANONICAL__],[__LOCALIZE_URL_PATH])|
 ---------------------------------------
 m4_traceoff([__LOCALIZE_URL_NULL])dnl
 m4_traceoff([__LOCALIZE_URL_PATH])dnl

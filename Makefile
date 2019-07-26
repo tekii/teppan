@@ -7,17 +7,16 @@ __EN__ 	:=en
 __ES__ 	:=es
 
 __SRC__	:=$(PWD)
-
 __TMP__:=/tmp
-__ROOT__:=/tmp/bucket
-__GZIP__:=/tmp/gzip
+__BUILD__:=$(PWD)/_build/doc
+__DEPS__:=$(PWD)/_build/dep
+__ZIP__:=$(PWD)/_build/zip
+__NAV__:=$(PWD)/_build/nav
 __STATIC__:=static
 __CSS__	:=css
 __IMG__	:=img
 __JS__ 	:=js
 __FON__	:=fonts
-__DEPS__:=/tmp/bucket/deps
-__ZIP__:=/tmp/gzip
 
 GLYPH:=glyphicons-halflings-regular
 
@@ -55,7 +54,7 @@ M4_FLAGS+= \
 endif
 M4_FLAGS+= \
 	-D __EN__=$(__EN__) -D __ES__=$(__ES__) \
-	-D __ROOT__=$(__ROOT__) -D __SRC__=$(__SRC__) 
+	-D __BUILD__=$(__BUILD__) -D __SRC__=$(__SRC__) 
 ##
 ## RULES START HERE
 ##
@@ -63,8 +62,8 @@ M4_FLAGS+= \
 ##
 ## TREE
 ##
-.PRECIOUS: $(__ROOT__)/%/
-$(__ROOT__)/%/:
+.PRECIOUS: $(PWD)/_build/%/
+$(PWD)/_build/%/:
 	@echo +++++++++++++++++++++  $@
 	mkdir -p $@
 
@@ -78,12 +77,12 @@ $(__TMP__)/%/:
 ## work, for now I will generate a normal rule in the dependencies or
 ## n rules here, if the suffix were different then the directories...
 ##
-#$(addprefix $(__SRC__)/, $(PAGES)): $(__SRC__)/layout.html $(__SRC__)/tpy.m4
-#$(__SRC__)/%.html: $(__SRC__)/layout.html $(__SRC__)/tpy.m4
+#$(addprefix $(__SRC__)/, $(PAGES)): $(__SRC__)/layout.html $(__SRC__)/generator.m4
+#$(__SRC__)/%.html: $(__SRC__)/layout.html $(__SRC__)/generator.m4
 ##
-LAYOUT_FILES:= $(__LAYOUT__) $(__SRC__)/tpy.m4 
+LAYOUT_FILES:= $(__LAYOUT__) $(__SRC__)/generator.m4 
 
-#$(__ROOT__)/navigation.txt
+#$(__BUILD__)/navigation.txt
 
 
 ##
@@ -95,19 +94,19 @@ LAYOUT_FILES:= $(__LAYOUT__) $(__SRC__)/tpy.m4
 
 ## this rule matches the ones __NAVIGATION insert
 ##
-$(__ROOT__)/%.txt: | $$(@D)/
+$(__BUILD__)/%.txt: | $$(@D)/
 	echo --txt------------------ $(EXTRA_BUILD_FLAGS)
 	$(M4) -D __DO__=MAKENAV $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=$* -D __TARGET__=$@ -D __FIRST__=$< \
-	tpy.m4 >$@
+	generator.m4 >$@
 
 ## this rule collects all prerequisites declared on the *.d generates above
-$(__ROOT__)/navigation.txt: | $$(@D)/
+$(__BUILD__)/navigation.txt: | $$(@D)/
 	cat $^ > $@
 
 .PHONY: clean
 clean:: 
-	$(RM) $(__ROOT__)/navigation.txt
+	$(RM) $(__BUILD__)/navigation.txt
 
 ##
 ## ACTUAL PAGES
@@ -117,10 +116,10 @@ $(M4) -D __DO__=MAKEBUILD $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=__UNDEF__ \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
-	tpy.m4 >$@
+	generator.m4 >$@
 endef
 
-#$(__ROOT__)/%.html: $(__SRC__)/$$(notdir %).in.html  | $$(@D)/
+#$(__BUILD__)/%.html: $(__SRC__)/$$(notdir %).in.html  | $$(@D)/
 #	$(do-build)
 
 ##
@@ -129,35 +128,35 @@ endef
 # contemplar el uso de $^, falta la dependencia con los
 # sources de los htmls (puede que esto no sea necesario y no haya problema
 # en regenerarlo siempre que tomemos la fecha del source
-#$(__ROOT__)/sitemap.xml : $(__SRC__)/sitemap.xml | $$(@D)/
+#$(__BUILD__)/sitemap.xml : $(__SRC__)/sitemap.xml | $$(@D)/
 #	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 #		-D __TNAME__=$(@F) \
 #		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 ##
 ## COPY ASSETS
 ##
-$(__ROOT__)/%.png : | $$(@D)/
+$(__BUILD__)/%.png : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.gif : | $$(@D)/
+$(__BUILD__)/%.gif : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.svg : | $$(@D)/
+$(__BUILD__)/%.svg : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.jpg : | $$(@D)/
+$(__BUILD__)/%.jpg : | $$(@D)/
 	cp $< $@	
 
-$(__ROOT__)/%.ttf : | $$(@D)/
+$(__BUILD__)/%.ttf : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.eot : | $$(@D)/
+$(__BUILD__)/%.eot : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.woff : | $$(@D)/
+$(__BUILD__)/%.woff : | $$(@D)/
 	cp $< $@
 
-$(__ROOT__)/%.woff2 : | $$(@D)/
+$(__BUILD__)/%.woff2 : | $$(@D)/
 	cp $< $@
 
 ##
@@ -177,15 +176,16 @@ endef
 ##
 .PHONY: test
 test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
-test: test_tpy.m4
+test: generator_test.m4
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	--debug= \
 	-D __DO__=MAKEBUILD \
-	-D __TDIR__="/tmp/test" -D __ROOT__=$(__ROOT__) -D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
-	test_tpy.m4
+	-D __TDIR__="/tmp/test" -D __BUILD__=$(__BUILD__) -D __ZIP__=$(__ZIP__) \
+	-D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
+	generator_test.m4
 
 .PHONY: build
-build: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://localhost -D __LAYOUT__=$(__LAYOUT__)
+build: EXTRA_BUILD_FLAGS= -D __LAYOUT__=$(__LAYOUT__)
 build:
 	@echo [[[ DONE $@ ]]]
 
@@ -226,8 +226,8 @@ cleangzip:
 .PHONY: realclean
 realclean:: clean
 	$(RMDIR) $(__DEPS__)
-	$(RMDIR) $(__ROOT__)
-#	$(RMDIR) $(__GZIP__)
+	$(RMDIR) $(__BUILD__)
+	$(RMDIR) $(__ZIP__)
 	@echo [[[ DONE $@ ]]]
 
 #gsutil -m rsync -ndr ../bucket/ gs://www.teky.io
@@ -248,7 +248,7 @@ $(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) Makefile | $$(@D)/
 		-D __STEM__=$* \
 		-D __ZIP__=$(__ZIP__) \
 		-D __TARGET__=$@ -D __FIRST__=$< \
-		tpy.m4 >$@ || rm $@
+		generator.m4 >$@ || rm $@
 
 # TODO: check what abaut this .PRECIOUS
 #.PRECIOUS: $(__DEPS__)/%.d
