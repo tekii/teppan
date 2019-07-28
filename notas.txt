@@ -11,6 +11,8 @@ https://amp.dev/documentation/guides-and-tutorials/?format=websites
 
 https://amp.dev/documentation/examples/guides/internationalization/?format=websites
 
+https://amp.dev/documentation/guides-and-tutorials/develop/style_and_layout/control_layout/?format=websites
+
 /www/somefile.x
 
 .INTERMEDIATE : /zip/% 

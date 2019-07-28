@@ -64,7 +64,7 @@ M4_FLAGS+= \
 ##
 .PRECIOUS: $(PWD)/_build/%/
 $(PWD)/_build/%/:
-	@echo +++++++++++++++++++++  $@
+	@echo +++++++++++++++++++++ $@
 	mkdir -p $@
 
 .PRECIOUS: $(__TMP__)/%/
