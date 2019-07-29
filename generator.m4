@@ -139,8 +139,8 @@ m4_define([__ASSET],[__HREF([__BUILD__/$1])[]dnl
 m4_divert_push([DEPEND])
 m4_text_box($1 BEGINS,[+])
 [## TODO for each domain ]
-__BUILD__/$1 : __SRC__/$1 
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
+m4_car(__I__)/$1 : __SRC__/$1 
 m4_unquote(m4_cdr(__I__)) : __BUILD__/$1
 ])dnl
 clean:: ; [$(RM)] __BUILD__/$1 
