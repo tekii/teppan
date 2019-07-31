@@ -141,9 +141,9 @@ m4_text_box($1 BEGINS,[+])
 [## TODO for each domain ]
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_car(__I__)/$1 : __SRC__/$1 
-m4_unquote(m4_cdr(__I__)) : __BUILD__/$1
+m4_unquote(m4_cdr(__I__)) : m4_car(__I__)/$1
+clean:: ; [$(RM)] m4_car(__I__)/$1 
 ])dnl
-clean:: ; [$(RM)] __BUILD__/$1 
 m4_text_box($1 ENDS,[-])
 m4_divert_pop([DEPEND])
 ])
@@ -155,16 +155,9 @@ dnl
 m4_define([__INCL],[
 m4_divert_text([DEPEND],[dnl
 [# from INCL]
-m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
-__BUILD_TARGET__ : $1
-])dnl
-
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
-[#########]__I__[#####]
-[#########]m4_car(__I__)[#####]
-[#########]m4_unquote(m4_cdr(__I__))[#####]
+m4_unquote(m4_cdr(__I__)) : $1
 ])dnl
-
 ])[]m4_include([$1])])
 
 dnl
