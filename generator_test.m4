@@ -66,15 +66,16 @@ dnl >>>>>__LOOKUP_LANG_NAME(nn)<<<<<
 ---------------------------------------
 m4_traceoff([__LANG_NAME3])dnl
 m4_traceon([__PAGE])dnl
-m4_traceon([__LOCALIZE_URL_NAME])dnl
-m4_traceon([__LOCALIZE_URL_PATH])dnl
-m4_traceon([__LOCALIZE_URL_NULL])dnl
+dnl m4_traceon([__LOCALIZE_URL_NAME])dnl
+dnl m4_traceon([__LOCALIZE_URL_PATH])dnl
+dnl m4_traceon([__LOCALIZE_URL_NULL])dnl
 ---------------------------------------
-|__PAGE([test.com],[some/main],[en,es],[__REL_AS_CANONICAL__],[__LOCALIZE_URL_PATH])|
+__PAGE([aaa.com],[en,es],[somepath/main],[__CANONICAL_PAGE__],[__LOCALIZE_URL_PATH])
+__PAGE([bbb.com],[en],   [somepath/main],[__ALTERNATE_PAGE__],[__LOCALIZE_URL_PATH])
 ---------------------------------------
-m4_traceoff([__LOCALIZE_URL_NULL])dnl
-m4_traceoff([__LOCALIZE_URL_PATH])dnl
-m4_traceoff([__LOCALIZE_URL_NAME])dnl
+dnl m4_traceoff([__LOCALIZE_URL_NULL])dnl
+dnl m4_traceoff([__LOCALIZE_URL_PATH])dnl
+dnl m4_traceoff([__LOCALIZE_URL_NAME])dnl
 m4_traceoff([__PAGE])dnl
 DEPEND---------------------------------
 m4_undivert([DEPEND])dnl

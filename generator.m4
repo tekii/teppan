@@ -70,9 +70,9 @@ dnl LOCALIZE MACROS
 dnl $1 page key
 dnl $2 lang key
 dnl
-m4_define([__LOCALIZE_URL_NAME],[$1-$2])
-m4_define([__LOCALIZE_URL_PATH],[$1/$3/$2])
-m4_define([__LOCALIZE_URL_NULL],[$1/$2])
+m4_define([__LOCALIZE_URL_NAME],[$2-$3])
+m4_define([__LOCALIZE_URL_PATH],[$1/$2/$3])
+m4_define([__LOCALIZE_URL_NULL],[$1/$3])
 
 dnl
 dnl PAGE MACRO
@@ -84,10 +84,11 @@ dnl $4 relationship
 dnl $5 localization strategy
 dnl
 m4_define([__PAGE],[dnl
-m4_foreach([__L__], [$3],[dnl
 m4_pushdef([__DOMAIN__],$1)
-m4_pushdef([__DOMAIN_T__],m4_bpatsubst(__DOMAIN__,[\.],[-]))
-m4_pushdef([__STEM__],$5(__DOMAIN__,[$2],__L__))dnl
+m4_set_add([__ROOTS__],__BUILD__/__DOMAIN__)dnl
+dnl
+m4_foreach([__L__], [$2],[dnl
+m4_pushdef([__STEM__],$5(__DOMAIN__,__L__,[$3]))dnl
 m4_set_add([__CURRENT_BUILD_TARGETS__],__BUILD__/__STEM__.html)dnl
 m4_set_add([__BUILD_TARGETS__],m4_quote(__BUILD__/__DOMAIN__,__BUILD__/__STEM__.html))dnl
 m4_divert_push([DEPEND])dnl
@@ -95,23 +96,23 @@ dnl
 m4_text_box(__STEM__ BEGINS,[+])
 __BUILD__/__STEM__.html : __SRC__/layout.html
 __BUILD__/__STEM__.html : __SRC__/generator.m4
-__BUILD__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__DOMAIN__]=__DOMAIN__ -D [__LOCAL__]=__BUILD__/__DOMAIN__ -D __LANG__=__L__ -D __ALTERNATE__
+__BUILD__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__L__ -D [__RELATION__]=$4 -D [__ROOT__]=__BUILD__/__DOMAIN__
 __BUILD__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
 
 .INTERMEDIATE : __ZIP__/__STEM__.html
 __ZIP__/__STEM__.html : GZIP_EXTRA_FLAGS:= 
 __ZIP__/__STEM__.html : __BUILD__/__STEM__.html | $$(@D)/ ;  [$(do-gzip)]
 
-[#].PHONY : __STEM__.html
 .INTERMEDIATE : __STEM__.html
 __STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __BUILD__/__STEM__.html | tr -d '\n')"
 __STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
 __STEM__.html : __ZIP__/__STEM__.html ; [$(do-publish)]
 
-.PHONY : __DOMAIN_T__
-__DOMAIN_T__ : __STEM__.html
-
-publish : __DOMAIN_T__
+m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
+.PHONY : __DOMAIN__
+__DOMAIN__ : __STEM__.html
+publish : __DOMAIN__
+m4_popdef([__DOMAIN__])
 
 build : __BUILD__/__STEM__.html
 clean :: ; [$(RM)] __BUILD__/__STEM__.html
@@ -122,15 +123,13 @@ m4_divert_pop([DEPEND])
 m4_divert_push([NAVIGATION])dnl
 <!-- nothing to see here yet -->
 m4_divert_pop([NAVIGATION])
-m4_popdef([__STEM__])
-m4_popdef([__DOMAIN_T__])
-m4_popdef([__DOMAIN__])
+m4_popdef([__STEM__])dnl
 ])dnl foreach
-m4_divert_push([DEPEND])dnl
-m4_text_box([TODO move some cleanup out of the loop],[*])
-m4_divert_pop([DEPEND])
+m4_popdef([__DOMAIN__])dnl
 ])dnl
-]
+
+
+
 dnl
 dnl ASSET MACRO
 dnl $1 source relative asset URI
@@ -138,11 +137,12 @@ dnl
 m4_define([__ASSET],[__HREF([__BUILD__/$1])[]dnl
 m4_divert_push([DEPEND])
 m4_text_box($1 BEGINS,[+])
-[## TODO for each domain ]
+m4_set_foreach([__ROOTS__],[__R__],[dnl
+m4_car(__R__)/$1 : __SRC__/$1 
+clean:: ; [$(RM)] m4_car(__R__)/$1 
+])dnl
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
-m4_car(__I__)/$1 : __SRC__/$1 
 m4_unquote(m4_cdr(__I__)) : m4_car(__I__)/$1
-clean:: ; [$(RM)] m4_car(__I__)/$1 
 ])dnl
 m4_text_box($1 ENDS,[-])
 m4_divert_pop([DEPEND])
