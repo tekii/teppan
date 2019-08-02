@@ -88,7 +88,8 @@ m4_pushdef([__DOMAIN__],$1)
 m4_set_add([__ROOTS__],__BUILD__/__DOMAIN__)dnl
 dnl
 m4_foreach([__L__], [$2],[dnl
-m4_pushdef([__STEM__],$5(__DOMAIN__,__L__,[$3]))dnl
+m4_pushdef([__STEM__],$5(__DOMAIN__,__L__,__STEM__))dnl
+m4_pushdef([__RELATION__],$4)
 m4_set_add([__CURRENT_BUILD_TARGETS__],__BUILD__/__STEM__.html)dnl
 m4_set_add([__BUILD_TARGETS__],m4_quote(__BUILD__/__DOMAIN__,__BUILD__/__STEM__.html))dnl
 m4_divert_push([DEPEND])dnl
@@ -96,7 +97,7 @@ dnl
 m4_text_box(__STEM__ BEGINS,[+])
 __BUILD__/__STEM__.html : __SRC__/layout.html
 __BUILD__/__STEM__.html : __SRC__/generator.m4
-__BUILD__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__L__ -D [__RELATION__]=$4 -D [__ROOT__]=__BUILD__/__DOMAIN__
+__BUILD__/__STEM__.html : EXTRA_BUILD_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__L__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__BUILD__/__DOMAIN__
 __BUILD__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
 
 .INTERMEDIATE : __ZIP__/__STEM__.html
@@ -123,6 +124,7 @@ m4_divert_pop([DEPEND])
 m4_divert_push([NAVIGATION])dnl
 <!-- nothing to see here yet -->
 m4_divert_pop([NAVIGATION])
+m4_popdef([__RELATION__])dnl
 m4_popdef([__STEM__])dnl
 ])dnl foreach
 m4_popdef([__DOMAIN__])dnl
