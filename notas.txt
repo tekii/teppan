@@ -38,3 +38,14 @@ if ok
 
 .PHONY: publish
 publish: fake.com/somefile.x
+
+
+
+
+
+tekii.com > tekii.us redirect file
+tekii.com.ar > tekii.ar redirect file 
+
+tekii.ar (esp site)
+tekii.us (eng site)
+
