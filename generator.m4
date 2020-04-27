@@ -11,6 +11,7 @@ m4_define([_m4_divert(AMP_CUSTOM_ELEMENTS)], 6)
 m4_define([_m4_divert(NAVIGATION)], 7)
 m4_define([_m4_divert(BUILD)], 8)
 m4_define([_m4_divert(PAPER)], 9)
+m4_define([_m4_divert(PUBLISH)], 10)
 
 dnl
 dnl CONSTANTS
@@ -55,7 +56,7 @@ m4_case(__LANG__,__EN__,$1,__ES__,$2))
 # TODO: strip fragments #xxx
 #
 m4_define([__HREF],
-[m4_esyscmd_s(__RP__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__TDIR__]))])
+[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__TDIR__]))])
 
 dnl[m4_divert_text([PAPER],[<!-- __file__ __line__ --$1-- -->])[]
 
@@ -75,48 +76,131 @@ m4_define([__LOCALIZE_URL_PATH],[$1/$2/$3])
 m4_define([__LOCALIZE_URL_NULL],[$1/$3])
 
 dnl
+dnl WITH_LAYOUT MACRO
+dnl
+m4_define([__WITH_LAYOUT],[dnl
+m4_pushdef([__LAYOUT__],m4_default($1,__LAYOUT__))dnl
+$2dnl
+m4_popdef([__LAYOUT__])dnl
+dnl next line its a temporary hack
+m4_define([__LAYOUT__],m4_default($1,__LAYOUT__))dnl
+])
+
+dnl
+dnl WITH_LANG MACRO
+dnl
+m4_define([__WITH_LANG],[
+m4_foreach([__L__], [$1],[
+m4_pushdef([__LANG__],__L__)
+$2dnl
+m4_popdef([__LANG__])
+])dnl foreach
+])
+
+dnl
+dnl WITH_DOMAIN MACRO
+dnl
+m4_define([__WITH_DOMAIN],[
+m4_foreach([__D__], [$1],[
+m4_pushdef([__DOMAIN__],__D__)
+m4_set_add([__ROOTS__],__DOC__/__DOMAIN__)dnl
+$2dnl
+m4_popdef([__DOMAIN__])
+])dnl foreach
+])
+
+dnl
+dnl MAKE_PAGE MACRO
+dnl
+dnl $1 LinkType
+dnl
+m4_define([__MAKE_PAGE],[
+m4_pushdef([__STEM__],$2(__DOMAIN__,__L__,__STEM__))
+m4_pushdef([__RELATION__],$1)
+dnl TODO rewiew next 2 lines
+m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__STEM__.html)dnl
+m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__STEM__.html))dnl
+dnl
+m4_divert_push([DEPEND])dnl
+m4_text_box(__STEM__ BEGINS,[+])
+__DOC__/__STEM__.html : __LAYOUT__
+__DOC__/__STEM__.html : __SRC__/generator.m4
+__DOC__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__
+__DOC__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
+.INTERMEDIATE : __ZIP__/__STEM__.html
+__ZIP__/__STEM__.html : GZIP_EXTRA_FLAGS:= 
+__ZIP__/__STEM__.html : __DOC__/__STEM__.html | $$(@D)/ ;  [$(do-gzip)]
+.INTERMEDIATE : __STEM__.html
+__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __DOC__/__STEM__.html | tr -d '\n')"
+__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
+__STEM__.html : __ZIP__/__STEM__.html ; [$(do-publish)]
+dnl
+m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
+.PHONY : __DOMAIN__
+__DOMAIN__ : __STEM__.html
+publish : __DOMAIN__
+m4_popdef([__DOMAIN__])dnl
+dnl 
+build : __DOC__/__STEM__.html
+clean :: ; [$(RM)] __DOC__/__STEM__.html
+realclean :: ; [$(RM)] __TARGET__
+m4_text_box(__STEM__ ENDS  ,[-])
+m4_divert_pop([DEPEND])
+dnl
+m4_divert_push([NAVIGATION])dnl
+<!-- nothing to see here yet -->
+m4_divert_pop([NAVIGATION])
+dnl
+m4_popdef([__RELATION__])
+m4_popdef([__STEM__])
+])
+
+dnl
 dnl PAGE MACRO
 dnl
 dnl $1 target domain
-dnl $2 page name, included path
-dnl $3 langs keys
+dnl $2 langs keys list
+dnl $3 page name, included path (not in use! the problem of that is you can have two diferent pages with 
+dnl                              same generates name in the same project)
 dnl $4 relationship
-dnl $5 localization strategy
+dnl $5 localization strategy (default to ...)
+dnl $6 layout (default to layout.html)
 dnl
 m4_define([__PAGE],[dnl
-m4_pushdef([__DOMAIN__],$1)
-m4_set_add([__ROOTS__],__BUILD__/__DOMAIN__)dnl
+m4_pushdef([__DOMAIN__],$1)dnl
+m4_set_add([__ROOTS__],__DOC__/__DOMAIN__)dnl
 dnl
 m4_foreach([__L__], [$2],[dnl
 m4_pushdef([__STEM__],$5(__DOMAIN__,__L__,__STEM__))dnl
 m4_pushdef([__RELATION__],$4)
-m4_set_add([__CURRENT_BUILD_TARGETS__],__BUILD__/__STEM__.html)dnl
-m4_set_add([__BUILD_TARGETS__],m4_quote(__BUILD__/__DOMAIN__,__BUILD__/__STEM__.html))dnl
+m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__STEM__.html)dnl
+m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__STEM__.html))dnl
 m4_divert_push([DEPEND])dnl
 dnl
 m4_text_box(__STEM__ BEGINS,[+])
-__BUILD__/__STEM__.html : __SRC__/layout.html
-__BUILD__/__STEM__.html : __SRC__/generator.m4
-__BUILD__/__STEM__.html : EXTRA_BUILD_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__L__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__BUILD__/__DOMAIN__
-__BUILD__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
+__DOC__/__STEM__.html : __LAYOUT__
+__DOC__/__STEM__.html : __SRC__/generator.m4
+__DOC__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__L__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__
+__DOC__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
 
 .INTERMEDIATE : __ZIP__/__STEM__.html
 __ZIP__/__STEM__.html : GZIP_EXTRA_FLAGS:= 
-__ZIP__/__STEM__.html : __BUILD__/__STEM__.html | $$(@D)/ ;  [$(do-gzip)]
+__ZIP__/__STEM__.html : __DOC__/__STEM__.html | $$(@D)/ ;  [$(do-gzip)]
 
 .INTERMEDIATE : __STEM__.html
-__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __BUILD__/__STEM__.html | tr -d '\n')"
+__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __DOC__/__STEM__.html | tr -d '\n')"
 __STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
 __STEM__.html : __ZIP__/__STEM__.html ; [$(do-publish)]
 
+dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : __DOMAIN__
 __DOMAIN__ : __STEM__.html
 publish : __DOMAIN__
 m4_popdef([__DOMAIN__])
-
-build : __BUILD__/__STEM__.html
-clean :: ; [$(RM)] __BUILD__/__STEM__.html
+dnl 
+build : __DOC__/__STEM__.html
+clean :: ; [$(RM)] __DOC__/__STEM__.html
 realclean :: ; [$(RM)] __TARGET__
 m4_text_box(__STEM__ ENDS,[-])
 dnl
@@ -136,9 +220,11 @@ dnl
 dnl ASSET MACRO
 dnl $1 source relative asset URI
 dnl
-m4_define([__ASSET],[__HREF([__BUILD__/$1])[]dnl
+m4_define([__ASSET],[__HREF([__DOC__/$1])[]dnl
 m4_divert_push([DEPEND])
 m4_text_box($1 BEGINS,[+])
+dnl TODO next loop copies the asset files in all domains not in the ones that
+dnl actually has a dependency whit it, this is an error.
 m4_set_foreach([__ROOTS__],[__R__],[dnl
 m4_car(__R__)/$1 : __SRC__/$1 
 clean:: ; [$(RM)] m4_car(__R__)/$1 
@@ -146,7 +232,7 @@ clean:: ; [$(RM)] m4_car(__R__)/$1
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_unquote(m4_cdr(__I__)) : m4_car(__I__)/$1
 ])dnl
-m4_text_box($1 ENDS,[-])
+m4_text_box($1 ENDS  ,[-])
 m4_divert_pop([DEPEND])
 ])
 
@@ -173,18 +259,18 @@ dnl
 dnl TODO move some dependencies to the item instead 
 dnl
 m4_define([__NAVIGATION],[dnl
-m4_divert_text([DEPEND],[
-[#] NAVIGATION BEGIN
-__BUILD__/__STEM__.txt : __FIRST__
-__BUILD__/navigation.txt : __BUILD__/__STEM__.txt
+m4_divert_text([DEPEND],[dnl
+m4_text_box(__STEM__ NAVIGATION BEGINS ,[+])
+__DOC__/__STEM__.txt : __FIRST__
+__DOC__/navigation.txt : __DOC__/__STEM__.txt
 m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
-__BUILD_TARGET__ : __BUILD__/navigation.txt
+__BUILD_TARGET__ : __DOC__/navigation.txt
 ])dnl
-clean :: ; [$(RM)] __BUILD__/__STEM__.txt
-clean :: ; [$(RM)] __BUILD__/navigation.txt 
-[#] NAVIGATION END
+clean :: ; [$(RM)] __DOC__/__STEM__.txt
+clean :: ; [$(RM)] __DOC__/navigation.txt 
+m4_text_box(__STEM__ NAVIGATION ENDS   ,[-])
 ])dnl
-m4_if(__DO__,[MAKEBUILD],[m4_include(__BUILD__/navigation.txt)],[])dnl
+m4_if(__PHASE__,[MAKEBUILD],[m4_include(__DOC__/navigation.txt)],[])dnl
 ])
 
 dnl
@@ -193,7 +279,11 @@ dnl PAGE PROCESS STARTS HERE
 dnl PAGE PROCESS STARTS HERE
 dnl PAGE PROCESS STARTS HERE
 dnl
-dnl HERE WE LOAD THE DIVERSIONS
+dnl FIRST LOAD THE CONFIG DEFINITIONS
+dnl
+m4_include([./configure.m4])
+dnl
+dnl HERE WE FILL THE DIVERSIONS
 dnl
 m4_include(__FIRST__)
 dnl
@@ -203,7 +293,7 @@ m4_include(__LAYOUT__)
 dnl
 dnl AND FINALLY CHOOSE WHAT TO EMIT
 dnl
-m4_case(__DO__,
+m4_case(__PHASE__,
 [MAKEBUILD],[
 m4_divert_text([DEFAULT],[m4_undivert([BUILD])])
 m4_cleardivert([SITEMAP])
@@ -215,6 +305,7 @@ m4_divert_text([DEFAULT],[
 <!-- PAPER TRAIL -------------------------------- -->
 m4_undivert([PAPER])
 <!-- PAPER TRAIL--------------------------------- -->])
+m4_cleardivert([PUBLISH])
 ],
 [MAKEDEPEND],[
 m4_divert_text([DEFAULT],[m4_undivert([DEPEND])])
@@ -226,6 +317,7 @@ m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([NAVIGATION])
 m4_cleardivert([BUILD])
 m4_cleardivert([PAPER])
+m4_cleardivert([PUBLISH])
 ],
 [MAKENAV],[
 m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])
@@ -237,9 +329,22 @@ m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([DEPEND])
 m4_cleardivert([BUILD])
 m4_cleardivert([PAPER])
+m4_cleardivert([PUBLISH])
+],
+[MAKEPUB],[
+m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])
+m4_cleardivert([SITEMAP])
+m4_cleardivert([HEADER])
+m4_cleardivert([BODY])
+m4_cleardivert([AMP_CUSTOM_STYLES])
+m4_cleardivert([AMP_CUSTOM_ELEMENTS])
+m4_cleardivert([DEPEND])
+m4_cleardivert([BUILD])
+m4_cleardivert([PAPER])
+m4_cleardivert([NAVIGATION])
 ],
 [
-m4_fatal([Unmached [__DO__]:__DO__],[1])
+m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])
 m4_cleardivert([DEPEND])
 m4_cleardivert([SITEMAP])
 m4_cleardivert([HEADER])
@@ -249,4 +354,5 @@ m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([NAVIGATION])
 m4_cleardivert([BUILD])
 m4_cleardivert([PAPER])
+m4_cleardivert([PUBLISH])
 ])
