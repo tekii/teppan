@@ -1,3 +1,4 @@
+dnl m4_include(./configure-fontawesome.m4)dnl
 m4_divert_push([BUILD])dnl
 <!DOCTYPE html>
 <html ⚡ lang="__LANG__">
@@ -11,40 +12,30 @@ m4_divert_push([BUILD])dnl
     [<link rel="alternate"
            hreflang="__ESEN(__EN__,__ES__)"
            href="__HREF(__ROOT__/__ESEN(__EN__,__ES__)/__TNAME__)"/>])
-    <!-- -->
-    <style>
-      m4_changequote(«,»)
-      <!-- local headeer stuff here  -->
-      m4_changequote([,])
-    </style>
-
-    m4_undivert([HEADER])[]dnl <!-- header content -->
-
+dnl    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto">
+    <!-- BEGIN HEADER divert -->
+m4_undivert([HEADER])[]dnl 
+    <!-- END   HEADER divert -->
     __INCL([meta.json])[]dnl <!-- -->
-    <!-- amp-custom elements -->
-    m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
-    <!-- amp-custom styles -->
-    <style>
-      /* amp custom styles */
-      m4_undivert(AMP_CUSTOM_STYLES)[]dnl
-    </style>
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,500,600,700&subset=cyrillic" rel="stylesheet"/>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- BEGIN amp-custom elements -->
+m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
+    <!-- END   amp-custom elements -->
+    <!-- BEGIN amp-custom styles -->
     <style amp-custom>
-      __INCL([css/style.css])
+m4_changequote(«,»)
+    body {
+        font-family: 'Noto', sans-serif;
+    }
+m4_changequote([,])
+m4_undivert(AMP_CUSTOM_STYLES)dnl
     </style>
+    <!-- END   amp-custom styles -->
     <!-- amp-boilerplate -->
-    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style>
-    <noscript>
-       <style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style>
-    </noscript>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
     <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
   </head>
-
   <body>
-    <!-- NAV -->
-    <!-- NAV -->
     <!-- NAV -->
     <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="right">
        <div class="builder-sidebar" id="builder-sidebar">
@@ -55,9 +46,7 @@ m4_divert_push([BUILD])dnl
             <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
                 m4_define([__NAVIGATION_ITEM_TEMPLATE],[
                 <li class="nav-item">
-                    <a class="nav-link link text-white display-7" href="__HREF([$2])[#]$3">
-                        <strong>$1</strong>
-                    </a>
+                    <a class="nav-link link text-white display-7" href="__HREF([$2])[#]$3">$1</a>
                 </li>   
                 ])
                 <!-- AAA -->

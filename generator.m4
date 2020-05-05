@@ -98,6 +98,19 @@ m4_popdef([__LANG__])
 ])
 
 dnl
+dnl WITH_FIRST_LANG_AS_CANONICAL MACRO
+dnl this is a future macro thats set __RELATION__
+dnl
+m4_define([__WITH_FIRST_LANG_AS_CANONICAL],[
+m4_foreach([__L__], [$1],[
+m4_pushdef([__LANG__],__L__)
+$2dnl
+m4_popdef([__LANG__])
+])dnl foreach
+])
+
+
+dnl
 dnl WITH_DOMAIN MACRO
 dnl
 m4_define([__WITH_DOMAIN],[
@@ -110,6 +123,13 @@ m4_popdef([__DOMAIN__])
 ])
 
 dnl
+dnl WITH_NAME MACRO
+dnl
+m4_define([__WITH_NAME],[dnl
+])
+dnl
+
+dnl
 dnl MAKE_PAGE MACRO
 dnl
 dnl $1 LinkType
@@ -118,14 +138,14 @@ m4_define([__MAKE_PAGE],[
 m4_pushdef([__STEM__],$2(__DOMAIN__,__L__,__STEM__))
 m4_pushdef([__RELATION__],$1)
 dnl TODO rewiew next 2 lines
-m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__STEM__.html)dnl
+dnl m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__STEM__.html)dnl
 m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__STEM__.html))dnl
 dnl
-m4_divert_push([DEPEND])dnl
-m4_text_box(__STEM__ BEGINS,[+])
+m4_divert_push([DEPEND])
+m4_text_box(__STEM__ DEPENDS BEGINS,[+])
 __DOC__/__STEM__.html : __LAYOUT__
 __DOC__/__STEM__.html : __SRC__/generator.m4
-__DOC__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__
+__DOC__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__
 __DOC__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
 .INTERMEDIATE : __ZIP__/__STEM__.html
 __ZIP__/__STEM__.html : GZIP_EXTRA_FLAGS:= 
@@ -136,15 +156,17 @@ __STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
 __STEM__.html : __ZIP__/__STEM__.html ; [$(do-publish)]
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
+.PHONY : __DOMAIN__-refresh
+__DOMAIN__-refresh : __DOC__/__STEM__.html
 .PHONY : __DOMAIN__
 __DOMAIN__ : __STEM__.html
 publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl 
 build : __DOC__/__STEM__.html
-clean :: ; [$(RM)] __DOC__/__STEM__.html
-realclean :: ; [$(RM)] __TARGET__
-m4_text_box(__STEM__ ENDS  ,[-])
+clean :: ; [$(RM)] -f __DOC__/__STEM__.html
+realclean :: ; [$(RM)] -f __TARGET__
+m4_text_box(__STEM__ DEPENDS ENDS  ,[-])
 m4_divert_pop([DEPEND])
 dnl
 m4_divert_push([NAVIGATION])dnl
@@ -156,83 +178,22 @@ m4_popdef([__STEM__])
 ])
 
 dnl
-dnl PAGE MACRO
-dnl
-dnl $1 target domain
-dnl $2 langs keys list
-dnl $3 page name, included path (not in use! the problem of that is you can have two diferent pages with 
-dnl                              same generates name in the same project)
-dnl $4 relationship
-dnl $5 localization strategy (default to ...)
-dnl $6 layout (default to layout.html)
-dnl
-m4_define([__PAGE],[dnl
-m4_pushdef([__DOMAIN__],$1)dnl
-m4_set_add([__ROOTS__],__DOC__/__DOMAIN__)dnl
-dnl
-m4_foreach([__L__], [$2],[dnl
-m4_pushdef([__STEM__],$5(__DOMAIN__,__L__,__STEM__))dnl
-m4_pushdef([__RELATION__],$4)
-m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__STEM__.html)dnl
-m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__STEM__.html))dnl
-m4_divert_push([DEPEND])dnl
-dnl
-m4_text_box(__STEM__ BEGINS,[+])
-__DOC__/__STEM__.html : __LAYOUT__
-__DOC__/__STEM__.html : __SRC__/generator.m4
-__DOC__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__L__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__
-__DOC__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
-
-.INTERMEDIATE : __ZIP__/__STEM__.html
-__ZIP__/__STEM__.html : GZIP_EXTRA_FLAGS:= 
-__ZIP__/__STEM__.html : __DOC__/__STEM__.html | $$(@D)/ ;  [$(do-gzip)]
-
-.INTERMEDIATE : __STEM__.html
-__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __DOC__/__STEM__.html | tr -d '\n')"
-__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-__STEM__.html : __ZIP__/__STEM__.html ; [$(do-publish)]
-
-dnl
-m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
-.PHONY : __DOMAIN__
-__DOMAIN__ : __STEM__.html
-publish : __DOMAIN__
-m4_popdef([__DOMAIN__])
-dnl 
-build : __DOC__/__STEM__.html
-clean :: ; [$(RM)] __DOC__/__STEM__.html
-realclean :: ; [$(RM)] __TARGET__
-m4_text_box(__STEM__ ENDS,[-])
-dnl
-m4_divert_pop([DEPEND])
-m4_divert_push([NAVIGATION])dnl
-<!-- nothing to see here yet -->
-m4_divert_pop([NAVIGATION])
-m4_popdef([__RELATION__])dnl
-m4_popdef([__STEM__])dnl
-])dnl foreach
-m4_popdef([__DOMAIN__])dnl
-])dnl
-
-
-
-dnl
 dnl ASSET MACRO
 dnl $1 source relative asset URI
 dnl
 m4_define([__ASSET],[__HREF([__DOC__/$1])[]dnl
 m4_divert_push([DEPEND])
-m4_text_box($1 BEGINS,[+])
+m4_text_box($1 ASSET BEGINS,[+])
 dnl TODO next loop copies the asset files in all domains not in the ones that
 dnl actually has a dependency whit it, this is an error.
 m4_set_foreach([__ROOTS__],[__R__],[dnl
 m4_car(__R__)/$1 : __SRC__/$1 
-clean:: ; [$(RM)] m4_car(__R__)/$1 
+clean:: ; -rm -f m4_car(__R__)/$1 
 ])dnl
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_unquote(m4_cdr(__I__)) : m4_car(__I__)/$1
 ])dnl
-m4_text_box($1 ENDS  ,[-])
+m4_text_box($1 ASSET ENDS  ,[-])
 m4_divert_pop([DEPEND])
 ])
 
@@ -241,11 +202,12 @@ dnl INCL MACRO
 dnl source relative filename
 dnl
 m4_define([__INCL],[
-m4_divert_text([DEPEND],[dnl
-[# from INCL]
+m4_divert_text([DEPEND],[
+m4_text_box($1 INCLUDE BEGINS,[+])
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_unquote(m4_cdr(__I__)) : $1
 ])dnl
+m4_text_box($1 INCLUDE ENDS  ,[-])
 ])[]m4_include([$1])])
 
 dnl
@@ -259,17 +221,17 @@ dnl
 dnl TODO move some dependencies to the item instead 
 dnl
 m4_define([__NAVIGATION],[dnl
-m4_divert_text([DEPEND],[dnl
+m4_divert_text([DEPEND],[
 m4_text_box(__STEM__ NAVIGATION BEGINS ,[+])
 __DOC__/__STEM__.txt : __FIRST__
 __DOC__/navigation.txt : __DOC__/__STEM__.txt
-m4_set_foreach([__CURRENT_BUILD_TARGETS__],[__BUILD_TARGET__],[dnl
-__BUILD_TARGET__ : __DOC__/navigation.txt
+m4_set_foreach([__BUILD_TARGETS__],[__BT__],[dnl
+m4_unquote(m4_cdr(__BT__)) : __DOC__/navigation.txt
 ])dnl
-clean :: ; [$(RM)] __DOC__/__STEM__.txt
-clean :: ; [$(RM)] __DOC__/navigation.txt 
+clean :: ; [$(RM)] -f __DOC__/__STEM__.txt
+clean :: ; [$(RM)] -f __DOC__/navigation.txt 
 m4_text_box(__STEM__ NAVIGATION ENDS   ,[-])
-])dnl
+])
 m4_if(__PHASE__,[MAKEBUILD],[m4_include(__DOC__/navigation.txt)],[])dnl
 ])
 
@@ -344,7 +306,7 @@ m4_cleardivert([PAPER])
 m4_cleardivert([NAVIGATION])
 ],
 [
-m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])
+dnl m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])
 m4_cleardivert([DEPEND])
 m4_cleardivert([SITEMAP])
 m4_cleardivert([HEADER])

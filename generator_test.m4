@@ -44,7 +44,7 @@ m4_define([m4_foreach_xxx],
 #     -__L__=__N__-])
 #m4_traceoff([m4_foreach_xxx])
 
-
+m4_cleardivert([DEFAULT])dnl
 m4_divert([DEFAULT])dnl
 
 
@@ -70,11 +70,10 @@ dnl m4_traceon([__LOCALIZE_URL_NAME])dnl
 dnl m4_traceon([__LOCALIZE_URL_PATH])dnl
 dnl m4_traceon([__LOCALIZE_URL_NULL])dnl
 ---------------------------------------
-__PAGE([aaa.com],[en,es],[somepath/main],[__CANONICAL_PAGE__],[__LOCALIZE_URL_PATH])
-__PAGE([bbb.com],[en],   [somepath/main],[__ALTERNATE_PAGE__],[__LOCALIZE_URL_PATH])
+dnl __PAGE([aaa.com],[en,es],[somepath/main],[__CANONICAL_PAGE__],[__LOCALIZE_URL_PATH])
+dnl __PAGE([bbb.com],[en],   [somepath/main],[__ALTERNATE_PAGE__],[__LOCALIZE_URL_PATH])
 ---------------------------------------
 dnl m4_traceoff([__LOCALIZE_URL_NULL])dnl
-dnl m4_traceoff([__LOCALIZE_URL_PATH])dnl
 dnl m4_traceoff([__LOCALIZE_URL_NAME])dnl
 m4_traceoff([__PAGE])dnl
 DEPEND---------------------------------
@@ -83,3 +82,17 @@ DEPEND---------------------------------
 NAVIGATION-----------------------------
 m4_undivert([NAVIGATION])dnl
 NAVIGATION-----------------------------
+
+INC_CSS--------------------------------
+dnl m4_changequote(«,»)
+dnl m4_bregexp([m4_include(/home/rodablo/www/_build/vendor/fontawesome-free-5.13.0-web/css/all.css)],[url\($1\)],[\1])
+dnl m4_bregexp([jsflkfjdlskjfurl("roro")sjdlurl("tata")fkjslkdfj],[\(url("\(.+\)")\)],[\1])
+dnl m4_changequote([,])
+m4_define([__TOTO__],m4_flatten(m4_esyscmd_s([grep -oP '(?<=url\(\").+?(?=\"\))' _build/vendor/fontawesome-free-5.13.0-web/css/all.css])))
+INC_CSS--------------------------------
+>__TOTO__<
+INC_CSS--------------------------------
+m4_foreach_w([__L__],[__TOTO__],m4_quote([__L__]))
+INC_CSS--------------------------------
+
+

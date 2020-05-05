@@ -8,11 +8,12 @@ __ES__ 	:=es
 
 __SRC__	:=$(PWD)
 __TMP__:=/tmp
-__DOC__:=$(PWD)/_build/doc
-__DEPS__:=$(PWD)/_build/dep
-__ZIP__:=$(PWD)/_build/zip
-__NAV__:=$(PWD)/_build/nav
-__STATIC__:=static
+__BUILD__:=$(PWD)/BUILD
+__DOC__:=$(__BUILD__)/doc
+__DEPS__:=$(__BUILD__)/dep
+__ZIP__:=$(__BUILD__)/zip
+__NAV__:=$(__BUILD__)/nav
+__VENDOR__:=$(PWD)/VENDOR
 __CSS__	:=css
 __IMG__	:=img
 __JS__ 	:=js
@@ -23,13 +24,8 @@ GLYPH:=glyphicons-halflings-regular
 __LAYOUT__:=$(__SRC__)/dummy-layout.html
 
 ##
-##
-##
 __UNAME__:=$(shell uname -s)
 
-##
-##
-##
 ##RM:= @-rm -f
 RM:= @-rm 
 RM2:= [ -e file ] && rm file
@@ -62,16 +58,38 @@ M4_FLAGS+= \
 ##
 ## TREE
 ##
-.PRECIOUS: $(PWD)/_build/%/
-$(PWD)/_build/%/:
+.PRECIOUS: $(PWD)/%/
+$(PWD)/%/:
+	mkdir -p $@
+
+.PRECIOUS: $(__BUILD__)/%/
+$(__BUILD__)/%/:
 	@echo +++++++++++++++++++++ $@
 	mkdir -p $@
 
 .PRECIOUS: $(__TMP__)/%/
 $(__TMP__)/%/:
-	@echo --------------------- $@
+#   @echo --------------------- $@
 	mkdir -p $@
 
+##
+## vendor
+##
+.PHONY: vendor
+vendor:
+#realclean::
+#	-rmdir --ignore-fail-on-non-empty $(__VENDOR__)
+
+##
+## fontawesome (move this out of the main Makefile)
+##
+#$(__VENDOR__)/fontawesome-free-5.13.0-web.zip: | $$(@D)/
+#	wget -P $(__VENDOR__) https://use.fontawesome.com/releases/v5.13.0/fontawesome-free-5.13.0-web.zip
+
+#$(__VENDOR__)/fontawesome-free-5.13.0-web: $(__VENDOR__)/fontawesome-free-5.13.0-web.zip
+#	unzip -d $(__VENDOR__) $(__VENDOR__)/fontawesome-free-5.13.0-web.zip
+
+#rvendor: $(__VENDOR__)/fontawesome-free-5.13.0-web
 ##
 ## as first target build marks all langs as done one rule doesn't
 ## work, for now I will generate a normal rule in the dependencies or
@@ -84,7 +102,6 @@ $(__TMP__)/%/:
 
 #$(__DOC__)/navigation.txt
 
-
 ##
 ## NAVIGATION MAP
 ##
@@ -95,7 +112,6 @@ $(__TMP__)/%/:
 ## this rule matches the ones __NAVIGATION insert
 ##
 $(__DOC__)/%.txt: | $$(@D)/
-	echo --txt------------------ $(EXTRA_BUILD_FLAGS)
 	$(M4) -D __PHASE__=MAKENAV $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=$* -D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 >$@
@@ -106,7 +122,7 @@ $(__DOC__)/navigation.txt: | $$(@D)/
 
 .PHONY: clean
 clean:: 
-	$(RM) $(__DOC__)/navigation.txt
+	$(RM) -f $(__DOC__)/navigation.txt
 
 ##
 ## ACTUAL PAGES
@@ -166,7 +182,6 @@ GSUTIL_EXTRA_FLAGS:=
 #$(__GZIP__)/$(__IMG__)/logo.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=3600"
 #$(__GZIP__)/$(__IMG__)/es.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=86400"
 #$(__GZIP__)/$(__IMG__)/us.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=86400"
-#$(__GZIP__)/$(__STATIC__)/%: GSUTIL_EXTRA_FLAGS+=-h "Cache-Control:public,max-age=86400"
 
 define do-gzip
 	gzip -c --no-name --rsyncable $< >$@
@@ -178,8 +193,8 @@ endef
 test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
 test: generator_test.m4
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-	--debug=aeqt \
-	-D __PHASE__=MAKEBUILD \
+	--debug= \
+	-D __PHASE__=MAKE__BUILD \
 	-D __TDIR__="/tmp/test" -D __DOC__=$(__DOC__) -D __ZIP__=$(__ZIP__) \
 	-D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
 	generator_test.m4
@@ -221,7 +236,7 @@ clean::
 
 .PHONY: cleangzip
 cleangzip:
-	rm -f $(ALL_GZIP)
+	-rm -f $(ALL_GZIP)
 
 .PHONY: realclean
 realclean:: clean
@@ -247,6 +262,7 @@ $(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) $(__SRC__)/generator.m4 Ma
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __PHASE__=MAKEDEPEND \
 		-D __STEM__=$* \
 		-D __ZIP__=$(__ZIP__) \
+		-D __VENDOR__=$(__VENDOR__) \
 		-D __TARGET__=$@ -D __FIRST__=$< \
 		generator.m4 >$@ || rm $@
 
