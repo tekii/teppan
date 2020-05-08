@@ -1,10 +1,10 @@
-__WITH_LAYOUT(,[
-    __WITH_DOMAIN([www.tekii.com],[
-        __WITH_LANG([__EN__,__ES__],[
-            __MAKE_PAGE([__IS_CANONICAL__],[__LOCALIZE_URL_PATH])
-        ])
-    ])
-])
+dnl __WITH_LAYOUT(,[
+dnl    __WITH_DOMAIN([www.tekii.com],[
+dnl         __WITH_LANG([__EN__,__ES__],[
+dnl            __MAKE_PAGE([__IS_CANONICAL__],[__LOCALIZE_URL_PATH])
+dnl        ])
+dnl    ])
+dnl ])
 
 m4_divert_text([SITEMAP],[
 weekly
@@ -18,7 +18,7 @@ m4_divert_text([HEADER],[
 ])
 
 m4_divert_push([BODY])dnl
-__NAVIGATION_ITEM([__ESEN([Inicio],[Home])],[__TARGET__],[home])
+__NAV_ITEM(__LANG__,[__ESEN([Inicio],[Home])],[__TARGET__],[home])
 __INCL([fragment-home.html])
 __INCL([fragment-about.html])
 dnl[]__INCL([fragment-services.html])

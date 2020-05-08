@@ -1,4 +1,4 @@
-__WITH_LAYOUT([__SRC__/layout-ar.html],[
+__WITH_LAYOUT(,[
 __WITH_DOMAIN([www.tekii.com.ar],[
 __WITH_LANG([__EN__,__ES__],[
 __MAKE_PAGE([__IS_CANONICAL__],[__LOCALIZE_URL_PATH])
@@ -30,7 +30,7 @@ m4_divert_push([BODY])dnl
         <div>
             <div>
                 <h1>
-                    <strong>__NAVIGATION_ITEM([__ENES([Contact Us],[Contacto])],[__TARGET__],[contact])</strong>
+                    <strong>__NAV_ITEM(__LANG__,[__ENES([Contact Us],[Contacto])],[__TARGET__],[contact])</strong>
                 </h1>
                 <p>
                     <span>__ENES([Email],[Email]):&nbsp; </span><span

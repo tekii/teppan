@@ -1,10 +1,10 @@
-__WITH_LAYOUT(,[
-    __WITH_DOMAIN([www.tekii.com],[
-        __WITH_LANG([__EN__],[
-            __MAKE_PAGE([__IS_CANONICAL__],[__LOCALIZE_URL_NULL])
-        ])
-    ])
-])
+dnl __WITH_LAYOUT(,[
+dnl     __WITH_DOMAIN([www.tekii.com],[
+dnl         __WITH_LANG([__EN__],[
+dnl             __MAKE_PAGE([__IS_CANONICAL__],[__LOCALIZE_URL_NULL])
+dnl         ])
+dnl     ])
+dnl ])
 
 m4_divert_text([SITEMAP],[
 weekly
@@ -23,7 +23,7 @@ m4_divert_push([BODY])dnl
         <div class="container">
             <div class="tky-row tky-justify-content-left">
                 <div class="tky-col-lg-6 tky-col-md-12">
-                    <h1 class="tky-section-title display-3"><strong>__NAVIGATION_ITEM([__ENES([Jobs],[])],[__ROOT__/__LANG__/__TNAME__],[jobs])</strong></h1>
+                    <h1 class="tky-section-title display-3"><strong>__NAV_ITEM(__LANG__,[__ENES([Jobs],[])],[__ROOT__/__LANG__/__TNAME__],[jobs])</strong></h1>
                     <p class="tky-text display-5">Some text.</p>
                     
                 </div>

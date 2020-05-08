@@ -6,7 +6,7 @@ m4_divert_push([BUILD])dnl
     <meta charset="utf-8">
     <link rel="canonical" href="__HREF([__TARGET__],[__ROOT__])">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
-    <meta name="msvalidate.01" content="62098880540BA63FB5E4BCEED0264D10" />
+    <meta name="msvalidate.01" content="__MICROSOFT_VALIDATE_KEY__" />
     <link rel="shortcut icon" href="__HREF(__ROOT__/favicon.ico)" type="image/x-icon" />
     m4_ifdef([__ALTERNATE__],
     [<link rel="alternate"
@@ -36,7 +36,7 @@ m4_undivert(AMP_CUSTOM_STYLES)dnl
     <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
   </head>
   <body>
-    <!-- NAV -->
+    <!-- BEGIN SIDEBAR -->
     <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="right">
        <div class="builder-sidebar" id="builder-sidebar">
           <button on="tap:sidebar.close" class="close-sidebar">
@@ -44,14 +44,10 @@ m4_undivert(AMP_CUSTOM_STYLES)dnl
           <span></span>
           </button>
             <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
-                m4_define([__NAVIGATION_ITEM_TEMPLATE],[
+                __RENDER_NAV_ITEMS([__TEXT__],[__URL__],[__FRAGMENT__],[
                 <li class="nav-item">
-                    <a class="nav-link link text-white display-7" href="__HREF([$2])[#]$3">$1</a>
-                </li>   
-                ])
-                <!-- AAA -->
-                __NAVIGATION
-                <!-- AAA -->
+                    <a class="link" href="__HREF([__URL__])[#]__FRAGMENT__">__TEXT__</a>
+                </li>])dnl        
                 <li class="nav-item">
                     __FOREACH_LANG_EXCEPT([__LANG__],[__L__],[__N__],[
                         <a class="nav-link link text-white display-7 lang-sel" href="__HREF(__ROOT__/__L__/__TNAME__)">
@@ -68,21 +64,19 @@ m4_undivert(AMP_CUSTOM_STYLES)dnl
           
        </div>
     </amp-sidebar>
+    <!-- END SIDEBAR -->
+    <!-- BEGIN PAGE HEADER -->
     <section class="menu horizontal-menu aa">
        <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg" i-amphtml-fixedid="F0" style="top: calc(0px);">
           <div class="container">
              <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
-                m4_define([__NAVIGATION_ITEM_TEMPLATE],[
+__RENDER_NAV_ITEMS([__TEXT__],[__URL__],[__FRAGMENT__],[dnl                    
                     <li class="nav-item">
-                        <a class="nav-link link text-white display-7" href="__HREF([$2])[#]$3">
-                            <strong>$1</strong>
+                        <a class="link" href="__HREF([__URL__])[#]__FRAGMENT__">
+                            <strong>__TEXT__</strong>
                         </a>
-                    </li>   
-                ])
-                <!-- AAA -->
-                __NAVIGATION
-                <!-- AAA -->
+                    </li>])dnl
                 </ul>
              </div>
           </div>
@@ -95,35 +89,31 @@ m4_undivert(AMP_CUSTOM_STYLES)dnl
        <span></span>
        </button>
     </section>
+    <!-- BEGIN BODY -->
     dnl <div class="container clearfix">
     m4_undivert([BODY])[]dnl
     dnl </div>
+    <!-- END   BODY -->
     <!-- BEGIN FOOTER -->
-    <section class="af">
-      <div class="container">
-          <div class="tky-row tky-justify-content-center">
-              <div class="tky-col-lg-8 tky-col-md-12 align-center">
-                  <div>
-                      <amp-img src="__ASSET([img/logo.png])" layout="responsive" width="75" height="75" class="i-amphtml-element i-amphtml-layout-responsive i-amphtml-layout-size-defined i-amphtml-layout">
-                      dnl<i-amphtml-sizer style="display: block; padding-top: 100%;"></i-amphtml-sizer>
-                      <img decoding="async" src="__ASSET([img/logo.png])" class="i-amphtml-fill-content i-amphtml-replaced-content"></amp-img>
-                  </div>
-                  <ul data-app-modern-menu="true">
-                        m4_define([__NAVIGATION_ITEM_TEMPLATE],[
+    <footer>
+        <div class="container">
+                <div class="tky-col-lg-8 tky-col-md-12 align-center">
+                    <div>
+                    <!--
+                        <amp-img src="__ASSET([img/logo.png])" layout="responsive" width="75" height="75" class="i-amphtml-element i-amphtml-layout-responsive i-amphtml-layout-size-defined i-amphtml-layout">
+                            dnl<i-amphtml-sizer style="display: block; padding-top: 100%;"></i-amphtml-sizer>
+                            <img decoding="async" src="__ASSET([img/logo.png])" class="i-amphtml-fill-content i-amphtml-replaced-content"></amp-img>
+                     -->
+                    </div>   
+                    <ul data-app-modern-menu="true">
+__RENDER_NAV_ITEMS([__TEXT__],[__URL__],[__FRAGMENT__],[dnl
                         <li class="nav-item">
-                            <a class="tky-fonts-style link text-white display-7" href="__HREF([$2])[#]$3">
-                                <strong>$1</strong>
+                            <a class="link" href="__HREF([__URL__])[#]__FRAGMENT__">
+                                <strong>__TEXT__</strong>
                             </a>
-                        </li>   
-                    ])
-                    <!-- AAA -->
-                    __NAVIGATION
-                    <!-- AAA -->
-
-
-                      <li class="nav-item">
-
-                        
+                        </li>])dnl
+                        <li class="nav-item">
+                                                    
                           <a class="tky-fonts-style link text-white display-7" href="/__ESEN([es],[en])/home.html#home">
                               <strong>__ESEN([INICIO],[HOME])</strong>
                           </a>
@@ -167,9 +157,8 @@ m4_undivert(AMP_CUSTOM_STYLES)dnl
                   </div>
               </div>
           </div>
-      </div>
-    </section>
-    <!-- BEGIN FOOTER -->
+    </footer>
+    <!-- END FOOTER -->
     m4_divert_push(KILL)
       <!--<script>m4_changequote(«,»)«»dnl
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

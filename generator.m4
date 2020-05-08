@@ -67,9 +67,7 @@ m4_define([__RDATE],
 [m4_chomp_all(m4_esyscmd(date --reference=$1 +%Y-%m-%d))])
 
 dnl
-dnl LOCALIZE MACROS
-dnl $1 page key
-dnl $2 lang key
+dnl LOCALIZE_*(DOMAIN,LANG,STEM) MACROS
 dnl
 m4_define([__LOCALIZE_URL_NAME],[$2-$3])
 m4_define([__LOCALIZE_URL_PATH],[$1/$2/$3])
@@ -82,7 +80,7 @@ m4_define([__WITH_LAYOUT],[dnl
 m4_pushdef([__LAYOUT__],m4_default($1,__LAYOUT__))dnl
 $2dnl
 m4_popdef([__LAYOUT__])dnl
-dnl next line its a temporary hack
+dnl next line its a temporary hack (but i forgot the problem... :( )
 m4_define([__LAYOUT__],m4_default($1,__LAYOUT__))dnl
 ])
 
@@ -123,11 +121,14 @@ m4_popdef([__DOMAIN__])
 ])
 
 dnl
-dnl WITH_NAME MACRO
+dnl WITH_STEM(STEM) MACRO
 dnl
-m4_define([__WITH_NAME],[dnl
+m4_define([__WITH_STEM],[
+m4_pushdef([__STEM__],[$1])       
+$2dnl
+m4_popdef([__STEM__])       
 ])
-dnl
+
 
 dnl
 dnl MAKE_PAGE MACRO
@@ -135,46 +136,54 @@ dnl
 dnl $1 LinkType
 dnl
 m4_define([__MAKE_PAGE],[
-m4_pushdef([__STEM__],$2(__DOMAIN__,__L__,__STEM__))
+m4_pushdef([__PATH_STEM__],$2(__DOMAIN__,__L__,__STEM__))
 m4_pushdef([__RELATION__],$1)
 dnl TODO rewiew next 2 lines
-dnl m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__STEM__.html)dnl
-m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__STEM__.html))dnl
+dnl m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__PATH_STEM__.html)dnl
+m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__.html))dnl
 dnl
 m4_divert_push([DEPEND])
 m4_text_box(__STEM__ DEPENDS BEGINS,[+])
-__DOC__/__STEM__.html : __LAYOUT__
-__DOC__/__STEM__.html : __SRC__/generator.m4
-__DOC__/__STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__
-__DOC__/__STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
-.INTERMEDIATE : __ZIP__/__STEM__.html
-__ZIP__/__STEM__.html : GZIP_EXTRA_FLAGS:= 
-__ZIP__/__STEM__.html : __DOC__/__STEM__.html | $$(@D)/ ;  [$(do-gzip)]
-.INTERMEDIATE : __STEM__.html
-__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __DOC__/__STEM__.html | tr -d '\n')"
-__STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-__STEM__.html : __ZIP__/__STEM__.html ; [$(do-publish)]
+__NAV__/__PATH_STEM__ : __SRC__/generator.m4
+__NAV__/__PATH_STEM__ : EXTRA_BUILD_FLAGS+= -D [__LANG__]=__LANG__
+__NAV__/__PATH_STEM__ : __FIRST__ | $$(@D)/ ; [$(do-navigation)]
+__NAV__/__DOMAIN__/NAVIGATION : __NAV__/__PATH_STEM__
+clean :: ; -rm -f __NAV__/__PATH_STEM__
+clean :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION
+[#]
+__DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION
+__DOC__/__PATH_STEM__.html : __LAYOUT__
+__DOC__/__PATH_STEM__.html : __SRC__/generator.m4
+__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
+__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
+[#]
+.INTERMEDIATE : __ZIP__/__PATH_STEM__.html
+__ZIP__/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:= 
+__ZIP__/__PATH_STEM__.html : __DOC__/__PATH_STEM__.html | $$(@D)/ ;  [$(do-gzip)]
+.INTERMEDIATE : __PATH_STEM__.html
+__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __DOC__/__PATH_STEM__.html | tr -d '\n')"
+__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
+__PATH_STEM__.html : __ZIP__/__PATH_STEM__.html ; [$(do-publish)]
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : __DOMAIN__-refresh
-__DOMAIN__-refresh : __DOC__/__STEM__.html
+__DOMAIN__-refresh : __DOC__/__PATH_STEM__.html
 .PHONY : __DOMAIN__
-__DOMAIN__ : __STEM__.html
+__DOMAIN__ : __PATH_STEM__.html
 publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl 
-build : __DOC__/__STEM__.html
-clean :: ; [$(RM)] -f __DOC__/__STEM__.html
+build : __DOC__/__PATH_STEM__.html
+clean :: ; [$(RM)] -f __DOC__/__PATH_STEM__.html
 realclean :: ; [$(RM)] -f __TARGET__
 m4_text_box(__STEM__ DEPENDS ENDS  ,[-])
 m4_divert_pop([DEPEND])
 dnl
-m4_divert_push([NAVIGATION])dnl
-<!-- nothing to see here yet -->
-m4_divert_pop([NAVIGATION])
+dnl m4_divert_push([NAVIGATION])dnl
+dnl m4_divert_pop([NAVIGATION])
 dnl
 m4_popdef([__RELATION__])
-m4_popdef([__STEM__])
+m4_popdef([__PATH_STEM__])
 ])
 
 dnl
@@ -198,7 +207,7 @@ m4_divert_pop([DEPEND])
 ])
 
 dnl
-dnl INCL MACRO
+dnl INCL() MACRO
 dnl source relative filename
 dnl
 m4_define([__INCL],[
@@ -211,28 +220,28 @@ m4_text_box($1 INCLUDE ENDS  ,[-])
 ])[]m4_include([$1])])
 
 dnl
-dnl NAVIGATION_ITEM
+dnl RENDER_NAV_ITEMS(TEXT,URL,FRAGMENT,TEMPLATE)
 dnl
-m4_define([__NAVIGATION_ITEM],[$1[]dnl
-m4_divert_text([NAVIGATION],[__NAVIGATION_ITEM_TEMPLATE([$1],$2,$3)])dnl
+m4_define([__RENDER_NAV_ITEMS],[dnl
+m4_set_foreach([__NAV__ITEMS__],[__I__],[dnl
+m4_if(m4_car(__I__),__LANG__,[dnl
+m4_pushdef([$1],m4_argn(2,__I__))dnl 
+m4_pushdef([$2],m4_argn(3,__I__))dnl
+m4_pushdef([$3],m4_argn(4,__I__))dnl
+$4
+m4_popdef([$3])dnl
+m4_popdef([$2])dnl
+m4_popdef([$1])dnl
+],[])dnl
+])
 ])
 
 dnl
-dnl TODO move some dependencies to the item instead 
+dnl NAV_ITEM(TEXT,URL,FRAGMENT)
 dnl
-m4_define([__NAVIGATION],[dnl
-m4_divert_text([DEPEND],[
-m4_text_box(__STEM__ NAVIGATION BEGINS ,[+])
-__DOC__/__STEM__.txt : __FIRST__
-__DOC__/navigation.txt : __DOC__/__STEM__.txt
-m4_set_foreach([__BUILD_TARGETS__],[__BT__],[dnl
-m4_unquote(m4_cdr(__BT__)) : __DOC__/navigation.txt
-])dnl
-clean :: ; [$(RM)] -f __DOC__/__STEM__.txt
-clean :: ; [$(RM)] -f __DOC__/navigation.txt 
-m4_text_box(__STEM__ NAVIGATION ENDS   ,[-])
-])
-m4_if(__PHASE__,[MAKEBUILD],[m4_include(__DOC__/navigation.txt)],[])dnl
+m4_define([__NAV_ITEM],[m4_divert_text([NAVIGATION],
+m4_dquote([m4_set_add](m4_dquote(__NAV__ITEMS__),m4_dquote(m4_dquote(__LANG__,$2,$3,$4))))dnl
+)
 ])
 
 dnl
@@ -251,6 +260,7 @@ m4_include(__FIRST__)
 dnl
 dnl NOW THE LAYOUT CONSUME THE DIVERSIONS
 dnl
+m4_if(__PHASE__,[MAKEBUILD],[m4_include(__NAV__/__DOMAIN__/NAVIGATION)],[])dnl
 m4_include(__LAYOUT__)
 dnl
 dnl AND FINALLY CHOOSE WHAT TO EMIT

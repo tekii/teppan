@@ -9,35 +9,24 @@ __ES__ 	:=es
 __SRC__	:=$(PWD)
 __TMP__:=/tmp
 __BUILD__:=$(PWD)/BUILD
-__DOC__:=$(__BUILD__)/doc
-__DEPS__:=$(__BUILD__)/dep
-__ZIP__:=$(__BUILD__)/zip
-__NAV__:=$(__BUILD__)/nav
 __VENDOR__:=$(PWD)/VENDOR
-__CSS__	:=css
-__IMG__	:=img
-__JS__ 	:=js
-__FON__	:=fonts
-
-GLYPH:=glyphicons-halflings-regular
+__DOC__:=$(__BUILD__)/DOC
+__DEP__:=$(__BUILD__)/DEP
+__ZIP__:=$(__BUILD__)/ZIP
+__NAV__:=$(__BUILD__)/NAV
 
 __LAYOUT__:=$(__SRC__)/dummy-layout.html
 
-##
-__UNAME__:=$(shell uname -s)
-
-##RM:= @-rm -f
 RM:= @-rm 
-RM2:= [ -e file ] && rm file
 RMDIR:= @-rmdir
 
 ##
 ## M4
 ##
 M4= $(shell which m4)
-M4_FLAGS:= \
-	-I $(__SRC__)
-ifeq ($(__UNAME__),Linux)
+M4_FLAGS:= -I $(__SRC__)
+##
+ifeq ($(shell uname -s),Linux)
 M4_FLAGS+= \
 	-I /usr/share/autoconf \
 	-R /usr/share/autoconf/m4sugar/m4sugar.m4f \
@@ -62,14 +51,8 @@ M4_FLAGS+= \
 $(PWD)/%/:
 	mkdir -p $@
 
-.PRECIOUS: $(__BUILD__)/%/
-$(__BUILD__)/%/:
-	@echo +++++++++++++++++++++ $@
-	mkdir -p $@
-
 .PRECIOUS: $(__TMP__)/%/
 $(__TMP__)/%/:
-#   @echo --------------------- $@
 	mkdir -p $@
 
 ##
@@ -81,16 +64,6 @@ vendor:
 #	-rmdir --ignore-fail-on-non-empty $(__VENDOR__)
 
 ##
-## fontawesome (move this out of the main Makefile)
-##
-#$(__VENDOR__)/fontawesome-free-5.13.0-web.zip: | $$(@D)/
-#	wget -P $(__VENDOR__) https://use.fontawesome.com/releases/v5.13.0/fontawesome-free-5.13.0-web.zip
-
-#$(__VENDOR__)/fontawesome-free-5.13.0-web: $(__VENDOR__)/fontawesome-free-5.13.0-web.zip
-#	unzip -d $(__VENDOR__) $(__VENDOR__)/fontawesome-free-5.13.0-web.zip
-
-#rvendor: $(__VENDOR__)/fontawesome-free-5.13.0-web
-##
 ## as first target build marks all langs as done one rule doesn't
 ## work, for now I will generate a normal rule in the dependencies or
 ## n rules here, if the suffix were different then the directories...
@@ -98,31 +71,23 @@ vendor:
 #$(addprefix $(__SRC__)/, $(PAGES)): $(__SRC__)/layout.html $(__SRC__)/generator.m4
 #$(__SRC__)/%.html: $(__SRC__)/layout.html $(__SRC__)/generator.m4
 ##
-######LAYOUT_FILES:= $(__LAYOUT__) $(__SRC__)/generator.m4 
-
-#$(__DOC__)/navigation.txt
 
 ##
 ## NAVIGATION MAP
 ##
-##$(__DEPS__)/%.d:   EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-##$(__DEPS__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+##$(__DEP__)/%.d:   EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+##$(__DEP__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
 ##%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
 
-## this rule matches the ones __NAVIGATION insert
-##
-$(__DOC__)/%.txt: | $$(@D)/
+define do-navigation
 	$(M4) -D __PHASE__=MAKENAV $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	-D __STEM__=$* -D __TARGET__=$@ -D __FIRST__=$< \
-	generator.m4 >$@
+	generator.m4 > $@
+endef
 
-## this rule collects all prerequisites declared on the *.d generates above
-$(__DOC__)/navigation.txt: | $$(@D)/
-	cat $^ > $@
-
-.PHONY: clean
-clean:: 
-	$(RM) -f $(__DOC__)/navigation.txt
+$(__NAV__)/%/NAVIGATION: | $$(@D)/
+#	if the file already exist we can try to compare checksum to avoid the ripples
+	cat $^ | cmp -s $@ - || cat $^ > $@ 
 
 ##
 ## ACTUAL PAGES
@@ -135,9 +100,6 @@ $(M4) -D __PHASE__=MAKEBUILD $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	generator.m4 >$@
 endef
 
-#$(__DOC__)/%.html: $(__SRC__)/$$(notdir %).in.html  | $$(@D)/
-#	$(do-build)
-
 ##
 ## SITEMAP.XML
 ##
@@ -148,6 +110,7 @@ endef
 #	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 #		-D __TNAME__=$(@F) \
 #		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
+
 ##
 ## COPY ASSETS
 ##
@@ -200,7 +163,6 @@ test: generator_test.m4
 	generator_test.m4
 
 .PHONY: build
-## build: EXTRA_BUILD_FLAGS= -D __LAYOUT__=$(__LAYOUT__)
 build:
 	@echo [[[ DONE $@ ]]]
 
@@ -214,13 +176,7 @@ define do-publish
 endef
 
 .PHONY: publish
-#publish: EXTRA_BUILD_FLAGS:= -D __DOMAIN__=http://www.tekii.com.ar -D __LAYOUT__=$(__LAYOUT__)
-#publish: GSUTIL_EXTRA_FLAGS:= -D __DOMAIN__=http://www.tekii.com.ar
 publish: #$(ALL_GZIP)
-#	gsutil web set -m en/index.html -e en/404.html gs://www.teky.io
-#	echo $^
-#	echo $(EXTRA_BUILD_FLAGS)
-#	echo $(GSUTIL_EXTRA_FLAGS)
 #	@echo [[[ DONE $@ ]]]
 
 .PHONY: all
@@ -240,7 +196,7 @@ cleangzip:
 
 .PHONY: realclean
 realclean:: clean
-	$(RMDIR) $(__DEPS__)
+	$(RMDIR) $(__DEP__)
 	$(RMDIR) $(__DOC__)
 	$(RMDIR) $(__ZIP__)
 	@echo [[[ DONE $@ ]]]
@@ -257,17 +213,18 @@ realclean:: clean
 ## 
 ## THIS MUST BE THE FIRST RULE TO RUN, PLEASE ALL PREREQUISITES MUST PRE-EXIST
 ## 
-########$(__DEPS__)/%.d: EXTRA_BUILD_FLAGS= -D __LAYOUT__=$(__LAYOUT__)
-$(__DEPS__)/%.d: $(__SRC__)/%.in.html $(LAYOUT_FILES) $(__SRC__)/generator.m4 Makefile | $$(@D)/
+########$(__DEP__)/%.d: EXTRA_BUILD_FLAGS= -D __LAYOUT__=$(__LAYOUT__)
+$(__DEP__)/%.d: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __PHASE__=MAKEDEPEND \
 		-D __STEM__=$* \
+		-D __NAV__=$(__NAV__) \
 		-D __ZIP__=$(__ZIP__) \
 		-D __VENDOR__=$(__VENDOR__) \
 		-D __TARGET__=$@ -D __FIRST__=$< \
 		generator.m4 >$@ || rm $@
 
 # TODO: check what abaut this .PRECIOUS
-#.PRECIOUS: $(__DEPS__)/%.d
+#.PRECIOUS: $(__DEP__)/%.d
 ## THIS FIRES THE RULE ABOVE
--include $(patsubst %.in.html,$(__DEPS__)/%.d,$(notdir $(wildcard $(__SRC__)/*.in.html)))
+-include $(patsubst %.in.html,$(__DEP__)/%.d,$(notdir $(wildcard $(__SRC__)/*.in.html)))
 
