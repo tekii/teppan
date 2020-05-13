@@ -16,9 +16,8 @@ m4_define([_m4_divert(PUBLISH)], 10)
 dnl
 dnl CONSTANTS
 dnl
-m4_define([__TEKII__],[<strong>TEKii$1</strong>])
-m4_define([__TEKII_SRL_]_,__TEKII__([ SRL]))
-
+m4_define([__ES__],[es])
+m4_define([__EN__],[en])
 m4_define([__REL_AS_CANONICAL__],canonical)
 m4_define([__REL_AS_ALTERNATE__],alernate)
 m4_define([__REL_AS_AMPHTML__],amphtml)
@@ -136,6 +135,8 @@ dnl
 dnl $1 LinkType
 dnl
 m4_define([__MAKE_PAGE],[
+dnl TODO: add some check in the composing of the id to avoid clashes
+m4_pushdef([__LOCAL_URL_ID__],m4_translit(__[]__STEM__[]_[]__LANG__[]_URL__,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__]))
 m4_pushdef([__PATH_STEM__],$2(__DOMAIN__,__L__,__STEM__))
 m4_pushdef([__RELATION__],$1)
 dnl TODO rewiew next 2 lines
@@ -144,46 +145,58 @@ m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__
 dnl
 m4_divert_push([DEPEND])
 m4_text_box(__STEM__ DEPENDS BEGINS,[+])
+[#] NAVIGATION
 __NAV__/__PATH_STEM__ : __SRC__/generator.m4
-__NAV__/__PATH_STEM__ : EXTRA_BUILD_FLAGS+= -D [__LANG__]=__LANG__
+__NAV__/__PATH_STEM__ : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ 
 __NAV__/__PATH_STEM__ : __FIRST__ | $$(@D)/ ; [$(do-navigation)]
 __NAV__/__DOMAIN__/NAVIGATION : __NAV__/__PATH_STEM__
 clean :: ; -rm -f __NAV__/__PATH_STEM__
+clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__
+dnl
 clean :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION
-[#]
-__DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION
+clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION
+dnl
+[#] BUILD 
+dnl TODO: is VENDOR really needed in this PHASE?
+[#] __DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION
 __DOC__/__PATH_STEM__.html : __LAYOUT__
 __DOC__/__PATH_STEM__.html : __SRC__/generator.m4
-__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
-__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ ; [$(do-build)]
-[#]
+__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
+__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION ; [$(do-build)]
+clean :: ; -rm -f __DOC__/__PATH_STEM__.html
+dnl
+[#] ZIP
 .INTERMEDIATE : __ZIP__/__PATH_STEM__.html
 __ZIP__/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:= 
 __ZIP__/__PATH_STEM__.html : __DOC__/__PATH_STEM__.html | $$(@D)/ ;  [$(do-gzip)]
+dnl
+[#] PUBLISH
 .INTERMEDIATE : __PATH_STEM__.html
 __PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __DOC__/__PATH_STEM__.html | tr -d '\n')"
 __PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
 __PATH_STEM__.html : __ZIP__/__PATH_STEM__.html ; [$(do-publish)]
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
-.PHONY : __DOMAIN__-refresh
-__DOMAIN__-refresh : __DOC__/__PATH_STEM__.html
+.PHONY : build-__DOMAIN__
+build-__DOMAIN__ : __DOC__/__PATH_STEM__.html
 .PHONY : __DOMAIN__
 __DOMAIN__ : __PATH_STEM__.html
 publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl 
 build : __DOC__/__PATH_STEM__.html
-clean :: ; [$(RM)] -f __DOC__/__PATH_STEM__.html
 realclean :: ; [$(RM)] -f __TARGET__
 m4_text_box(__STEM__ DEPENDS ENDS  ,[-])
 m4_divert_pop([DEPEND])
 dnl
-dnl m4_divert_push([NAVIGATION])dnl
-dnl m4_divert_pop([NAVIGATION])
+m4_divert_push([NAVIGATION])dnl
+m4_text_box(__PATH_STEM__,[-])
+[m4_define](m4_dquote(__LOCAL_URL_ID__),m4_dquote(__DOC__/__PATH_STEM__.html))
+m4_divert_pop([NAVIGATION])
 dnl
 m4_popdef([__RELATION__])
 m4_popdef([__PATH_STEM__])
+m4_popdef([__LOCAL_URL_ID__])
 ])
 
 dnl

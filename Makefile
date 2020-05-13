@@ -3,9 +3,6 @@
 .SUFFIXES:
 #.SUFFIXES: .html .m4 .png .gif
 
-__EN__ 	:=en
-__ES__ 	:=es
-
 __SRC__	:=$(PWD)
 __TMP__:=/tmp
 __BUILD__:=$(PWD)/BUILD
@@ -20,9 +17,9 @@ __LAYOUT__:=$(__SRC__)/dummy-layout.html
 RM:= @-rm 
 RMDIR:= @-rmdir
 
-##
-## M4
-##
+#
+# M4
+#
 M4= $(shell which m4)
 M4_FLAGS:= -I $(__SRC__)
 ##
@@ -38,15 +35,14 @@ M4_FLAGS+= \
 	-D __REALPATH__=$(shell which grealpath)
 endif
 M4_FLAGS+= \
-	-D __EN__=$(__EN__) -D __ES__=$(__ES__) \
 	-D __DOC__=$(__DOC__) -D __SRC__=$(__SRC__) 
-##
-## RULES START HERE
-##
+#
+# RULES START HERE
+#
 .SECONDEXPANSION:
-##
-## TREE
-##
+#
+# CREATE DIR ON DEMAND
+#
 .PRECIOUS: $(PWD)/%/
 $(PWD)/%/:
 	mkdir -p $@
@@ -55,46 +51,40 @@ $(PWD)/%/:
 $(__TMP__)/%/:
 	mkdir -p $@
 
-##
-## vendor
-##
+#
+# VENDOR
+#
 .PHONY: vendor
 vendor:
 #realclean::
 #	-rmdir --ignore-fail-on-non-empty $(__VENDOR__)
 
-##
-## as first target build marks all langs as done one rule doesn't
-## work, for now I will generate a normal rule in the dependencies or
-## n rules here, if the suffix were different then the directories...
-##
-#$(addprefix $(__SRC__)/, $(PAGES)): $(__SRC__)/layout.html $(__SRC__)/generator.m4
-#$(__SRC__)/%.html: $(__SRC__)/layout.html $(__SRC__)/generator.m4
-##
-
-##
-## NAVIGATION MAP
-##
-##$(__DEP__)/%.d:   EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-##$(__DEP__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-##%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+#
+# NAVIGATION MAP
+#
+#$(__DEP__)/%.d:   EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+#$(__DEP__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
+#%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
 
 define do-navigation
-	$(M4) -D __PHASE__=MAKENAV $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-	-D __STEM__=$* -D __TARGET__=$@ -D __FIRST__=$< \
+	$(M4) -D __PHASE__=MAKENAV $(M4_FLAGS) \
+	$(EXTRA_NAV_FLAGS) \
+	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 > $@
 endef
 
 $(__NAV__)/%/NAVIGATION: | $$(@D)/
-#	if the file already exist we can try to compare checksum to avoid the ripples
-	cat $^ | cmp -s $@ - || cat $^ > $@ 
+	# we compare checksum to see if actually change and avoid the ripples of the circularity
+	# cat $^ | cmp -s $@ - || cat $^ > $@ 
+	cat $^ > $@ 
 
-##
-## ACTUAL PAGES
-##
+#
+# ACTUAL PAGES 
+# TODO: review the need of TNAME, TDIR, AND STEM HERE (MAKEBUILD ALREADY ADD THEM)
+#
 define do-build
-$(M4) -D __PHASE__=MAKEBUILD $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-	-D __STEM__=__UNDEF__ \
+$(M4) -D __PHASE__=MAKEBUILD $(M4_FLAGS) \
+	$(EXTRA_BUILD_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 >$@
@@ -111,9 +101,9 @@ endef
 #		-D __TNAME__=$(@F) \
 #		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 
-##
-## COPY ASSETS
-##
+#
+# COPY ASSETS
+#
 $(__DOC__)/%.png : | $$(@D)/
 	cp $< $@
 
@@ -138,9 +128,9 @@ $(__DOC__)/%.woff : | $$(@D)/
 $(__DOC__)/%.woff2 : | $$(@D)/
 	cp $< $@
 
-##
-## GZIPED TARGETS
-##
+#
+# GZIPED TARGETS
+#
 GSUTIL_EXTRA_FLAGS:=
 #$(__GZIP__)/$(__IMG__)/logo.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=3600"
 #$(__GZIP__)/$(__IMG__)/es.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=86400"
@@ -149,18 +139,6 @@ GSUTIL_EXTRA_FLAGS:=
 define do-gzip
 	gzip -c --no-name --rsyncable $< >$@
 endef
-##
-## COMMANDS --debug=aeqt
-##
-.PHONY: test
-test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
-test: generator_test.m4
-	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-	--debug= \
-	-D __PHASE__=MAKE__BUILD \
-	-D __TDIR__="/tmp/test" -D __DOC__=$(__DOC__) -D __ZIP__=$(__ZIP__) \
-	-D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
-	generator_test.m4
 
 .PHONY: build
 build:
@@ -206,16 +184,30 @@ realclean:: clean
 #gsutil acl ch -r -u AllUsers:R gs://www.teky.io/
 # mimetype --brief /tmp/bucketgz/favicon.ico | tr -d '\n'
 
+#
+# COMMANDS --debug=aeqt
+#
+.PHONY: test
+test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
+test: generator_test.m4
+	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+	--debug= \
+	-D __PHASE__=MAKE__BUILD \
+	-D __TDIR__="/tmp/test" -D __DOC__=$(__DOC__) -D __ZIP__=$(__ZIP__) \
+	-D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
+	generator_test.m4
+
 .IGNORE: clean cleangzip realclean obliterate  
 .DEFAULT_GOAL := build
-##
-## MAKEDEPEND
-## 
-## THIS MUST BE THE FIRST RULE TO RUN, PLEASE ALL PREREQUISITES MUST PRE-EXIST
-## 
-########$(__DEP__)/%.d: EXTRA_BUILD_FLAGS= -D __LAYOUT__=$(__LAYOUT__)
+
+#
+#
+# MAKEDEPEND
+# 
+# THIS MUST BE THE FIRST RULE TO RUN, PLEASE ALL PREREQUISITES MUST PRE-EXIST
+# 
 $(__DEP__)/%.d: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
-	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) -D __PHASE__=MAKEDEPEND \
+	$(M4) -D __PHASE__=MAKEDEPEND $(M4_FLAGS) \
 		-D __STEM__=$* \
 		-D __NAV__=$(__NAV__) \
 		-D __ZIP__=$(__ZIP__) \
