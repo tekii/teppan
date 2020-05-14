@@ -1,13 +1,13 @@
 __WITH_LAYOUT(,[
 __WITH_DOMAIN([www.tekii.com.ar],[
-__WITH_LANG([__EN__,__ES__],[
+__WITH_LANG([__EN__,__ES__,__BR__],[
 __MAKE_PAGE([__IS_CANONICAL__],[__LOCALIZE_URL_PATH])
 ])
 ])
 ])
 
-m4_divert_text([HEADER],[
-<title>TEKii SRL - __ENES([Contact],[Contacto])</title>
+m4_divert_text([HEADER],[dnl
+    <title>TEKii SRL - __ENES([Contact],[Contacto])</title>
 ])
 
 m4_divert_push([AMP_CUSTOM_STYLES])
@@ -30,7 +30,7 @@ m4_divert_push([BODY])dnl
         <div>
             <div>
                 <h1>
-                    <strong>__NAV_ITEM(__LANG__,[__ENES([Contact Us],[Contacto])],[__TARGET__],[contact])</strong>
+                    <strong>__NAV_ITEM(__LANG__,[__ENES([Contact Us],[Contacto])],[__LOCAL_URL_ID__],[contact])</strong>
                 </h1>
                 <p>
                     <span>__ENES([Email],[Email]):&nbsp; </span><span

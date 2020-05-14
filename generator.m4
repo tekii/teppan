@@ -18,6 +18,7 @@ dnl CONSTANTS
 dnl
 m4_define([__ES__],[es])
 m4_define([__EN__],[en])
+m4_define([__BR__],[br])
 m4_define([__REL_AS_CANONICAL__],canonical)
 m4_define([__REL_AS_ALTERNATE__],alernate)
 m4_define([__REL_AS_AMPHTML__],amphtml)
@@ -25,7 +26,7 @@ m4_define([__REL_AS_AMPHTML__],amphtml)
 dnl
 dnl LANG CONDITIONALS
 dnl
-m4_define([__LANGS__],[[en,[English]],[es,[Español]]])
+m4_define([__LANGS__],[[en,[English]],[es,[Español]],[br,[Português]]])
 
 m4_define([__FOREACH_LANG],
 [m4_foreach([Iter], [__LANGS__],
@@ -54,8 +55,16 @@ m4_case(__LANG__,__EN__,$1,__ES__,$2))
 # calculate path jump relative to __TDIR__ or $2
 # TODO: strip fragments #xxx
 #
-m4_define([__HREF],
-[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__TDIR__]))])
+m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__TDIR__]))])
+
+# 
+# REL(URL,[BASE]) MACRO 
+#
+m4_define([__RELATIVE],[$1])dnl
+#
+# ABS(URL,[BASE|SCHEME]) MACRO
+#
+m4_define([__ABSOLUTE],[m4_esyscmd_s(helper-url-absolute --scheme http --start __DOC__ --path $1)])dnl
 
 dnl[m4_divert_text([PAPER],[<!-- __file__ __line__ --$1-- -->])[]
 
@@ -128,6 +137,7 @@ $2dnl
 m4_popdef([__STEM__])       
 ])
 
+m4_define([__UP],[m4_translit($1,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__])])
 
 dnl
 dnl MAKE_PAGE MACRO
@@ -136,7 +146,7 @@ dnl $1 LinkType
 dnl
 m4_define([__MAKE_PAGE],[
 dnl TODO: add some check in the composing of the id to avoid clashes
-m4_pushdef([__LOCAL_URL_ID__],m4_translit(__[]__STEM__[]_[]__LANG__[]_URL__,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__]))
+m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__STEM__[]_[]__LANG__[]_URL__))
 m4_pushdef([__PATH_STEM__],$2(__DOMAIN__,__L__,__STEM__))
 m4_pushdef([__RELATION__],$1)
 dnl TODO rewiew next 2 lines
@@ -149,11 +159,8 @@ m4_text_box(__STEM__ DEPENDS BEGINS,[+])
 __NAV__/__PATH_STEM__ : __SRC__/generator.m4
 __NAV__/__PATH_STEM__ : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ 
 __NAV__/__PATH_STEM__ : __FIRST__ | $$(@D)/ ; [$(do-navigation)]
-__NAV__/__DOMAIN__/NAVIGATION : __NAV__/__PATH_STEM__
-clean :: ; -rm -f __NAV__/__PATH_STEM__
 clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__
-dnl
-clean :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION
+__NAV__/__DOMAIN__/NAVIGATION : __NAV__/__PATH_STEM__
 clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION
 dnl
 [#] BUILD 
@@ -161,14 +168,15 @@ dnl TODO: is VENDOR really needed in this PHASE?
 [#] __DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION
 __DOC__/__PATH_STEM__.html : __LAYOUT__
 __DOC__/__PATH_STEM__.html : __SRC__/generator.m4
-__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
+__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__DOC__]=__DOC__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
 __DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION ; [$(do-build)]
-clean :: ; -rm -f __DOC__/__PATH_STEM__.html
+clean-build :: ; -rm -f __DOC__/__PATH_STEM__.html
 dnl
 [#] ZIP
 .INTERMEDIATE : __ZIP__/__PATH_STEM__.html
 __ZIP__/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:= 
 __ZIP__/__PATH_STEM__.html : __DOC__/__PATH_STEM__.html | $$(@D)/ ;  [$(do-gzip)]
+clean-gzip :: ; -rm -f __ZIP__/__PATH_STEM__.html
 dnl
 [#] PUBLISH
 .INTERMEDIATE : __PATH_STEM__.html
@@ -192,6 +200,7 @@ dnl
 m4_divert_push([NAVIGATION])dnl
 m4_text_box(__PATH_STEM__,[-])
 [m4_define](m4_dquote(__LOCAL_URL_ID__),m4_dquote(__DOC__/__PATH_STEM__.html))
+[m4_set_add](m4_quote(__UP(__[]__STEM__[]_ALTERNATES__),m4_dquote(m4_dquote(__LANG__,__LOCAL_URL_ID__))))
 m4_divert_pop([NAVIGATION])
 dnl
 m4_popdef([__RELATION__])
@@ -210,13 +219,13 @@ dnl TODO next loop copies the asset files in all domains not in the ones that
 dnl actually has a dependency whit it, this is an error.
 m4_set_foreach([__ROOTS__],[__R__],[dnl
 m4_car(__R__)/$1 : __SRC__/$1 
-clean:: ; -rm -f m4_car(__R__)/$1 
+clean-asset :: ; -rm -f m4_car(__R__)/$1 
 ])dnl
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_unquote(m4_cdr(__I__)) : m4_car(__I__)/$1
 ])dnl
 m4_text_box($1 ASSET ENDS  ,[-])
-m4_divert_pop([DEPEND])
+m4_divert_pop([DEPEND])dnl
 ])
 
 dnl
@@ -269,11 +278,11 @@ m4_include([./configure.m4])
 dnl
 dnl HERE WE FILL THE DIVERSIONS
 dnl
+m4_if(__PHASE__,[MAKEBUILD],[m4_include(__NAV__/__DOMAIN__/NAVIGATION)],[])dnl
 m4_include(__FIRST__)
 dnl
 dnl NOW THE LAYOUT CONSUME THE DIVERSIONS
 dnl
-m4_if(__PHASE__,[MAKEBUILD],[m4_include(__NAV__/__DOMAIN__/NAVIGATION)],[])dnl
 m4_include(__LAYOUT__)
 dnl
 dnl AND FINALLY CHOOSE WHAT TO EMIT

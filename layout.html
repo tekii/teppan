@@ -4,15 +4,20 @@ m4_divert_push([BUILD])dnl
 <html ⚡ lang="__LANG__">
   <head>
     <meta charset="utf-8">
-    <link rel="canonical" href="__HREF([__TARGET__],[__ROOT__])">
+    <!-- m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__) -->
+m4_set_foreach(m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__),__A__,[dnl
+m4_pushdef([__AL__],m4_car(__A__))m4_pushdef([__AU__],m4_shift(__A__))dnl
+    <link rel="alternate" hreflang="__AL__" href="__ABSOLUTE(__AU__)"/>
+m4_if(__LANG__,__AL__,[dnl
+    <link rel="canonical" href="__ABSOLUTE(__AU__)">
+])dnl
+m4_popdef([__AU__])m4_popdef([__AL__])dnl
+])dnl
+    <!-- -->
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
     <meta name="msvalidate.01" content="__MICROSOFT_VALIDATE_KEY__" />
     <link rel="shortcut icon" href="__HREF(__ROOT__/favicon.ico)" type="image/x-icon" />
-    m4_ifdef([__ALTERNATE__],
-    [<link rel="alternate"
-           hreflang="__ESEN(__EN__,__ES__)"
-           href="__HREF(__ROOT__/__ESEN(__EN__,__ES__)/__TNAME__)"/>])
-dnl    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto">
+dnl <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto">
     <!-- BEGIN HEADER divert -->
 m4_undivert([HEADER])[]dnl 
     <!-- END   HEADER divert -->

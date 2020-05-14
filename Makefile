@@ -102,7 +102,7 @@ endef
 #		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 
 #
-# COPY ASSETS
+# COPY ASSETS TODO: this could be moved to an static generated rule 
 #
 $(__DOC__)/%.png : | $$(@D)/
 	cp $< $@
@@ -165,12 +165,8 @@ all: build
 ## make the dep list then delete all
 ##
 .PHONY: clean
-clean:: 
+clean : clean-navigation clean-build clean-asset clean-gzip
 	@echo [[[ DONE $@ ]]]
-
-.PHONY: cleangzip
-cleangzip:
-	-rm -f $(ALL_GZIP)
 
 .PHONY: realclean
 realclean:: clean

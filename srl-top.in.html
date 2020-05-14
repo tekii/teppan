@@ -7,20 +7,23 @@ __WITH_LAYOUT(,[
             __WITH_LANG([__EN__],[
                 __MAKE_PAGE([__IS_ALTERNATE__],[__LOCALIZE_URL_PATH])
             ])
+            __WITH_LANG([__BR__],[
+                __MAKE_PAGE([__IS_ALTERNATE__],[__LOCALIZE_URL_PATH])
+            ])
         ])
     ])
 ])
 
 m4_divert_push([HEADER])dnl
-<title>TEKii SRL - __ENES([About Us],[Nuestra Historia])</title>
-<meta name="keywords" content="tekii,teky,trazabilidad,traceability,anmat">
+    <title>TEKii SRL - __ENES([About Us],[Nuestra Historia])</title>
+    <meta name="keywords" content="tekii,teky,trazabilidad,traceability,anmat">
 m4_divert_pop([HEADER])
 
-m4_divert_push([BODY])dnl
+m4_divert_push([BODY])dnl 
 <section class="" id="about">
     <div class="">
         <h1 class="">
-          <strong>__NAV_ITEM(__LANG__,[__ENES([About Us],[Nuestra Historia])],[__TARGET__],[about])</strong>
+          <strong>__NAV_ITEM(__LANG__,[__ENES([About Us],[Nuestra Historia])],[__LOCAL_URL_ID__],[about]) </strong>
         </h1>
         m4_case(__LANG__,__EN__,[
         <p class="">__TEKII_SRL__ began its operations in 2006.  Our first goal was the design and implementation of a tracking software system for track oncological drugs. After four months of heavy development, we released <strong>TrazAudit®</strong>, Argentinian drug industry system operated by Track &amp; Trace S. A.</p>
