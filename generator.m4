@@ -104,19 +104,6 @@ m4_popdef([__LANG__])
 ])
 
 dnl
-dnl WITH_FIRST_LANG_AS_CANONICAL MACRO
-dnl this is a future macro thats set __RELATION__
-dnl
-m4_define([__WITH_FIRST_LANG_AS_CANONICAL],[
-m4_foreach([__L__], [$1],[
-m4_pushdef([__LANG__],__L__)
-$2dnl
-m4_popdef([__LANG__])
-])dnl foreach
-])
-
-
-dnl
 dnl WITH_DOMAIN MACRO
 dnl
 m4_define([__WITH_DOMAIN],[
