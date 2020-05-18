@@ -8,3 +8,7 @@ dnl
 m4_divert_push([DEPEND])
 m4_divert_pop([DEPEND])
 dnl
+m4_define([__ESENBR],[m4_case(__LANG__,dnl
+__ES__,m4_dquote(m4_default([$1],[Texto a completar])),dnl
+__EN__,m4_dquote(m4_default([$2],[To be completed])),dnl
+__BR__,m4_dquote(m4_default([$3],[Ser completado])))])

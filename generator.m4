@@ -242,28 +242,29 @@ m4_text_box($1 INCLUDE ENDS  ,[-])
 ])[]m4_include([$1])])
 
 dnl
-dnl RENDER_NAV_ITEMS(TEXT,URL,FRAGMENT,TEMPLATE)
-dnl
-m4_define([__RENDER_NAV_ITEMS],[dnl
-m4_set_foreach([__NAV__ITEMS__],[__I__],[dnl
-m4_if(m4_car(__I__),__LANG__,[dnl
-m4_pushdef([$1],m4_argn(2,__I__))dnl 
-m4_pushdef([$2],m4_argn(3,__I__))dnl
-m4_pushdef([$3],m4_argn(4,__I__))dnl
-$4
-m4_popdef([$3])dnl
-m4_popdef([$2])dnl
-m4_popdef([$1])dnl
-],[])dnl
-])
-])
-
-dnl
 dnl NAV_ITEM(TEXT,URL,FRAGMENT)
 dnl
 m4_define([__NAV_ITEM],[m4_divert_text([NAVIGATION],
 m4_dquote([m4_set_add](m4_dquote(__NAV__ITEMS__),m4_dquote(m4_dquote(__LANG__,$2,$3,$4))))dnl
 )
+])
+
+dnl
+dnl RENDER(LIST,TEMPLATE)
+dnl
+m4_define([__RENDER],[dnl
+m4_pushdef([$0_T],[$2])dnl
+m4_foreach([__I__],[$1],[m4_indir([$0_T],__I__)])dnl
+m4_popdef([$0_T])dnl
+])
+
+dnl
+dnl RENDER_SET(SET,TEMPLATE)
+dnl
+m4_define([__RENDER_SET],[dnl
+m4_pushdef([$0_T],[$2])dnl
+m4_set_foreach([$1],[__I__],[m4_indir([$0_T],__I__)])dnl
+m4_popdef([$0_T])dnl
 ])
 
 dnl
@@ -279,6 +280,7 @@ dnl
 dnl HERE WE FILL THE DIVERSIONS
 dnl
 m4_if(__PHASE__,[MAKEBUILD],[m4_include(__NAV__/__DOMAIN__/NAVIGATION)],[])dnl
+dnl m4_sinclude(__NAV__/__DOMAIN__/NAVIGATION)
 m4_include(__FIRST__)
 dnl
 dnl NOW THE LAYOUT CONSUME THE DIVERSIONS

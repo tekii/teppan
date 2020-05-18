@@ -64,8 +64,8 @@ dnl >>>>>__LOOKUP_LANG_NAME(nn,m4_unquote(__LANGS__))<<<<<
 dnl >>>>>__LANG_NAME(en)<<<<<
 dnl >>>>>__LOOKUP_LANG_NAME(nn)<<<<<
 ---------------------------------------
-m4_traceoff([__LANG_NAME3])dnl
-m4_traceon([__PAGE])dnl
+dnl m4_traceoff([__LANG_NAME3])dnl
+dnl m4_traceon([__PAGE])dnl
 dnl m4_traceon([__LOCALIZE_URL_NAME])dnl
 dnl m4_traceon([__LOCALIZE_URL_PATH])dnl
 dnl m4_traceon([__LOCALIZE_URL_NULL])dnl
@@ -75,7 +75,7 @@ dnl __PAGE([bbb.com],[en],   [somepath/main],[__ALTERNATE_PAGE__],[__LOCALIZE_UR
 ---------------------------------------
 dnl m4_traceoff([__LOCALIZE_URL_NULL])dnl
 dnl m4_traceoff([__LOCALIZE_URL_NAME])dnl
-m4_traceoff([__PAGE])dnl
+dnl m4_traceoff([__PAGE])dnl
 DEPEND---------------------------------
 m4_undivert([DEPEND])dnl
 DEPEND---------------------------------
@@ -88,11 +88,53 @@ dnl m4_changequote(«,»)
 dnl m4_bregexp([m4_include(/home/rodablo/www/_build/vendor/fontawesome-free-5.13.0-web/css/all.css)],[url\($1\)],[\1])
 dnl m4_bregexp([jsflkfjdlskjfurl("roro")sjdlurl("tata")fkjslkdfj],[\(url("\(.+\)")\)],[\1])
 dnl m4_changequote([,])
-m4_define([__TOTO__],m4_flatten(m4_esyscmd_s([grep -oP '(?<=url\(\").+?(?=\"\))' _build/vendor/fontawesome-free-5.13.0-web/css/all.css])))
-INC_CSS--------------------------------
->__TOTO__<
-INC_CSS--------------------------------
-m4_foreach_w([__L__],[__TOTO__],m4_quote([__L__]))
-INC_CSS--------------------------------
+dnl m4_define([__TOTO__],m4_flatten(m4_esyscmd_s([grep -oP '(?<=url\(\").+?(?=\"\))' _build/vendor/fontawesome-free-5.13.0-web/css/all.css])))
+dnl INC_CSS--------------------------------
+dnl >__TOTO__<
+dnl INC_CSS--------------------------------
+dnl m4_foreach_w([__L__],[__TOTO__],m4_quote([__L__]))
+dnl INC_CSS--------------------------------
+dnl m4_traceon(m4_dquote)m4_traceon(m4_dquote_elt)
+--------------------------------
+dnl [m4_quote(1,2,3,4,5)]
+--------------------------------
+dnl m4_dquote(1,2,3,4,5)
+--------------------------------
+dnl m4_dquote_elt(1,2,3,4,5)
+dnl m4_combine([, ], [[a], [b], [c]], [-], [1], [2], [3])
+dnl m4_map_args_w(esto es un string, [<], [m4_curry([m4_quote],[$1])], [sep])
+dnl m4_traceon([m4_curry])
+dnl m4_curry([m4_curry],[m4_curry],[m4_quote],1)(2)(3)(4)
+--------------------------------
+m4_define([__TESTL__],[[[a],[b],[c]],[[d],[e],[f]],[a]])
+m4_define([__RENDER],[dnl
+m4_pushdef([$0_T],[$2])dnl
+m4_foreach([__I__],[$1],[m4_indir([$0_T],__I__)])dnl
+m4_popdef([$0_T])dnl
+])
+dnl m4_traceon([__RENDER])
+>>>__RENDER([__TESTL__],[==$1==$2==$3==$4==
+])<<<
+dnl _m4_foreach([m4_define([i],],[)i],[],[111111111111111],[22222222222222222])
+dnl m4_map_args_sep([__RENDER(],[)],[--],__TESTL__)
+--------------------------------
+dnl m4_eval([==$1==$2==$3==],__TESTL__)
+
+m4_set_add(__TEST_SET__,[[A],[B]])
+m4_set_add(__TEST_SET__,[[C],[D]])
+m4_set_add(__TEST_SET__,[[E],[F]])
+
+m4_define([__RENDERS],[dnl
+m4_pushdef([$0_T],[$2])dnl
+m4_set_foreach([$1],[__I__],[m4_indir([$0_T],__I__)])dnl
+m4_popdef([$0_T])dnl
+])
+
+>>>__RENDERS([__TEST_SET__],[**$1**$2**$3**$4**
+])<<<
+
+dnl m4_debugmode([acetl])
+m4_define([__LANG__],[en])
+
 
 
