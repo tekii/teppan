@@ -19,9 +19,9 @@ dnl
 m4_define([__ES__],[es])
 m4_define([__EN__],[en])
 m4_define([__BR__],[br])
-m4_define([__REL_AS_CANONICAL__],canonical)
-m4_define([__REL_AS_ALTERNATE__],alernate)
-m4_define([__REL_AS_AMPHTML__],amphtml)
+dnl m4_define([__REL_AS_CANONICAL__],canonical)
+dnl m4_define([__REL_AS_ALTERNATE__],alernate)
+dnl m4_define([__REL_AS_AMPHTML__],amphtml)
 
 dnl
 dnl LANG CONDITIONALS
@@ -116,6 +116,19 @@ $2dnl
 m4_popdef([__STEM__])       
 ])
 
+dnl
+dnl CP_ASSET(FILE) MACRO
+dnl 
+m4_define([__CP_ASSET],[
+m4_divert_push([DEPEND])
+m4_text_box($1 CP ASSET BEGINS,[+])
+__DOC__/__DOMAIN__/$1 : __SRC__/$1
+clean-asset :: ; -rm -f __DOC__/__DOMAIN__/$1 
+__DOC__/__PATH_STEM__.html : __DOC__/__DOMAIN__/$1
+m4_text_box($1 CP ASSET ENDS  ,[-])
+m4_divert_pop([DEPEND])dnl
+])
+
 m4_define([__UP],[m4_translit($1,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__])])
 
 dnl
@@ -126,8 +139,7 @@ dnl
 m4_define([__MAKE_PAGE],[
 dnl TODO: add some check in the composing of the id to avoid clashes
 m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__STEM__[]_[]__LANG__[]_URL__))
-m4_pushdef([__PATH_STEM__],$2(__DOMAIN__,__L__,__STEM__))
-m4_pushdef([__RELATION__],$1)
+m4_pushdef([__PATH_STEM__],$1(__DOMAIN__,__L__,__STEM__))
 dnl TODO rewiew next 2 lines
 dnl m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__PATH_STEM__.html)dnl
 m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__.html))dnl
@@ -147,7 +159,7 @@ dnl TODO: is VENDOR really needed in this PHASE?
 [#] __DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION
 __DOC__/__PATH_STEM__.html : __LAYOUT__
 __DOC__/__PATH_STEM__.html : __SRC__/generator.m4
-__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__DOC__]=__DOC__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__RELATION__]=__RELATION__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
+__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__DOC__]=__DOC__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
 __DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION ; [$(do-build)]
 clean-build :: ; -rm -f __DOC__/__PATH_STEM__.html
 dnl
@@ -182,7 +194,8 @@ m4_text_box(__PATH_STEM__,[-])
 [m4_set_add](m4_quote(__UP(__[]__STEM__[]_ALTERNATES__),m4_dquote(m4_dquote(__LANG__,__LOCAL_URL_ID__))))
 m4_divert_pop([NAVIGATION])
 dnl
-m4_popdef([__RELATION__])
+$2dnl
+dnl
 m4_popdef([__PATH_STEM__])
 m4_popdef([__LOCAL_URL_ID__])
 ])

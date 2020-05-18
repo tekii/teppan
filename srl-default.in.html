@@ -2,13 +2,14 @@ __WITH_LAYOUT(,[
     __WITH_DOMAIN([www.tekii.com.ar],[
         __WITH_STEM([index],[
             __WITH_LANG([__ES__],[
-                __MAKE_PAGE([__IS_CANONICAL__],[__LOCALIZE_URL_NULL])
+                __MAKE_PAGE([__LOCALIZE_URL_NULL],[
+                  __CP_ASSET([img/flag-__LANG__.png])
+                ])
             ])
-            __WITH_LANG([__EN__],[
-                __MAKE_PAGE([__IS_ALTERNATE__],[__LOCALIZE_URL_PATH])
-            ])
-            __WITH_LANG([__BR__],[
-                __MAKE_PAGE([__IS_ALTERNATE__],[__LOCALIZE_URL_PATH])
+            __WITH_LANG([__EN__,__BR__],[
+                __MAKE_PAGE([__LOCALIZE_URL_PATH],[
+                  __CP_ASSET([img/flag-__LANG__.png])
+                ])
             ])
         ])
     ])
