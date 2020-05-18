@@ -28,14 +28,6 @@ dnl LANG CONDITIONALS
 dnl
 m4_define([__LANGS__],[[en,[English]],[es,[Español]],[br,[Português]]])
 
-m4_define([__FOREACH_LANG],
-[m4_foreach([Iter], [__LANGS__],
-            [m4_pushdef([$1])m4_pushdef([$2])m4_define([$1],m4_car(Iter))m4_define([$2],m4_cdr(Iter))$3[]m4_popdef([$2])m4_popdef([$1])])])
-
-m4_define([__FOREACH_LANG_EXCEPT],
-[m4_foreach([Iter], [__LANGS__],
-            [m4_pushdef([$2])m4_pushdef([$3])m4_define([$2],m4_car(Iter))m4_define([$3],m4_cdr(Iter))m4_if(__L__,$1,[],[$4])m4_popdef([$3])m4_popdef([$2])])])
-
 m4_define([__LOOKUP_LANG_NAME],
 [m4_if([$#], 0, [m4_fatal([$0: cannot be called without arguments]],
        [$#], 1, [m4_fatal([$0: cannot be called with 1 arguments])],
