@@ -134,7 +134,6 @@ m4_popdef([$0_T])dnl
 ])<<<
 
 dnl m4_debugmode([acetl])
-m4_define([__LANG__],[en])
 
 
 
