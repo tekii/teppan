@@ -1,17 +1,17 @@
 dnl 
-dnl DIVERTS
+dnl DIVERTS, when M4 load the script the active divert is KILL because the m4_init
 dnl 
 m4_define([_m4_divert(DEFAULT)], 0)
 m4_define([_m4_divert(DEPEND)], 1)
-m4_define([_m4_divert(SITEMAP)], 2)
+dnl m4_define([_m4_divert(SITEMAP)], 2)
 m4_define([_m4_divert(HEADER)], 3)
 m4_define([_m4_divert(BODY)], 4)
 m4_define([_m4_divert(AMP_CUSTOM_STYLES)], 5)
 m4_define([_m4_divert(AMP_CUSTOM_ELEMENTS)], 6)
 m4_define([_m4_divert(NAVIGATION)], 7)
 m4_define([_m4_divert(BUILD)], 8)
-m4_define([_m4_divert(PAPER)], 9)
-m4_define([_m4_divert(PUBLISH)], 10)
+dnl m4_define([_m4_divert(PAPER)], 9)
+dnl m4_define([_m4_divert(PUBLISH)], 10)
 
 dnl
 dnl CONSTANTS
@@ -72,6 +72,7 @@ dnl
 m4_define([__LOCALIZE_URL_NAME],[$2-$3])
 m4_define([__LOCALIZE_URL_PATH],[$1/$2/$3])
 m4_define([__LOCALIZE_URL_NULL],[$1/$3])
+m4_define([__LOCALIZE_URL_DOMAIN],[$2.$1/$3])
 
 dnl
 dnl WITH_LAYOUT MACRO
@@ -142,6 +143,7 @@ m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__STEM__[]_[]__LANG__[]_URL__))
 m4_pushdef([__PATH_STEM__],$1(__DOMAIN__,__L__,__STEM__))
 dnl TODO rewiew next 2 lines
 dnl m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__PATH_STEM__.html)dnl
+m4_set_add([__ALTERNATES__],m4_quote(__LANG__,__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__.html))dnl
 m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__.html))dnl
 dnl
 m4_divert_push([DEPEND])
@@ -221,6 +223,26 @@ m4_divert_pop([DEPEND])dnl
 ])
 
 dnl
+dnl ASSET3(ASSET,ROOT,TARGET)
+dnl
+m4_define([__ASSET3],[dnl
+m4_pushdef([__ROOT__],m4_default([$2],__ROOT__))[]dnl
+__HREF([__ROOT__/$1])[]dnl
+m4_divert_push([DEPEND])
+m4_text_box($1 ASSET3 BEGINS,[+])
+dnl TODO next loop copies the asset files in all domains not in the ones that
+dnl actually has a dependency whit it, this is an error.
+__ROOT__/$1 : __SRC__/$1
+clean-asset :: ; -rm -f __ROOT__/$1
+dnl
+$3 : __ROOT__/$1 
+m4_text_box($1 ASSET3 ENDS  ,[-])
+m4_divert_pop([DEPEND])dnl
+m4_popdef([__ROOT__])dnl
+])
+
+
+dnl
 dnl INCL() MACRO
 dnl source relative filename
 dnl
@@ -279,68 +301,23 @@ dnl NOW THE LAYOUT CONSUME THE DIVERSIONS
 dnl
 m4_include(__LAYOUT__)
 dnl
-dnl AND FINALLY CHOOSE WHAT TO EMIT
+dnl AND CHOOSE WHAT TO EMIT INTO DEFAULT
 dnl
 m4_case(__PHASE__,
-[MAKEBUILD],[
-m4_divert_text([DEFAULT],[m4_undivert([BUILD])])
-m4_cleardivert([SITEMAP])
+[MAKEBUILD],[m4_divert_text([DEFAULT],[m4_undivert([BUILD])])],
+[MAKEDEPEND],[m4_divert_text([DEFAULT],[m4_undivert([DEPEND])])],
+[MAKENAV],[m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])],
+[MAKEPUB],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
+[m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])]
+)
+dnl DISCARD ALL NON OFF-PHASE TEXT
 m4_cleardivert([DEPEND])
-m4_cleardivert([AMP_CUSTOM_STYLES])
-m4_cleardivert([AMP_CUSTOM_ELEMENTS])
-m4_cleardivert([NAVIGATION])
-m4_divert_text([DEFAULT],[
-<!-- PAPER TRAIL -------------------------------- -->
-m4_undivert([PAPER])
-<!-- PAPER TRAIL--------------------------------- -->])
-m4_cleardivert([PUBLISH])
-],
-[MAKEDEPEND],[
-m4_divert_text([DEFAULT],[m4_undivert([DEPEND])])
-m4_cleardivert([SITEMAP])
+dnl m4_cleardivert([SITEMAP])
 m4_cleardivert([HEADER])
 m4_cleardivert([BODY])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([NAVIGATION])
 m4_cleardivert([BUILD])
-m4_cleardivert([PAPER])
-m4_cleardivert([PUBLISH])
-],
-[MAKENAV],[
-m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])
-m4_cleardivert([SITEMAP])
-m4_cleardivert([HEADER])
-m4_cleardivert([BODY])
-m4_cleardivert([AMP_CUSTOM_STYLES])
-m4_cleardivert([AMP_CUSTOM_ELEMENTS])
-m4_cleardivert([DEPEND])
-m4_cleardivert([BUILD])
-m4_cleardivert([PAPER])
-m4_cleardivert([PUBLISH])
-],
-[MAKEPUB],[
-m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])
-m4_cleardivert([SITEMAP])
-m4_cleardivert([HEADER])
-m4_cleardivert([BODY])
-m4_cleardivert([AMP_CUSTOM_STYLES])
-m4_cleardivert([AMP_CUSTOM_ELEMENTS])
-m4_cleardivert([DEPEND])
-m4_cleardivert([BUILD])
-m4_cleardivert([PAPER])
-m4_cleardivert([NAVIGATION])
-],
-[
-dnl m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])
-m4_cleardivert([DEPEND])
-m4_cleardivert([SITEMAP])
-m4_cleardivert([HEADER])
-m4_cleardivert([BODY])
-m4_cleardivert([AMP_CUSTOM_STYLES])
-m4_cleardivert([AMP_CUSTOM_ELEMENTS])
-m4_cleardivert([NAVIGATION])
-m4_cleardivert([BUILD])
-m4_cleardivert([PAPER])
-m4_cleardivert([PUBLISH])
-])
+dnl
+dnl DEFAULT DIVERT IS OUTPUT TO STDOUT

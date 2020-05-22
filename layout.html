@@ -51,11 +51,13 @@ m4_if($1,__LANG__,[dnl
                 </li>
 ])dnl
 ])dnl
-__RENDER_SET(m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__),[dnl
+dnl __RENDER_SET(m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__),[dnl
+__RENDER_SET([__ALTERNATES__],[dnl
 m4_if(__LANG__,$1,[],[dnl
+                <!-- $1 - $2 - $3 -->
                 <li class="nav-item">
-                    <a class="" href="__HREF([$2])">
-                        <amp-img src="__ASSET([img/flag-$1.png])" alt="" height=18 width=25 layout="fixed"/>
+                    <a class="" href="__HREF([$3])">
+                        <amp-img src="__ASSET3(img/flag-$1.png,$2,__LOCAL_URL_ID__)" alt="" height=18 width=25 layout="fixed"/>
                     </a>
                 </li>
 ])dnl
