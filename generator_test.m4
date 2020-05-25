@@ -44,8 +44,8 @@ m4_define([m4_foreach_xxx],
 #     -__L__=__N__-])
 #m4_traceoff([m4_foreach_xxx])
 
-m4_cleardivert([DEFAULT])dnl
-m4_divert([DEFAULT])dnl
+#m4_cleardivert([DEFAULT])dnl
+#m4_divert([DEFAULT])dnl
 
 
 m4_define([__L],
@@ -76,9 +76,9 @@ dnl __PAGE([bbb.com],[en],   [somepath/main],[__ALTERNATE_PAGE__],[__LOCALIZE_UR
 dnl m4_traceoff([__LOCALIZE_URL_NULL])dnl
 dnl m4_traceoff([__LOCALIZE_URL_NAME])dnl
 dnl m4_traceoff([__PAGE])dnl
-DEPEND---------------------------------
-m4_undivert([DEPEND])dnl
-DEPEND---------------------------------
+MAKEFILE---------------------------------
+m4_undivert([MAKEFILE])dnl
+MAKEFILE---------------------------------
 NAVIGATION-----------------------------
 m4_undivert([NAVIGATION])dnl
 NAVIGATION-----------------------------

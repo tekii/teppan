@@ -1,14 +1,16 @@
 dnl m4_include(./configure-fontawesome.m4)dnl
-m4_divert_push([BUILD])dnl
+m4_divert_push([HTML])dnl
 <!DOCTYPE html>
 <html ⚡ lang="__LANG__">
     <head>
         <meta charset="utf-8">
-        <!-- m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__) -->
-__RENDER_SET(m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__),[dnl
-        <link rel="alternate" hreflang="$1" href="__ABSOLUTE($2)"/>
+dnl        <!-- m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__) -->
+dnl __RENDER_SET(m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__),[dnl
+        <!-- m4_quote(__ALTERNATES__) -->
+__RENDER_SET(m4_quote(__ALTERNATES__),[dnl
+        <link rel="alternate" hreflang="$1" href="__ABSOLUTE($3)"/>
 m4_if(__LANG__,$1,[dnl
-        <link rel="canonical" href="__ABSOLUTE($2)">
+        <link rel="canonical" href="__ABSOLUTE($3)">
 ])dnl
 ])dnl
         <!-- -->
@@ -57,7 +59,7 @@ m4_if(__LANG__,$1,[],[dnl
                 <!-- $1 - $2 - $3 -->
                 <li class="nav-item">
                     <a class="" href="__HREF([$3])">
-                        <amp-img src="__ASSET3(img/flag-$1.png,$2,__LOCAL_URL_ID__)" alt="" height=18 width=25 layout="fixed"/>
+                        <amp-img src="__DEFERRED_ASSET3(img/flag-$1.png,$2,__LOCAL_URL_ID__)" alt="" height=18 width=25 layout="fixed"/>
                     </a>
                 </li>
 ])dnl
@@ -157,4 +159,4 @@ m4_divert_push(KILL)
 m4_divert_pop(KILL)dnl
     </body>
 </html>
-m4_divert_pop([BUILD])dnl
+m4_divert_pop([HTML])dnl

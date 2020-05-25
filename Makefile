@@ -66,29 +66,41 @@ vendor:
 #$(__DEP__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
 #%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
 
-define do-navigation
-	$(M4) -D __PHASE__=MAKENAV $(M4_FLAGS) \
+define do-generate-navigation
+	$(M4) -D __PHASE__=GENERATE_NAVIGATION $(M4_FLAGS) \
 	$(EXTRA_NAV_FLAGS) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 > $@
 endef
 
-$(__NAV__)/%/NAVIGATION: | $$(@D)/
+$(__NAV__)/%/NAVIGATION.m4 : | $$(@D)/
 	# we compare checksum to see if actually change and avoid the ripples of the circularity
 	# cat $^ | cmp -s $@ - || cat $^ > $@ 
 	cat $^ > $@ 
 
 #
 # ACTUAL PAGES 
-# TODO: review the need of TNAME, TDIR, AND STEM HERE (MAKEBUILD ALREADY ADD THEM)
+# TODO: review the need of TNAME, TDIR, AND STEM HERE (GENERATE_HTML ALREADY ADD THEM)
 #
-define do-build
-$(M4) -D __PHASE__=MAKEBUILD $(M4_FLAGS) \
-	$(EXTRA_BUILD_FLAGS) \
+define do-generate-html
+$(M4) -D __PHASE__=GENERATE_HTML $(M4_FLAGS) \
+	$(EXTRA_HTML_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 >$@
 endef
+
+define do-generate-deferred-mk
+$(M4) -D __PHASE__=GENERATE_DEFERRED_MK $(M4_FLAGS) \
+	$(EXTRA_DEFERRED_MK_FLAGS) \
+	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
+	-D __TARGET__=$@ -D __FIRST__=$< \
+	generator.m4 >$@ || rm $@
+endef
+
+#.PHONY : deferred-mk
+#deferred-mk :
+#	@echo $^
 
 ##
 ## SITEMAP.XML
@@ -165,7 +177,7 @@ all: build
 ## make the dep list then delete all
 ##
 .PHONY: clean
-clean : clean-navigation clean-build clean-asset clean-gzip
+clean : clean-build clean-asset clean-gzip clean-mk clean-navigation
 	@echo [[[ DONE $@ ]]]
 
 .PHONY: realclean
@@ -198,12 +210,12 @@ test: generator_test.m4
 
 #
 #
-# MAKEDEPEND
+# GENERATE_MAKEFILE
 # 
 # THIS MUST BE THE FIRST RULE TO RUN, PLEASE ALL PREREQUISITES MUST PRE-EXIST
 # 
-$(__DEP__)/%.d: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
-	$(M4) -D __PHASE__=MAKEDEPEND $(M4_FLAGS) \
+$(__DEP__)/%.1.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
+	$(M4) -D __PHASE__=GENERATE_MAKEFILE $(M4_FLAGS) \
 		-D __STEM__=$* \
 		-D __NAV__=$(__NAV__) \
 		-D __ZIP__=$(__ZIP__) \
@@ -214,5 +226,7 @@ $(__DEP__)/%.d: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
 # TODO: check what abaut this .PRECIOUS
 #.PRECIOUS: $(__DEP__)/%.d
 ## THIS FIRES THE RULE ABOVE
--include $(patsubst %.in.html,$(__DEP__)/%.d,$(notdir $(wildcard $(__SRC__)/*.in.html)))
+-include $(patsubst %.in.html,$(__DEP__)/%.1.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))
+
+#-include toto.mk
 

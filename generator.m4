@@ -2,16 +2,15 @@ dnl
 dnl DIVERTS, when M4 load the script the active divert is KILL because the m4_init
 dnl 
 m4_define([_m4_divert(DEFAULT)], 0)
-m4_define([_m4_divert(DEPEND)], 1)
+m4_define([_m4_divert(MAKEFILE)], 1)
 dnl m4_define([_m4_divert(SITEMAP)], 2)
 m4_define([_m4_divert(HEADER)], 3)
 m4_define([_m4_divert(BODY)], 4)
 m4_define([_m4_divert(AMP_CUSTOM_STYLES)], 5)
 m4_define([_m4_divert(AMP_CUSTOM_ELEMENTS)], 6)
 m4_define([_m4_divert(NAVIGATION)], 7)
-m4_define([_m4_divert(BUILD)], 8)
-dnl m4_define([_m4_divert(PAPER)], 9)
-dnl m4_define([_m4_divert(PUBLISH)], 10)
+m4_define([_m4_divert(HTML)], 8)
+m4_define([_m4_divert(DEFERRED_MK)], 9)
 
 dnl
 dnl CONSTANTS
@@ -121,13 +120,13 @@ dnl
 dnl CP_ASSET(FILE) MACRO
 dnl 
 m4_define([__CP_ASSET],[
-m4_divert_push([DEPEND])
+m4_divert_push([MAKEFILE])
 m4_text_box($1 CP ASSET BEGINS,[+])
 __DOC__/__DOMAIN__/$1 : __SRC__/$1
 clean-asset :: ; -rm -f __DOC__/__DOMAIN__/$1 
 __DOC__/__PATH_STEM__.html : __DOC__/__DOMAIN__/$1
 m4_text_box($1 CP ASSET ENDS  ,[-])
-m4_divert_pop([DEPEND])dnl
+m4_divert_pop([MAKEFILE])dnl
 ])
 
 m4_define([__UP],[m4_translit($1,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__])])
@@ -143,32 +142,42 @@ m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__STEM__[]_[]__LANG__[]_URL__))
 m4_pushdef([__PATH_STEM__],$1(__DOMAIN__,__L__,__STEM__))
 dnl TODO rewiew next 2 lines
 dnl m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__PATH_STEM__.html)dnl
+dnl the nex declaration of alternates is the earliest one, in MAKEFILE PHASE
 m4_set_add([__ALTERNATES__],m4_quote(__LANG__,__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__.html))dnl
 m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__.html))dnl
 dnl
-m4_divert_push([DEPEND])
-m4_text_box(__STEM__ DEPENDS BEGINS,[+])
+m4_divert_push([MAKEFILE])
+m4_text_box(__STEM__ MAKEFILE BEGINS,[+])
 [#] NAVIGATION
-__NAV__/__PATH_STEM__ : __SRC__/generator.m4
-__NAV__/__PATH_STEM__ : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ 
-__NAV__/__PATH_STEM__ : __FIRST__ | $$(@D)/ ; [$(do-navigation)]
-clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__
-__NAV__/__DOMAIN__/NAVIGATION : __NAV__/__PATH_STEM__
-clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION
+__NAV__/__PATH_STEM__.m4 : __SRC__/generator.m4
+__NAV__/__PATH_STEM__.m4 : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ 
+__NAV__/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-navigation)]
+clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__.m4
+__NAV__/__DOMAIN__/NAVIGATION.m4 : __NAV__/__PATH_STEM__.m4
+clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION.m4
 dnl
-[#] BUILD 
+[#] HTML 
 dnl TODO: is VENDOR really needed in this PHASE?
-[#] __DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION
+[#] __DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION.m4
 __DOC__/__PATH_STEM__.html : __LAYOUT__
 __DOC__/__PATH_STEM__.html : __SRC__/generator.m4
-__DOC__/__PATH_STEM__.html : EXTRA_BUILD_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__DOC__]=__DOC__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
-__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION ; [$(do-build)]
+__DOC__/__PATH_STEM__.html : EXTRA_HTML_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
+__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 ; [$(do-generate-html)]
 clean-build :: ; -rm -f __DOC__/__PATH_STEM__.html
+dnl
+[#] DEFERRED MAKEFILE
+__DOC__/__PATH_STEM__.mk : __SRC__/generator.m4
+__DOC__/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
+__DOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 ; [$(do-generate-deferred-mk)]
+clean-mk :: ; -rm -f __DOC__/__PATH_STEM__.mk
+[#] -include __DOC__/__PATH_STEM__.mk
+deferred-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
+clean-asset :: ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
 dnl
 [#] ZIP
 .INTERMEDIATE : __ZIP__/__PATH_STEM__.html
 __ZIP__/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:= 
-__ZIP__/__PATH_STEM__.html : __DOC__/__PATH_STEM__.html | $$(@D)/ ;  [$(do-gzip)]
+__ZIP__/__PATH_STEM__.html : __DOC__/__PATH_STEM__.html | $$(@D)/ __DOC__/__PATH_STEM__.mk ;  [$(do-gzip)]
 clean-gzip :: ; -rm -f __ZIP__/__PATH_STEM__.html
 dnl
 [#] PUBLISH
@@ -179,21 +188,21 @@ __PATH_STEM__.html : __ZIP__/__PATH_STEM__.html ; [$(do-publish)]
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : build-__DOMAIN__
-build-__DOMAIN__ : __DOC__/__PATH_STEM__.html
+build-__DOMAIN__ : __DOC__/__PATH_STEM__.html deferred-asset | __DOC__/__PATH_STEM__.mk
 .PHONY : __DOMAIN__
 __DOMAIN__ : __PATH_STEM__.html
 publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl 
 build : __DOC__/__PATH_STEM__.html
-realclean :: ; [$(RM)] -f __TARGET__
-m4_text_box(__STEM__ DEPENDS ENDS  ,[-])
-m4_divert_pop([DEPEND])
+clean-mk :: ; [$(RM)] -f __TARGET__
+m4_text_box(__STEM__ MAKEFILE ENDS  ,[-])
+m4_divert_pop([MAKEFILE])
 dnl
 m4_divert_push([NAVIGATION])dnl
 m4_text_box(__PATH_STEM__,[-])
 [m4_define](m4_dquote(__LOCAL_URL_ID__),m4_dquote(__DOC__/__PATH_STEM__.html))
-[m4_set_add](m4_quote(__UP(__[]__STEM__[]_ALTERNATES__),m4_dquote(m4_dquote(__LANG__,__LOCAL_URL_ID__))))
+dnl [m4_set_add](m4_quote(__UP(__[]__STEM__[]_ALTERNATES__),m4_dquote(m4_dquote(__LANG__,__LOCAL_URL_ID__))))
 m4_divert_pop([NAVIGATION])
 dnl
 $2dnl
@@ -207,7 +216,7 @@ dnl ASSET MACRO
 dnl $1 source relative asset URI
 dnl
 m4_define([__ASSET],[__HREF([__DOC__/$1])[]dnl
-m4_divert_push([DEPEND])
+m4_divert_push([MAKEFILE])
 m4_text_box($1 ASSET BEGINS,[+])
 dnl TODO next loop copies the asset files in all domains not in the ones that
 dnl actually has a dependency whit it, this is an error.
@@ -219,7 +228,7 @@ m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_unquote(m4_cdr(__I__)) : m4_car(__I__)/$1
 ])dnl
 m4_text_box($1 ASSET ENDS  ,[-])
-m4_divert_pop([DEPEND])dnl
+m4_divert_pop([MAKEFILE])dnl
 ])
 
 dnl
@@ -228,7 +237,7 @@ dnl
 m4_define([__ASSET3],[dnl
 m4_pushdef([__ROOT__],m4_default([$2],__ROOT__))[]dnl
 __HREF([__ROOT__/$1])[]dnl
-m4_divert_push([DEPEND])
+m4_divert_push([MAKEFILE])
 m4_text_box($1 ASSET3 BEGINS,[+])
 dnl TODO next loop copies the asset files in all domains not in the ones that
 dnl actually has a dependency whit it, this is an error.
@@ -237,7 +246,27 @@ clean-asset :: ; -rm -f __ROOT__/$1
 dnl
 $3 : __ROOT__/$1 
 m4_text_box($1 ASSET3 ENDS  ,[-])
-m4_divert_pop([DEPEND])dnl
+m4_divert_pop([MAKEFILE])dnl
+m4_popdef([__ROOT__])dnl
+])
+
+dnl
+dnl DEFERRED_ASSET3(ASSET,ROOT,TARGET)
+dnl
+m4_define([__DEFERRED_ASSET3],[dnl
+m4_pushdef([__ROOT__],m4_default([$2],__ROOT__))[]dnl
+__HREF([__ROOT__/$1])[]dnl
+m4_divert_push([DEFERRED_MK])
+m4_text_box($1 DEFERRED_ASSET3 BEGINS,[+])
+dnl TODO next loop copies the asset files in all domains not in the ones that
+dnl actually has a dependency whit it, this is an error.
+__ROOT__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
+dnl
+dnl $3 : __ROOT__/$1 
+deferred-asset : __ROOT__/$1 
+clean-asset :: ; -rm -f __ROOT__/$1
+m4_text_box($1 DEFERRED_ASSET3 ENDS  ,[-])
+m4_divert_pop([DEFERRED_MK])dnl
 m4_popdef([__ROOT__])dnl
 ])
 
@@ -247,7 +276,7 @@ dnl INCL() MACRO
 dnl source relative filename
 dnl
 m4_define([__INCL],[
-m4_divert_text([DEPEND],[
+m4_divert_text([MAKEFILE],[
 m4_text_box($1 INCLUDE BEGINS,[+])
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_unquote(m4_cdr(__I__)) : $1
@@ -289,35 +318,34 @@ dnl PAGE PROCESS STARTS HERE
 dnl
 dnl FIRST LOAD THE CONFIG DEFINITIONS
 dnl
-m4_include([./configure.m4])
+m4_include([./configure.m4])dnl
 dnl
 dnl HERE WE FILL THE DIVERSIONS
 dnl
-m4_if(__PHASE__,[MAKEBUILD],[m4_include(__NAV__/__DOMAIN__/NAVIGATION)],[])dnl
+m4_if(__PHASE__,[GENERATE_HTML],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],__PHASE__,[GENERATE_DEFERRED_MK],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],[])dnl
 dnl m4_sinclude(__NAV__/__DOMAIN__/NAVIGATION)
-m4_include(__FIRST__)
+m4_include(__FIRST__)dnl
 dnl
 dnl NOW THE LAYOUT CONSUME THE DIVERSIONS
 dnl
-m4_include(__LAYOUT__)
+m4_include(__LAYOUT__)dnl
 dnl
 dnl AND CHOOSE WHAT TO EMIT INTO DEFAULT
 dnl
 m4_case(__PHASE__,
-[MAKEBUILD],[m4_divert_text([DEFAULT],[m4_undivert([BUILD])])],
-[MAKEDEPEND],[m4_divert_text([DEFAULT],[m4_undivert([DEPEND])])],
-[MAKENAV],[m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])],
+[GENERATE_MAKEFILE],[m4_divert_text([DEFAULT],[m4_undivert([MAKEFILE])])],
+[GENERATE_NAVIGATION],[m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])],
+[GENERATE_HTML],[m4_divert_text([DEFAULT],[m4_undivert([HTML])])],
+[GENERATE_DEFERRED_MK],[m4_divert_text([DEFAULT],[m4_undivert([DEFERRED_MK])])],
 [MAKEPUB],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
-[m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])]
-)
-dnl DISCARD ALL NON OFF-PHASE TEXT
-m4_cleardivert([DEPEND])
+[m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])])
+dnl DISCARD ALL OFF-PHASE TEXT
+m4_cleardivert([MAKEFILE])
+m4_cleardivert([DEFERRED_MK])
 dnl m4_cleardivert([SITEMAP])
 m4_cleardivert([HEADER])
 m4_cleardivert([BODY])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([NAVIGATION])
-m4_cleardivert([BUILD])
-dnl
-dnl DEFAULT DIVERT IS OUTPUT TO STDOUT
+m4_cleardivert([HTML])

@@ -1,7 +1,7 @@
 dnl
 dnl Font Awesome MACROS
 dnl
-m4_divert_push([DEPEND])dnl
+m4_divert_push([MAKEFILE])dnl
 m4_text_box(FONTAWESOME DEPS BEGIN,[+])
 ifndef __VENDOR_FA__
 __VENDOR_FA__=1
@@ -19,7 +19,7 @@ m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
 m4_unquote(m4_cdr(__I__)) : __VENDOR__/fontawesome-free-5.13.0-web/css/all.css
 ])dnl
 m4_text_box(FONTAWESOME DEPS END  ,[-])
-m4_divert_pop([DEPEND])dnl
+m4_divert_pop([MAKEFILE])dnl
 dnl
 m4_divert_push([AMP_CUSTOM_STYLES])dnl
 /** helper-css-remap --base __TDIR__ __VENDOR__/fontawesome-free-5.13.0-web/css/all.css **/
