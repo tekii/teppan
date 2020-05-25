@@ -171,11 +171,11 @@ __DOC__/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__
 __DOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 ; [$(do-generate-deferred-mk)]
 clean-makefile :: ; -rm -f __DOC__/__PATH_STEM__.mk
 [#] -include __DOC__/__PATH_STEM__.mk
-deferred-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
-clean-asset :: ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
+cp-deferred-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
+clean-asset gzip-asset :: ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
 dnl
 [#] ZIP
-.INTERMEDIATE : __ZIP__/__PATH_STEM__.html
+.SECONDARY : __ZIP__/__PATH_STEM__.html
 __ZIP__/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:= 
 __ZIP__/__PATH_STEM__.html : __DOC__/__PATH_STEM__.html | $$(@D)/ __DOC__/__PATH_STEM__.mk ;  [$(do-gzip)]
 clean-gzip :: ; -rm -f __ZIP__/__PATH_STEM__.html
@@ -188,7 +188,7 @@ __PATH_STEM__.html : __ZIP__/__PATH_STEM__.html ; [$(do-publish)]
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : build-__DOMAIN__
-build-__DOMAIN__ : __DOC__/__PATH_STEM__.html deferred-asset | __DOC__/__PATH_STEM__.mk
+build-__DOMAIN__ : __DOC__/__PATH_STEM__.html cp-deferred-asset | __DOC__/__PATH_STEM__.mk
 .PHONY : __DOMAIN__
 __DOMAIN__ : __PATH_STEM__.html
 publish : __DOMAIN__
@@ -251,19 +251,15 @@ m4_popdef([__ROOT__])dnl
 ])
 
 dnl
-dnl DEFERRED_ASSET3(ASSET,ROOT,TARGET)
+dnl DEFERRED_ASSET2(ASSET,ROOT,TARGET)
 dnl
-m4_define([__DEFERRED_ASSET3],[dnl
+m4_define([__DEFERRED_ASSET2],[dnl
 m4_pushdef([__ROOT__],m4_default([$2],__ROOT__))[]dnl
 __HREF([__ROOT__/$1])[]dnl
 m4_divert_push([DEFERRED_MK])
 m4_text_box($1 DEFERRED_ASSET3 BEGINS,[+])
-dnl TODO next loop copies the asset files in all domains not in the ones that
-dnl actually has a dependency whit it, this is an error.
 __ROOT__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
-dnl
-dnl $3 : __ROOT__/$1 
-deferred-asset : __ROOT__/$1 
+cp-deferred-asset : __ROOT__/$1 
 clean-asset :: ; -rm -f __ROOT__/$1
 m4_text_box($1 DEFERRED_ASSET3 ENDS  ,[-])
 m4_divert_pop([DEFERRED_MK])dnl

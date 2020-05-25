@@ -3,5 +3,6 @@
 $(__SRC__)/%/:
 	mkdir -p $@
 
-deferred-asset :
+cp-deferred-asset :
+gzip-asset :
 clean-asset ::

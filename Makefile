@@ -78,10 +78,6 @@ $(__NAV__)/%/NAVIGATION.m4 : | $$(@D)/
 	# cat $^ | cmp -s $@ - || cat $^ > $@ 
 	cat $^ > $@ 
 
-#
-# ACTUAL PAGES 
-# TODO: review the need of TNAME, TDIR, AND STEM HERE (GENERATE_HTML ALREADY ADD THEM)
-#
 define do-generate-html
 $(M4) -D __PHASE__=GENERATE_HTML $(M4_FLAGS) \
 	$(EXTRA_HTML_FLAGS) \
@@ -97,10 +93,6 @@ $(M4) -D __PHASE__=GENERATE_DEFERRED_MK $(M4_FLAGS) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 >$@ || rm $@
 endef
-
-#.PHONY : deferred-mk
-#deferred-mk :
-#	@echo $^
 
 ##
 ## SITEMAP.XML
