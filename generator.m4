@@ -169,7 +169,7 @@ dnl
 __DOC__/__PATH_STEM__.mk : __SRC__/generator.m4
 __DOC__/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
 __DOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 ; [$(do-generate-deferred-mk)]
-clean-mk :: ; -rm -f __DOC__/__PATH_STEM__.mk
+clean-makefile :: ; -rm -f __DOC__/__PATH_STEM__.mk
 [#] -include __DOC__/__PATH_STEM__.mk
 deferred-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
 clean-asset :: ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
@@ -195,7 +195,7 @@ publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl 
 build : __DOC__/__PATH_STEM__.html
-clean-mk :: ; [$(RM)] -f __TARGET__
+clean-makefile :: ; [$(RM)] -f __TARGET__
 m4_text_box(__STEM__ MAKEFILE ENDS  ,[-])
 m4_divert_pop([MAKEFILE])
 dnl

@@ -10,7 +10,7 @@ __VENDOR__:=$(PWD)/VENDOR
 __DOC__:=$(__BUILD__)/DOC
 __DEP__:=$(__BUILD__)/DEP
 __ZIP__:=$(__BUILD__)/ZIP
-__NAV__:=$(__BUILD__)/NAV
+__NAV__:=$(__DOC__)
 
 __LAYOUT__:=$(__SRC__)/dummy-layout.html
 
@@ -145,8 +145,6 @@ $(__DOC__)/%.woff2 : | $$(@D)/
 #
 GSUTIL_EXTRA_FLAGS:=
 #$(__GZIP__)/$(__IMG__)/logo.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=3600"
-#$(__GZIP__)/$(__IMG__)/es.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=86400"
-#$(__GZIP__)/$(__IMG__)/us.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=86400"
 
 define do-gzip
 	gzip -c --no-name --rsyncable $< >$@
@@ -177,7 +175,7 @@ all: build
 ## make the dep list then delete all
 ##
 .PHONY: clean
-clean : clean-build clean-asset clean-gzip clean-mk clean-navigation
+clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
 	@echo [[[ DONE $@ ]]]
 
 .PHONY: realclean
@@ -209,12 +207,9 @@ test: generator_test.m4
 .DEFAULT_GOAL := build
 
 #
-#
-# GENERATE_MAKEFILE
+# TEMPLATE MAKEFILES
 # 
-# THIS MUST BE THE FIRST RULE TO RUN, PLEASE ALL PREREQUISITES MUST PRE-EXIST
-# 
-$(__DEP__)/%.1.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
+$(__DEP__)/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
 	$(M4) -D __PHASE__=GENERATE_MAKEFILE $(M4_FLAGS) \
 		-D __STEM__=$* \
 		-D __NAV__=$(__NAV__) \
@@ -225,8 +220,5 @@ $(__DEP__)/%.1.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D
 
 # TODO: check what abaut this .PRECIOUS
 #.PRECIOUS: $(__DEP__)/%.d
-## THIS FIRES THE RULE ABOVE
--include $(patsubst %.in.html,$(__DEP__)/%.1.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))
-
-#-include toto.mk
-
+# THIS INCLUDE FIRES THE RULE ABOVE
+-include $(patsubst %.in.html,$(__DEP__)/%.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))
