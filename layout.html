@@ -69,29 +69,26 @@ m4_if(__LANG__,$1,[],[dnl
         </amp-sidebar>
         <!-- END SIDEBAR -->
         <!-- BEGIN PAGE HEADER -->
-        <section class="menu horizontal-menu aa">
-        <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg" i-amphtml-fixedid="F0" style="top: calc(0px);">
-            <div class="container">
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
-__RENDER_SET([__NAV__ITEMS__],[dnl                    
-m4_if($1,__LANG__,[dnl
-                        <li class="nav-item">
-                            <a class="link" href="__HREF([$3])[#]$4">$2</a>
-                        </li>
-])dnl
-])dnl
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- AMP plug -->
-        <button on="tap:sidebar.toggle" class="ampstart-btn hamburger sticky-but">M</button>
-        </section>
+        <header>
+dnl         <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg" i-amphtml-fixedid="F0" style="top: calc(0px);">
+dnl             <div class="container">
+dnl                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+dnl                     <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
+dnl __RENDER_SET([__NAV__ITEMS__],[dnl                    
+dnl m4_if($1,__LANG__,[dnl
+dnl                         <li class="nav-item">
+dnl                             <a class="link" href="__HREF([$3])[#]$4">$2</a>
+dnl                         </li>
+dnl ])dnl
+dnl ])dnl
+dnl                     </ul>
+dnl                 </div>
+dnl             </div>
+dnl         </nav>
+            <button on="tap:sidebar.toggle" class="ampstart-btn hamburger sticky-but">M</button>
+        </header>
         <!-- BEGIN BODY -->
-dnl <div class="container clearfix">
 m4_undivert([BODY])[]dnl
-dnl </div>
         <!-- END   BODY -->
         <!-- BEGIN FOOTER -->
         <footer>

@@ -283,9 +283,9 @@ m4_text_box($1 INCLUDE ENDS  ,[-])
 dnl
 dnl NAV_ITEM(TEXT,URL,FRAGMENT)
 dnl
-m4_define([__NAV_ITEM],[m4_divert_text([NAVIGATION],
-m4_dquote([m4_set_add](m4_dquote(__NAV__ITEMS__),m4_dquote(m4_dquote(__LANG__,$2,$3,$4))))dnl
-)
+m4_define([__NAV_ITEM],[dnl
+m4_divert_text([NAVIGATION],m4_dquote([m4_set_add](m4_dquote(__NAV__ITEMS__),m4_dquote(m4_dquote(__LANG__,$2,$3,$4)))))dnl
+$2[]dnl
 ])
 
 dnl
