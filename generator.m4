@@ -271,7 +271,7 @@ dnl
 dnl INCL() MACRO
 dnl source relative filename
 dnl
-m4_define([__INCL],[
+m4_define([__INCL],[dnl
 m4_divert_text([MAKEFILE],[
 m4_text_box($1 INCLUDE BEGINS,[+])
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl

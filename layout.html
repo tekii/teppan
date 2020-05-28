@@ -16,24 +16,22 @@ m4_if(__LANG__,$1,[dnl
         <!-- -->
         <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
         <meta name="msvalidate.01" content="__MICROSOFT_VALIDATE_KEY__" />
-        <link rel="shortcut icon" href="__HREF(__ROOT__/favicon.ico)" type="image/x-icon" />
-dnl     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto">
+        <link rel="shortcut icon" href="__ASSET(favicon.ico,__ROOT__,__TARGET__)" type="image/x-icon" />
+dnl     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+        <link  rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Serif:ital@0;1&display=swap">
         <!-- BEGIN HEADER divert -->
 m4_undivert([HEADER])[]dnl 
         <!-- END   HEADER divert -->
-__INCL([meta.json])[]dnl <!-- -->
+dnl __INCL([meta.json])[]dnl <!-- -->
         <!-- BEGIN amp-custom elements -->
 m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
         <!-- END   amp-custom elements -->
         <!-- BEGIN amp-custom styles -->
         <style amp-custom>
-m4_changequote(«,»)
-        body {
-            font-family: 'Noto', sans-serif;
-        }
-m4_changequote([,])[]dnl
-m4_undivert(AMP_CUSTOM_STYLES)
-        </style>
+__INCL([amp-custom.css])[]dnl            
+m4_changequote(«,»)«»dnl
+        /* */
+m4_changequote([,])m4_undivert([AMP_CUSTOM_STYLES])        </style>
         <!-- END   amp-custom styles -->
         <!-- amp-boilerplate -->
         <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
@@ -42,7 +40,7 @@ m4_undivert(AMP_CUSTOM_STYLES)
     </head>
     <body>
         <!-- BEGIN SIDEBAR -->
-        <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="right">
+        <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="left">
         <div class="builder-sidebar" id="builder-sidebar">
             <button on="tap:sidebar.close" class="close-sidebar">X</button>
             <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
@@ -59,7 +57,7 @@ m4_if(__LANG__,$1,[],[dnl
                 <!-- $1 - $2 - $3 -->
                 <li class="nav-item">
                     <a class="" href="__HREF([$3])">
-                        <amp-img src="__DEFERRED_ASSET2(img/flag-$1.png,$2)" alt="" height=18 width=25 layout="fixed"/>
+                        <amp-img src="__DEFERRED_ASSET2(img/flag-$1.png,$2)" alt="" height=48 width=48 layout="fixed"/>
                     </a>
                 </li>
 ])dnl
@@ -69,8 +67,8 @@ m4_if(__LANG__,$1,[],[dnl
         </amp-sidebar>
         <!-- END SIDEBAR -->
         <!-- BEGIN PAGE HEADER -->
-        <header>
-dnl         <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg" i-amphtml-fixedid="F0" style="top: calc(0px);">
+        <header style="">
+dnl         <nav class="">
 dnl             <div class="container">
 dnl                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
 dnl                     <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
@@ -85,24 +83,21 @@ dnl                     </ul>
 dnl                 </div>
 dnl             </div>
 dnl         </nav>
-            <button on="tap:sidebar.toggle" class="ampstart-btn hamburger sticky-but">M</button>
+            <button on="tap:sidebar.toggle" class="">M</button>
         </header>
         <!-- BEGIN BODY -->
 m4_undivert([BODY])[]dnl
         <!-- END   BODY -->
         <!-- BEGIN FOOTER -->
         <footer>
-            <div class="container">
-                <div class="tky-col-lg-8 tky-col-md-12 align-center">
-                    <div>
+            <div class="grid-container">
                     <!--
                         <amp-img src="__ASSET([img/logo.png])" layout="responsive" width="75" height="75" class="i-amphtml-element i-amphtml-layout-responsive i-amphtml-layout-size-defined i-amphtml-layout">
                             dnl<i-amphtml-sizer style="display: block; padding-top: 100%;"></i-amphtml-sizer>
                             <img decoding="async" src="__ASSET([img/logo.png])" class="i-amphtml-fill-content i-amphtml-replaced-content"></amp-img>
                      -->
-                    </div>   
-                <ul data-app-modern-menu="true">
-__RENDER_SET([__NAV__ITEMS__],[dnl                    
+                <ul>
+__RENDER_SET([__NAV__ITEMS__],[dnl
 m4_if($1,__LANG__,[dnl
                     <li class="nav-item">
                         <a class="link" href="__HREF([$3])[#]$4">$2</a>
@@ -115,30 +110,29 @@ m4_if($1,__LANG__,[dnl
 [Since 2006 __TEKII__ delivers solutions and large scale web applications that are secure and ready for high traffic.],dnl
 [])</p>
 m4_divert_push(KILL)
-                    <div class="ico-wrapper">
-                          <div class="card-img">
-                              <a href="https://www.linkedin.com/company/tekii-srl/" target="_blank">
-                                  <span class="tky-iconfont fa-linkedin fa"></span>
-                              </a>
-                          </div>
-                          <div class="card-img">
-                              <a href="https://www.facebook.com/tekiisrl/" target="_blank">
-                                  <span class="tky-iconfont fa-facebook-f fa"></span>
-                              </a>
-                          </div>
-                          <div class="card-img">
-                              <a href="https://twitter.com/tekii_srl" target="_blank">
-                                  <span class="tky-iconfont fa-twitter fa"></span>
-                              </a>
-                          </div>
-                          dnl<div class="card-img">
-                          dnl    <a href="https://plus.google.com/u/0/+tekiiar" target="_blank">
-                          dnl        <span class="tky-iconfont fa-google-plus fa"></span>
-                          dnl    </a>
-                          dnl</div>
-                    </div>
+            <div class="ico-wrapper">
+                  <div class="card-img">
+                      <a href="https://www.linkedin.com/company/tekii-srl/" target="_blank">
+                          <span class="tky-iconfont fa-linkedin fa"></span>
+                      </a>
+                  </div>
+                  <div class="card-img">
+                      <a href="https://www.facebook.com/tekiisrl/" target="_blank">
+                          <span class="tky-iconfont fa-facebook-f fa"></span>
+                      </a>
+                  </div>
+                  <div class="card-img">
+                      <a href="https://twitter.com/tekii_srl" target="_blank">
+                          <span class="tky-iconfont fa-twitter fa"></span>
+                      </a>
+                  </div>
+                  dnl<div class="card-img">
+                  dnl    <a href="https://plus.google.com/u/0/+tekiiar" target="_blank">
+                  dnl        <span class="tky-iconfont fa-google-plus fa"></span>
+                  dnl    </a>
+                  dnl</div>
+            </div>
 m4_divert_pop(KILL)dnl
-                </div>
             </div>
         </footer>
         <!-- END FOOTER -->

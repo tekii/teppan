@@ -10,18 +10,17 @@ m4_divert_text([HEADER],[dnl
     <title>TEKii SRL - __ENES([Contact],[Contacto])</title>
 ])
 
-m4_divert_push([AMP_CUSTOM_STYLES])
-<!-- -->
-@font-face {
-font-family: 'Glyphicons Halflings';
-src: url(__ASSET(fonts/glyphicons-halflings-regular.eot));
-/* src: url(__ASSET(fonts/glyphicons-halflings-regular.eot))
-format('embedded-opentype'),
-url(__ASSET(fonts/glyphicons-halflings-regular.woff2)) format('woff2'),
-url(__ASSET(fonts/glyphicons-halflings-regular.woff)) format('woff'),
-url(__ASSET(fonts/glyphicons-halflings-regular.ttf)) format('truetype'),
-url(__ASSET([fonts/glyphicons-halflings-regular.svg])) format('svg');*/
-}
+m4_divert_push([AMP_CUSTOM_STYLES])[]dnl
+        @font-face {
+            font-family: 'Glyphicons Halflings';
+            src: url(__ASSET(fonts/glyphicons-halflings-regular.eot));
+            /* src: url(__ASSET(fonts/glyphicons-halflings-regular.eot))
+            format('embedded-opentype'),
+            url(__ASSET(fonts/glyphicons-halflings-regular.woff2)) format('woff2'),
+            url(__ASSET(fonts/glyphicons-halflings-regular.woff)) format('woff'),
+            url(__ASSET(fonts/glyphicons-halflings-regular.ttf)) format('truetype'),
+            url(__ASSET([fonts/glyphicons-halflings-regular.svg])) format('svg');*/
+        }
 m4_divert_pop([AMP_CUSTOM_STYLES])
 
 m4_divert_push([BODY])dnl

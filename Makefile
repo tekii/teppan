@@ -108,6 +108,9 @@ endef
 #
 # COPY ASSETS TODO: this could be moved to an static generated rule 
 #
+$(__DOC__)/%.ico : | $$(@D)/
+	cp $< $@
+
 $(__DOC__)/%.png : | $$(@D)/
 	cp $< $@
 
