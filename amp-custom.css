@@ -4,17 +4,37 @@ body {
 h1, h2 {
     font-family: 'IBM Plex Sans', sans-serif;
 }
+header .logo-tex {
+    fill:#666666;
+    fill-rule: nonzero;
+}
+header .logo-bird {
+    fill:#5582f3;
+    fill-rule: evenodd;
+}
+footer  .logo-text::shadow {
+    fill:red;
+    fill-rule: nonzero;
+}
+
+header {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+}
 header, footer, amp-sidebar, section {
     padding: 1em;
 }
 footer {
     color: white;
-    background-color: rgb(57, 68, 77);
+    background-color: #666666;
     text-decoration: none;
     font-family: 'IBM Plex Sans', sans-serif;
 }
-footer ul {
+footer ul, amp-sidebar ul {
     list-style-type: none;
+    /*text-align: left;*/
+    padding-left: 0pt;
 }
 footer a:link, footer a:visited, footer a:hover {
     color: white;
@@ -23,9 +43,24 @@ footer a:link, footer a:visited, footer a:hover {
 footer a:hover {
     text-decoration: underline;
 }
+amp-sidebar ul {
+    font-family: 'IBM Plex Sans', sans-serif;
+    list-style-type: none;
+    padding-left: 0pt;
+}
 .grid-container {
     display: grid;
     justify-content: space-between;
-    grid-template-columns: auto auto;
     grid-gap: 1em;
-  }
+}
+@media only screen and (max-width: 600px) {
+    .grid-container {
+        grid-template-columns: auto;
+    }
+}
+@media only screen and (min-width: 601px) {
+    .grid-container {
+        grid-template-columns: auto auto;
+    }
+}
+
