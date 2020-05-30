@@ -53,14 +53,28 @@ amp-sidebar ul {
     justify-content: space-between;
     grid-gap: 1em;
 }
+use.tekii-layout-header-logo {
+    fill:#666666;
+}
+use.tekii-layout-footer-logo {
+    fill:white;
+}
 @media only screen and (max-width: 600px) {
     .grid-container {
         grid-template-columns: auto;
     }
+    .layout-logo {
+        width: 75px;
+        height: 75px;
+    }
 }
 @media only screen and (min-width: 601px) {
     .grid-container {
-        grid-template-columns: auto auto;
+        grid-template-columns: auto auto auto;
+    }
+    .layout-logo {
+        width: 100px;
+        height: 100px;
     }
 }
 
