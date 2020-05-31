@@ -13,6 +13,12 @@ m4_define([_m4_divert(HTML)], 8)
 m4_define([_m4_divert(DEFERRED_MK)], 9)
 
 dnl
+dnl
+dnl
+m4_define([__BODY_PUSH__],[m4_divert_push([BODY])<!-- ])
+m4_define([__BODY_POP__],[ -->m4_newline([])[]m4_divert_pop([BODY])])
+
+dnl
 dnl CONSTANTS
 dnl
 m4_define([__ES__],[es])
