@@ -44,12 +44,15 @@ amp-sidebar ul {
     margin-block-start: 0em;
     margin-block-end: 0em;
 }
-use.tekii-layout-header-logo {
-    fill:#666666;
+#header-layout-logo {
+    --logo-text-color:#666666;
+    --logo-bird-color:#5582f3;
 }
-use.tekii-layout-footer-logo {
-    fill:white;
+#footer-layout-logo {
+    --logo-text-color:white;
+    --logo-bird-color:white;
 }
+
 @media only screen and (max-width: 600px) {
     .grid-container {
         grid-template-columns: auto;
