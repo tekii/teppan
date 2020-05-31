@@ -19,9 +19,9 @@ m4_if(__LANG__,$1,[dnl
         <link rel="shortcut icon" href="__ASSET(favicon.ico,__ROOT__,__TARGET__)" type="image/x-icon" />
 dnl     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
         <link  rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Serif:ital@0;1&display=swap">
-        <!-- BEGIN HEADER divert -->
-m4_undivert([HEADER])[]dnl 
-        <!-- END   HEADER divert -->
+        <!-- BEGIN HEAD divert -->
+m4_undivert([HEAD])[]dnl 
+        <!-- END   HEAD divert -->
 dnl __INCL([meta.json])[]dnl <!-- -->
         <!-- BEGIN amp-custom elements -->
 m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
@@ -68,7 +68,7 @@ m4_if(__LANG__,$1,[],[dnl
         </div>
         </amp-sidebar>
         <!-- END SIDEBAR -->
-        <!-- BEGIN PAGE HEADER -->
+        <!-- BEGIN HEADER -->
         <header>
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none;" fill="none" stroke="none" stroke-linecap="square" stroke-miterlimit="10">
                 <symbol id="tekii-logo" viewBox="0.0 0.0 576.0 576.0">
@@ -96,6 +96,7 @@ dnl             </div>
 dnl         </nav>
             <button on="tap:sidebar.toggle" class="">M</button>
         </header>
+        <!-- END HEADER-->
         <!-- BEGIN BODY -->
 m4_undivert([BODY])[]dnl
         <!-- END   BODY -->
