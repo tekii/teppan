@@ -4,19 +4,6 @@ body {
 h1, h2 {
     font-family: 'IBM Plex Sans', sans-serif;
 }
-header .logo-tex {
-    fill:#666666;
-    fill-rule: nonzero;
-}
-header .logo-bird {
-    fill:#5582f3;
-    fill-rule: evenodd;
-}
-footer  .logo-text::shadow {
-    fill:red;
-    fill-rule: nonzero;
-}
-
 header {
     display: grid;
     grid-template-columns: auto auto;
@@ -27,14 +14,16 @@ header, footer, amp-sidebar, section {
 }
 footer {
     color: white;
-    background-color: #666666;
+    background-color: #333;
     text-decoration: none;
     font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 80%;
 }
 footer ul, amp-sidebar ul {
     list-style-type: none;
-    /*text-align: left;*/
-    padding-left: 0pt;
+    /*text-align: left;
+    margin-block-start: 0em;
+    margin-block-end: 0em;*/
 }
 footer a:link, footer a:visited, footer a:hover {
     color: white;
@@ -52,6 +41,8 @@ amp-sidebar ul {
     display: grid;
     justify-content: space-between;
     grid-gap: 1em;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
 }
 use.tekii-layout-header-logo {
     fill:#666666;
@@ -77,4 +68,3 @@ use.tekii-layout-footer-logo {
         height: 100px;
     }
 }
-

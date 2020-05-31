@@ -1,0 +1,20 @@
+__WITH_LAYOUT(,[
+    __WITH_DOMAIN([www.tekii.com.ar],[
+        __WITH_LANG([__ES__],[
+            __MAKE_PAGE([__LOCALIZE_URL_PATH])
+        ])
+    ])
+])
+
+m4_divert_text([HEADER],[
+<title>TEKii SRL - Novedades</title>
+])
+
+m4_divert_push([BODY])dnl
+dnl<body>
+    <section id="news">
+        <h1>__NAV_ITEM(__LANG__,[Novedades],[__LOCAL_URL_ID__],[])</h1>
+        <p>Lorem ipsum dolor sit amet,&nbsp;consectetur adipiscing elit,&nbsp;sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,&nbsp;quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,&nbsp;sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </section>
+dnl</body>
+m4_divert_pop([BODY])dnl

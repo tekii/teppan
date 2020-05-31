@@ -12,13 +12,63 @@ __WITH_LAYOUT(,[
 ])
 
 m4_divert_push([HEADER])dnl
-    <title>TEKii SRL - __ESENBR([About Us],[Nuestra Historia])</title>
-    <meta name="keywords" content="tekii,trazabilidad,traceability,anmat">
+        <title>TEKii SRL - __ESENBR([About Us],[Nuestra Historia])</title>
+        <meta name="keywords" content="tekii,trazabilidad,traceability,anmat">
 m4_divert_pop([HEADER])
 
+m4_divert_push([AMP_CUSTOM_ELEMENTS])dnl
+        <script async custom-element="amp-position-observer" src="https://cdn.ampproject.org/v0/amp-position-observer-0.1.js"></script>
+        <script async custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js"></script>
+m4_divert_pop([AMP_CUSTOM_ELEMENTS])dnl
+
+m4_divert_push([AMP_CUSTOM_STYLES])dnl
+dnl<style>
+        :root {
+            --color-primary: #005AF0;
+            --color-secondary: #00DCC0;
+            --color-text-light: #fff;
+        
+            --space-2: 1rem;   /* 16px */
+        
+            --box-shadow-1: 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 1px -1px rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+          }
+          .scrollToTop {
+            color: var(--color-text-light);
+            font-size: 1.4em;
+            box-shadow: var(--box-shadow-1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            outline: none;
+            background: var(--color-primary);
+            z-index: 9999;
+            bottom: var(--space-2);
+            right: var(--space-2);
+            position: fixed;
+            opacity: 0;
+            visibility: hidden;
+          }
+          /* we move the anchor down to componsate the fixed header */
+          .target {
+            position: relative;
+          }
+          .target-anchor {
+            position: absolute;
+            top: -72px;
+            left: 0;
+          }
+dnl</style>
+m4_divert_pop([AMP_CUSTOM_STYLES])
+
 m4_divert_push([BODY])dnl 
+dnl<body>
 <section id="about">
-    <h1>__NAV_ITEM(__LANG__,[__ESENBR([Nuestra Historia],[About Us],[])],[__LOCAL_URL_ID__],[])</h1>
+    <h1 class="target">
+        <a class="target-anchor"id="top"></a>
+        __NAV_ITEM(__LANG__,[__ESENBR([Nuestra Historia],[About Us],[])],[__LOCAL_URL_ID__],[])dnl
+        <amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer>
+    </h1>
 __ESENBR([dnl
     <p>__TEKII_SRL__ inició actividades en el año 2006 con el objetivo de diseñar e implementar el sistema que registrase los medicamentos distribuidos por los convenios oncológicos,&nbsp;cuatro meses después entró en operación TrazAudit®,&nbsp;el Sistema de Trazabilidad de la industria.</p>
     <p>Tras ocho años de operación ininterrumpida,&nbsp;la tercera generación de <strong>TrazAudit®</strong> acumula 14.790.801 transacciones,&nbsp;20.147.998 medicamentos identificados unívocamente de entre 3.399 especialidades medicinales y afectando 515.784 afiliados.</p>
@@ -39,8 +89,44 @@ __ESENBR([dnl
     <p>Lorem ipsum dolor sit amet,&nbsp;consectetur adipiscing elit,&nbsp;sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,&nbsp;quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,&nbsp;sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 ])dnl
 dnl <div>
-dnl     <a href="#">GET STARTED</a>
-dnl     <a href="#">MORE INFO</a>
+dnl     <a href="[#]">GET STARTED</a>
+dnl     <a href="[#]">MORE INFO</a>
 dnl </div>
 </section>
+<amp-animation id="showAnim" layout="nodisplay">
+    <script type="application/json">
+    {
+        "duration": "200ms",
+        "fill": "both",
+        "iterations": "1",
+        "direction": "alternate",
+        "animations": [{
+            "selector": "#scrollToTopButton",
+            "keyframes": [{
+            "opacity": "1",
+            "visibility": "visible"
+            }]
+        }]
+    }
+    </script>
+</amp-animation>
+<amp-animation id="hideAnim" layout="nodisplay">
+    <script type="application/json">
+    {
+        "duration": "200ms",
+        "fill": "both",
+        "iterations": "1",
+        "direction": "alternate",
+        "animations": [{
+            "selector": "#scrollToTopButton",
+            "keyframes": [{
+            "opacity": "0",
+            "visibility": "hidden"
+            }]
+        }]
+    }
+    </script>
+</amp-animation>
+<button id="scrollToTopButton" on="tap:top.scrollTo(duration=200)" class="scrollToTop">⌃</button>
+dnl</body>
 m4_divert_pop([BODY])
