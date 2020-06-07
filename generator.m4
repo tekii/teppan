@@ -5,7 +5,7 @@ m4_define([_m4_divert(DEFAULT)], 0)
 m4_define([_m4_divert(MAKEFILE)], 1)
 dnl m4_define([_m4_divert(SITEMAP)], 2)
 m4_define([_m4_divert(HEAD)], 3)
-m4_define([_m4_divert(BODY)], 4)
+m4_define([_m4_divert(MAIN)], 4)
 m4_define([_m4_divert(AMP_CUSTOM_STYLES)], 5)
 m4_define([_m4_divert(AMP_CUSTOM_ELEMENTS)], 6)
 m4_define([_m4_divert(NAVIGATION)], 7)
@@ -15,8 +15,10 @@ m4_define([_m4_divert(DEFERRED_MK)], 9)
 dnl
 dnl
 dnl
-m4_define([__BODY_PUSH__],[m4_divert_push([BODY])<!-- ])
-m4_define([__BODY_POP__],[ -->m4_newline([])[]m4_divert_pop([BODY])])
+m4_define([__MAIN_PUSH__],[m4_divert_push([MAIN])<!-- ])
+m4_define([__MAIN__POP__],[ -->m4_newline([])[]m4_divert_pop([MAIN])])
+m4_define([__HEAD_PUSH__],[m4_divert_push([HEAD])<!-- ])
+m4_define([__HEAD__POP__],[ -->m4_newline([])[]m4_divert_pop([HEAD])])
 
 dnl
 dnl CONSTANTS
@@ -346,7 +348,7 @@ m4_cleardivert([MAKEFILE])
 m4_cleardivert([DEFERRED_MK])
 dnl m4_cleardivert([SITEMAP])
 m4_cleardivert([HEAD])
-m4_cleardivert([BODY])
+m4_cleardivert([MAIN])
 m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([NAVIGATION])

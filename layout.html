@@ -4,8 +4,6 @@ m4_divert_push([HTML])dnl
 <html ⚡ lang="__LANG__">
     <head>
         <meta charset="utf-8">
-dnl        <!-- m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__) -->
-dnl __RENDER_SET(m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__),[dnl
         <!-- m4_quote(__ALTERNATES__) -->
 __RENDER_SET(m4_quote(__ALTERNATES__),[dnl
         <link rel="alternate" hreflang="$1" href="__ABSOLUTE($3)"/>
@@ -45,6 +43,9 @@ m4_undivert([AMP_CUSTOM_STYLES])[]dnl
         <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="right">
         <div class="builder-sidebar" id="builder-sidebar">
             <button on="tap:sidebar.close" class="close-sidebar">X</button>
+
+            <nav toolbar="(min-width: 767px)" toolbar-target="desktop-sidebar">
+
             <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
 __RENDER_SET([__NAV__ITEMS__],[dnl
 m4_if($1,__LANG__,[dnl
@@ -53,7 +54,6 @@ m4_if($1,__LANG__,[dnl
                 </li>
 ])dnl
 ])dnl
-dnl __RENDER_SET(m4_quote(__[]__UP(__STEM__)[]_ALTERNATES__),[dnl
 __RENDER_SET([__ALTERNATES__],[dnl
 m4_if(__LANG__,$1,[],[dnl
                 <!-- $1 - $2 - $3 -->
@@ -65,6 +65,7 @@ m4_if(__LANG__,$1,[],[dnl
 ])dnl
 ])dnl
             </ul>
+            </nav>
         </div>
         </amp-sidebar>
         <!-- END SIDEBAR -->
@@ -97,9 +98,10 @@ dnl         </nav>
             <button on="tap:sidebar.toggle" class="">M</button>
         </header>
         <!-- END HEADER-->
-        <!-- BEGIN BODY -->
-m4_undivert([BODY])[]dnl
-        <!-- END   BODY -->
+        <main>
+            <aside id="desktop-sidebar"></aside>
+m4_undivert([MAIN])[]dnl <!-- MAIN DIVERSION WILL BE INSERTED HERE -->
+        </main>
         <!-- BEGIN FOOTER -->
         <footer>
             <div class="grid-container">

@@ -27,12 +27,10 @@ dnl<style>
             --color-primary: #005AF0;
             --color-secondary: #00DCC0;
             --color-text-light: #fff;
-        
             --space-2: 1rem;   /* 16px */
-        
             --box-shadow-1: 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 1px -1px rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
-          }
-          .scrollToTop {
+        }
+        .scrollToTop {
             color: var(--color-text-light);
             font-size: 1.4em;
             box-shadow: var(--box-shadow-1);
@@ -48,24 +46,24 @@ dnl<style>
             position: fixed;
             opacity: 0;
             visibility: hidden;
-          }
-          /* we move the anchor down to componsate the fixed header */
-          .target {
+        }
+        /* we move the anchor down to componsate the fixed header */
+        .target {
             position: relative;
-          }
-          .target-anchor {
+        }
+        .target-anchor {
             position: absolute;
             top: -72px;
             left: 0;
-          }
+        }
 dnl</style>
 m4_divert_pop([AMP_CUSTOM_STYLES])
 
-m4_divert_push([BODY])dnl 
+m4_divert_push([MAIN])dnl 
 dnl<body>
 <section id="about">
     <h1 class="target">
-        <a class="target-anchor"id="top"></a>
+        <a class="target-anchor" id="top"></a>
         __NAV_ITEM(__LANG__,[__ESENBR([Nuestra Historia],[About Us],[])],[__LOCAL_URL_ID__],[])dnl
         <amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer>
     </h1>
@@ -103,8 +101,8 @@ dnl </div>
         "animations": [{
             "selector": "#scrollToTopButton",
             "keyframes": [{
-            "opacity": "1",
-            "visibility": "visible"
+                "opacity": "1",
+                "visibility": "visible"
             }]
         }]
     }
@@ -120,8 +118,8 @@ dnl </div>
         "animations": [{
             "selector": "#scrollToTopButton",
             "keyframes": [{
-            "opacity": "0",
-            "visibility": "hidden"
+                "opacity": "0",
+                "visibility": "hidden"
             }]
         }]
     }
@@ -129,4 +127,4 @@ dnl </div>
 </amp-animation>
 <button id="scrollToTopButton" on="tap:top.scrollTo(duration=200)" class="scrollToTop">⌃</button>
 dnl</body>
-m4_divert_pop([BODY])
+m4_divert_pop([MAIN])
