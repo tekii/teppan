@@ -27,7 +27,6 @@ dnl<style>
             --color-primary: #005AF0;
             --color-secondary: #00DCC0;
             --color-text-light: #fff;
-            --space-2: 1rem;   /* 16px */
             --box-shadow-1: 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 1px -1px rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
         }
         .scrollToTop {
@@ -41,8 +40,8 @@ dnl<style>
             outline: none;
             background: var(--color-primary);
             z-index: 9999;
-            bottom: var(--space-2);
-            right: var(--space-2);
+            bottom: var(--big-air);
+            right: var(--big-air);
             position: fixed;
             opacity: 0;
             visibility: hidden;
@@ -63,7 +62,7 @@ m4_divert_push([MAIN])dnl
 dnl<body>
 <section id="about">
     <h1 class="target">
-        <a class="target-anchor" id="top"></a>
+dnl        <a class="target-anchor" id="top"></a>
         __NAV_ITEM(__LANG__,[__ESENBR([Nuestra Historia],[About Us],[])],[__LOCAL_URL_ID__],[])dnl
         <amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer>
     </h1>
@@ -125,6 +124,6 @@ dnl </div>
     }
     </script>
 </amp-animation>
-<button id="scrollToTopButton" on="tap:top.scrollTo(duration=200)" class="scrollToTop">⌃</button>
+<button id="scrollToTopButton" on="tap:main-scroll.scrollTo(duration=200),about.scrollTo(duration=200)" class="scrollToTop">⌃</button>
 dnl</body>
 m4_divert_pop([MAIN])

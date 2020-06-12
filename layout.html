@@ -26,7 +26,7 @@ m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
         <!-- END   amp-custom elements -->
         <!-- BEGIN amp-custom styles -->
         <style amp-custom>
-__INCL([amp-custom.css])[]dnl            
+__INCL([amp-custom.css])[]dnl
 m4_changequote(«,»)«»dnl
         /* */
 m4_changequote([,])[]dnl
@@ -41,12 +41,11 @@ m4_undivert([AMP_CUSTOM_STYLES])[]dnl
     <body>
         <!-- BEGIN SIDEBAR -->
         <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="right">
-        <div class="builder-sidebar" id="builder-sidebar">
             <button on="tap:sidebar.close" class="close-sidebar">X</button>
 
-            <nav toolbar="(min-width: 767px)" toolbar-target="desktop-sidebar">
+            <nav toolbar="(min-width: 768px)" toolbar-target="desktop-sidebar">
 
-            <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
+            <ul>
 __RENDER_SET([__NAV__ITEMS__],[dnl
 m4_if($1,__LANG__,[dnl
                 <li class="nav-item">
@@ -66,10 +65,8 @@ m4_if(__LANG__,$1,[],[dnl
 ])dnl
             </ul>
             </nav>
-        </div>
         </amp-sidebar>
-        <!-- END SIDEBAR -->
-        <!-- BEGIN HEADER -->
+        <!-- END SIDEBAR -- BEGIN HEADER -->
         <header>
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none;" fill="none" stroke="none" stroke-linecap="square" stroke-miterlimit="10">
                 <symbol id="tekii-logo" viewBox="0.0 0.0 576.0 576.0">
@@ -80,31 +77,20 @@ m4_if(__LANG__,$1,[],[dnl
             <svg class="layout-logo">
                 <use id="header-layout-logo" xlink:href="#tekii-logo"/>
             </svg>
-dnl         <nav class="">
-dnl             <div class="container">
-dnl                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-dnl                     <ul class="navbar-nav nav-dropdown navbar-nav-top-padding" data-app-modern-menu="true">
-dnl __RENDER_SET([__NAV__ITEMS__],[dnl                    
-dnl m4_if($1,__LANG__,[dnl
-dnl                         <li class="nav-item">
-dnl                             <a class="link" href="__HREF([$3])[#]$4">$2</a>
-dnl                         </li>
-dnl ])dnl
-dnl ])dnl
-dnl                     </ul>
-dnl                 </div>
-dnl             </div>
-dnl         </nav>
+            <div id=""></div>
             <button on="tap:sidebar.toggle" class="">M</button>
         </header>
-        <!-- END HEADER-->
-        <main>
-            <aside id="desktop-sidebar"></aside>
+        <!-- END HEADER -- BEGIN DESKTOP-SIDEBAR -->
+        <div id="desktop-sidebar">
+            <svg class="layout-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use id="header-layout-logo" xlink:href="#tekii-logo"/></svg>
+        </div>
+        <!-- END DESKTOP-SIDEBAR -- BEGIN MAIN -->
+<main id="main-scroll">
 m4_undivert([MAIN])[]dnl <!-- MAIN DIVERSION WILL BE INSERTED HERE -->
-        </main>
-        <!-- BEGIN FOOTER -->
+</main>
+        <!-- END MAIN -- BEGIN FOOTER -->
         <footer>
-            <div class="grid-container">
+            <div>
                     <!--
                         <amp-img src="__ASSET([img/logo.png])" layout="responsive" width="75" height="75" class="i-amphtml-element i-amphtml-layout-responsive i-amphtml-layout-size-defined i-amphtml-layout">
                             dnl<i-amphtml-sizer style="display: block; padding-top: 100%;"></i-amphtml-sizer>
@@ -128,6 +114,8 @@ m4_if($1,__LANG__,[dnl
             </svg>
 m4_divert_push(KILL)
             <div class="ico-wrapper">
+
+                <a href="http://qr.afip.gob.ar/?qr=sifPTfj7txtxzvCuOMriYA,," target="_F960AFIPInfo"><img src="http://www.afip.gob.ar/images/f960/DATAWEB.jpg" border="0"></a>
                   <div class="card-img">
                       <a href="https://www.linkedin.com/company/tekii-srl/" target="_blank">
                           <span class="tky-iconfont fa-linkedin fa"></span>
