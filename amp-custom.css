@@ -87,22 +87,29 @@ div#desktop-sidebar {
         font-family: inherit;
         font-size: inherit;
         cursor: pointer;
-        padding: var(--small-air) var(--small-air) var(--small-air) var(--small-air);
+        padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
     }
     div.lang-dd div {
         display: none;
         position: absolute;
         right: 0;
-        background-color: inherit;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        background-color: lightgrey;
+        /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
         z-index: 1;
     }
     div.lang-dd button:hover + div, div.lang-dd div:hover {
-        display: block;
+        display: flex;
     }
     div.lang-dd div a {
-        padding: var(--small-air) var(--small-air) var(--small-air) var(--small-air);
+        padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
     }
+    div.lang-dd div a:hover {
+        background-color: gray;
+    }
+    div.lang-dd:hover button {
+        background-color: lightgray;
+    }
+    
 }
 @media only screen and (min-width: 768px) {
     .grid-container {
