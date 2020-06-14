@@ -9,12 +9,12 @@ body {
 h1:nth-of-type(1) {
     margin-block-start: 0em;
 }
-h1, h2 {
+header, h1, h2 {
     font-family: 'IBM Plex Sans', sans-serif;
 }
 header {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto auto auto;
     justify-content: space-between;
 }
 header, footer, amp-sidebar, section {
@@ -76,6 +76,32 @@ div#desktop-sidebar {
     }
     body {
         flex-direction: column;
+    }
+    div.lang-dd {
+        position: relative;
+        display:inline-block;
+    }
+    div.lang-dd button {
+        border: none;
+        background-color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        cursor: pointer;
+        padding: var(--small-air) var(--small-air) var(--small-air) var(--small-air);
+    }
+    div.lang-dd div {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: inherit;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+    div.lang-dd button:hover + div, div.lang-dd div:hover {
+        display: block;
+    }
+    div.lang-dd div a {
+        padding: var(--small-air) var(--small-air) var(--small-air) var(--small-air);
     }
 }
 @media only screen and (min-width: 768px) {
