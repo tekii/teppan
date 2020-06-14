@@ -11,4 +11,4 @@ __pycache__
 BUILD
 VENDOR
 notas.txt
-.attic/blue-logo.svg
+.attic/*
