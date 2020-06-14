@@ -88,6 +88,7 @@ div#desktop-sidebar {
         font-size: inherit;
         cursor: pointer;
         padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
+        /*align-items: center;*/
     }
     div.lang-dd div {
         display: none;

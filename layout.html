@@ -15,8 +15,9 @@ m4_if(__LANG__,$1,[dnl
         <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
         <meta name="msvalidate.01" content="__MICROSOFT_VALIDATE_KEY__" />
         <link rel="shortcut icon" href="__ASSET(favicon.ico,__ROOT__,__TARGET__)" type="image/x-icon" />
-dnl     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Serif:ital@0;1&display=swap">
+dnl     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Serif:ital@0;1&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- BEGIN HEAD divert -->
 m4_undivert([HEAD])[]dnl 
         <!-- END   HEAD divert -->
@@ -75,7 +76,7 @@ m4_if(__LANG__,$1,[],[dnl
                 <use id="header-layout-logo" xlink:href="#tekii-logo"/>
             </svg>
             <div class="lang-dd">
-                <button>__LANG_NAME__</button>
+                <button><i class="material-icons" style="vertical-align: bottom;font-size: 28px;">public</i>&nbsp;__LANG_NAME__</button>
                 <div>
 __RENDER_SET([__ALTERNATES__],[dnl
 m4_if(__LANG__,$1,[],[dnl
