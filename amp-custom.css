@@ -12,11 +12,6 @@ h1:nth-of-type(1) {
 header, h1, h2 {
     font-family: 'IBM Plex Sans', sans-serif;
 }
-header {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    justify-content: space-between;
-}
 header, footer, amp-sidebar, section {
     padding: var(--big-air);
 }
@@ -45,13 +40,6 @@ amp-sidebar ul {
     list-style-type: none;
     padding-left: 0pt;
 }
-.grid-container {
-    display: grid;
-    justify-content: space-between;
-    grid-gap: var(--big-air);
-    margin-block-start: 0em;
-    margin-block-end: 0em;
-}
 #header-layout-logo {
     --logo-text-color:#666666;
     --logo-bird-color:#5582f3;
@@ -60,37 +48,40 @@ amp-sidebar ul {
     --logo-text-color:white;
     --logo-bird-color:white;
 }
-div#desktop-sidebar {
-    flex-direction: column;
+
+svg.ui-element {
+    width: 2rem;
+    height: 2rem;
 }
 @media only screen and (max-width: 767px) {
-    .grid-container {
-        grid-template-columns: auto;
-    }
     .layout-logo {
         width: 75px;
         height: 75px;
     }
     amp-sidebar {
-        width: 300px;
+        width: 301px;
     }
     body {
         flex-direction: column;
+    }
+    header {
+        display: flex;
+        /*grid-template-columns: auto auto auto;
+        justify-content: space-between;*/
     }
     div.lang-dd {
         position: relative;
         display:inline-block;
     }
-    div.lang-dd button {
+    /*div.lang-dd button {
         border: none;
         background-color: inherit;
         font-family: inherit;
         font-size: inherit;
         cursor: pointer;
         padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
-        /*align-items: center;*/
-    }
-    div.lang-dd div {
+    }*/
+    div.lang-dd div:nth-of-type(2) {
         display: none;
         position: absolute;
         right: 0;
@@ -98,24 +89,37 @@ div#desktop-sidebar {
         /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
         z-index: 1;
     }
-    div.lang-dd button:hover + div, div.lang-dd div:hover {
-        display: flex;
+    header div.lang-dd div:hover + div, div.lang-dd div:hover {
+        display: block;
     }
-    div.lang-dd div a {
+    /*div.lang-dd div a {
         padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
-    }
+    }*/
     div.lang-dd div a:hover {
         background-color: gray;
     }
-    div.lang-dd:hover button {
+    div.lang-dd:hover div {
         background-color: lightgray;
     }
-    
+    header div, amp-sidebar div {
+        border:none;
+        background: none;
+        cursor: pointer;
+        padding: unset;
+    }
+    header div:focus, amp-sidebar div:focus {
+        outline: none;
+    }
+    header div svg, amp-sidebar div svg {
+        outline:none;
+        /*transition: transform 0.1s linear;*/
+        height: 36px;
+    }
+    header div:hover svg, amp-sidebar div:hover svg {
+        transform:scale(1.1);
+    }
 }
 @media only screen and (min-width: 768px) {
-    .grid-container {
-        grid-template-columns: auto auto auto;
-    }
     .layout-logo {
         width: 100px;
         height: 100px;
@@ -128,8 +132,9 @@ div#desktop-sidebar {
         display: none;
     }
     div#desktop-sidebar {
-        min-width: 300px;
-        width: 300px;
+        flex-direction: column;
+        min-width: 299px;
+        width: 303px;
         flex-grow: 1;
     }
     main {
