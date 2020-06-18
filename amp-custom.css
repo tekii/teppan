@@ -49,25 +49,30 @@ amp-sidebar ul {
     --logo-bird-color:white;
 }
 
-svg.ui-element {
-    width: 2rem;
-    height: 2rem;
-}
 @media only screen and (max-width: 767px) {
     .layout-logo {
         width: 75px;
         height: 75px;
     }
     amp-sidebar {
-        width: 301px;
+        width: 300px;
     }
     body {
         flex-direction: column;
     }
     header {
         display: flex;
+        align-items: center;
         /*grid-template-columns: auto auto auto;
         justify-content: space-between;*/
+    }
+    svg.ui-element, header svg:nth-of-type(2) {
+        width: 2rem;
+        height: 2rem;
+    }
+    span.text-isologo {
+        font-family:'Days One', sans-serif; 
+        font-size: 36px;
     }
     div.lang-dd {
         position: relative;
@@ -81,7 +86,7 @@ svg.ui-element {
         cursor: pointer;
         padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
     }*/
-    div.lang-dd div:nth-of-type(2) {
+    div.lang-dd > div {
         display: none;
         position: absolute;
         right: 0;
@@ -89,7 +94,7 @@ svg.ui-element {
         /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
         z-index: 1;
     }
-    header div.lang-dd div:hover + div, div.lang-dd div:hover {
+    div.lang-dd:hover div, div.lang-dd div:hover {
         display: block;
     }
     /*div.lang-dd div a {
@@ -101,21 +106,36 @@ svg.ui-element {
     div.lang-dd:hover div {
         background-color: lightgray;
     }
-    header div, amp-sidebar div {
+    header * {
+        user-select: none;
+        -moz-user-select: none;
+        outline: none;
+    }
+    header svg:focus, amp-sidebar svg:focus {
+        outline: none;
+        /*background: none;
+        border: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;*/
+
+    }
+    header svg, amp-sidebar svg {
+        /*-moz-user-select: none;
+        -webkit-user-select: none;*/
+        outline:none;
         border:none;
         background: none;
         cursor: pointer;
         padding: unset;
-    }
-    header div:focus, amp-sidebar div:focus {
-        outline: none;
-    }
-    header div svg, amp-sidebar div svg {
-        outline:none;
         /*transition: transform 0.1s linear;*/
-        height: 36px;
+        /*height: 36px;*/
+        -webkit-tap-highlight-color: transparent;
+        /*user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;*/
+        margin-inline-end: 1rem;
     }
-    header div:hover svg, amp-sidebar div:hover svg {
+    header svg.ui-element:hover, amp-sidebar svg.ui-element:hover {
         transform:scale(1.1);
     }
 }
