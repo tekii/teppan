@@ -90,6 +90,7 @@ dnl     <a href="[#]">GET STARTED</a>
 dnl     <a href="[#]">MORE INFO</a>
 dnl </div>
 </section>
+m4_divert_push([EPILOG])dnl
 <amp-animation id="showAnim" layout="nodisplay">
     <script type="application/json">
     {
@@ -124,6 +125,7 @@ dnl </div>
     }
     </script>
 </amp-animation>
+m4_divert_pop([EPILOG])dnl
 <button id="scrollToTopButton" on="tap:main-scroll.scrollTo(duration=200),about.scrollTo(duration=200)" class="scrollToTop">⌃</button>
 dnl</body>
 m4_divert_pop([MAIN])

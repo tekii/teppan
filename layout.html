@@ -25,8 +25,8 @@ dnl __INCL([meta.json])[]dnl <!-- -->
 m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
         <!-- END amp-custom elements BEGIN amp-custom styles -->
         <style amp-custom>
-/*__MAGIC_COMMENT_TO_AVOID_MESS_WITH_CSS_HIGHLIGHT_WHILE_INCLUDE_AMP_CUSTOM_CSS__*/
-/*__MAGIC_COMMENT_TO_AVOID_MESS_WITH_CSS_HIGHLIGHT_WHILE_UNDIVERT_AMP_CUSTOM_STYLES__*/
+/*__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_INCLUDE_AMP_CUSTOM_CSS__*/
+/*__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_UNDIVERT_AMP_CUSTOM_STYLES__*/
         </style>
         <!-- END amp-custom styles -->
         <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
@@ -66,8 +66,8 @@ m4_undivert([AMP_CUSTOM_ELEMENTS])[]dnl
                 d="M 8,8 504,504 M 8.0000001,8 H 504 c 0,0 0,0 0,10e-8 V 504 c 0,0 0,0 0,0 H 8.0000001 C 8,504 8,504 8,504 V 8.0000001 C 8,8 8,8 8.0000001,8 Z"/>
             </symbol>
         </svg>
-        <!-- END LOGO DEF -- BEGIN SIDEBAR -->
-        <amp-sidebar id="sidebar" class="aa" layout="nodisplay" side="left">
+        <!-- END LOGO DEF -- BEGIN LEFT SIDEBAR -->
+        <amp-sidebar id="sidebar" class="ajja" layout="nodisplay" side="left">
             <svg on="tap:sidebar.close" class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
 
             <nav toolbar="(min-width: 768px)" toolbar-target="desktop-sidebar">
@@ -93,12 +93,26 @@ m4_if(__LANG__,$1,[],[dnl
             </ul>
             </nav>
         </amp-sidebar>
-        <!-- END SIDEBAR -- BEGIN HEADER -->
+        <!-- END LEFT SIDEBAR -- BEGIN RIGHT SIDEBAR -->
+        <amp-sidebar id="lang-sidebar" layout="nodisplay" side="right">
+            <svg on="tap:lang-sidebar.close" class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
+            <nav toolbar="(min-width: 768px)" toolbar-target="desktop-lang-sidebar">
+            <ul>
+__RENDER_SET([__ALTERNATES__],[dnl
+                <li>
+                    <a m4_if(__LANG__,$1,[class="selected" href="[#]"],[href="__HREF([$3])"])>__LANG_NAME($1)</a>
+                </li>
+])dnl
+            </ul>
+            </nav>
+        </amp-sidebar>
+        <!-- END RIGHT SIDEBAR -- BEGING HEADER -->
         <header>
             <svg on="tap:sidebar.toggle" role="button" tabindex="0" class="ui-element"><use xlink:href="[#]hamburger"/></svg>
             <svg class="layout-logo"><use xlink:href="[#]bird2"/></svg>
 dnl         <svg ><use id="header-layout-logo" xlink:href="[#]tekii-logo"/></svg>
             <span class="text-isologo">TEKii</span>
+            <svg on="tap:lang-sidebar.toggle" role="button" tabindex="2" class="ui-element"><use xlink:href="[#]language"/></svg>
             <div class="lang-dd" style="display: contents;" role="button" tabindex="1">
                 <svg class="ui-element"><use xlink:href="[#]language"/></svg>
                 <div>
@@ -175,7 +189,9 @@ m4_divert_push(KILL)
 m4_divert_pop(KILL)dnl
             </div>
         </footer>
-        <!-- END FOOTER -->
+        <!-- END FOOTER -- BEGIN EPILOG -->
+m4_undivert([EPILOG])[]dnl
+        <!-- END EPILOG -->
 m4_divert_push(KILL)
         <!--<script>m4_changequote(«,»)«»dnl
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

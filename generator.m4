@@ -11,6 +11,7 @@ m4_define([_m4_divert(AMP_CUSTOM_ELEMENTS)], 6)
 m4_define([_m4_divert(NAVIGATION)], 7)
 m4_define([_m4_divert(HTML)], 8)
 m4_define([_m4_divert(DEFERRED_MK)], 9)
+m4_define([_m4_divert(EPILOG)], 10)
 
 dnl
 dnl
@@ -353,3 +354,4 @@ m4_cleardivert([AMP_CUSTOM_STYLES])
 m4_cleardivert([AMP_CUSTOM_ELEMENTS])
 m4_cleardivert([NAVIGATION])
 m4_cleardivert([HTML])
+m4_cleardivert([EPILOG])

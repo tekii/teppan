@@ -169,8 +169,10 @@ amp-sidebar ul {
 
 .amp-sidebar-toolbar-target-shown {
     background-color:pink;
+    /*display: none;*/
 }
 
 .amp-sidebar-toolbar-target-hidden {
     background-color:red;
+    /*display: block;*/
 }
