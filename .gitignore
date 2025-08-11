@@ -5,7 +5,7 @@ tmp
 .vscode/*
 www.code-workspace
 *.patch
-.venv
+*venv*
 *.egg-info
 __pycache__
 BUILD
