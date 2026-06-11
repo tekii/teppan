@@ -1,4 +1,15 @@
+dnl Include the file to be tested
+dnl
 m4_include([generator.m4])dnl
+dnl Set the TESTS out divert
+m4_divert([TESTS])dnl
+
+dnl
+dnl ASSERT_EQ(NAME, ACTUAL, EXPECTED) -- self-checking test helper.
+dnl pass ACTUAL as a macro call (unquoted) so it is expanded before
+dnl comparison; prints PASS/FAIL so `make test` can grep for FAIL.
+dnl
+m4_define([__ASSERT_EQ],[m4_if([$2],[$3],[PASS $1],[FAIL $1: got [$2] expected [$3]])])
 
 #m4_changequote(`«', `»')#m4_fatal(«bye»)
 dnlm4_translit(«a.html b.html   c/d.html»,« »,«,»)
@@ -12,12 +23,13 @@ m4_bregexp([index.html],       [\([^/]+\..+\)$], [\1])
 m4_bregexp([en/about.html],    [\([^/]+\..+\)$], [\1])
 m4_bregexp([en/en/about.html], [\([^/]+\..+\)$], [\1])
 
-|__HREF([/tmp/bucket/es/about.html],[/tmp/bucket/en])|
+__ASSERT_EQ([HREF relative to base],__HREF([/tmp/bucket/es/about.html],[/tmp/bucket/en]),[../es/about.html])
+dnl __HREF([./img/logo.png]) depends on the build's PWD (relative to __TDIR__), kept for manual inspection only:
 |__HREF([./img/logo.png])|
 
-|__ABSOLUTE([__DOC__/tests.com/en/about.html])|
-|__ABSOLUTE([__DOC__/tests.com/about.html])|
-|__ABSOLUTE([__DOC__/index.html])|
+__ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__DOC__/tests.com/en/about.html]),[http://tests.com/en/about.html])
+__ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__DOC__/tests.com/about.html]),[http://tests.com/about.html])
+__ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__DOC__/index.html]),[http://index.html])
 
 
 m4_foreach_w([__X__], m4_unquote([__LIST__]), [==__X__==])

@@ -12,6 +12,7 @@ m4_define([_m4_divert(NAVIGATION)], 7)
 m4_define([_m4_divert(HTML)], 8)
 m4_define([_m4_divert(DEFERRED_MK)], 9)
 m4_define([_m4_divert(EPILOG)], 10)
+m4_define([_m4_divert(TESTS)], 11)
 
 dnl
 dnl
@@ -345,7 +346,10 @@ m4_case(__PHASE__,
 [GENERATE_HTML],[m4_divert_text([DEFAULT],[m4_undivert([HTML])])],
 [GENERATE_DEFERRED_MK],[m4_divert_text([DEFAULT],[m4_undivert([DEFERRED_MK])])],
 [MAKEPUB],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
-[m4_fatal([Unmached [__PHASE__]:__PHASE__],[1])])
+
+[TEST_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([TESTS])])],
+
+[m4_fatal(Unmached! [__PHASE__]==__PHASE__)])
 dnl DISCARD ALL OFF-PHASE TEXT
 m4_cleardivert([MAKEFILE])
 m4_cleardivert([DEFERRED_MK])

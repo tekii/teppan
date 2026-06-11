@@ -193,10 +193,12 @@ test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__
 test: generator_test.m4
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
 	--debug= \
-	-D __PHASE__=MAKE__BUILD \
+	-D __PHASE__=TEST_PHASE \
 	-D __TDIR__="/tmp/test" -D __DOC__=$(__DOC__) -D __ZIP__=$(__ZIP__) \
 	-D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
-	generator_test.m4
+	generator_test.m4 > /tmp/generator_test.out
+	@cat /tmp/generator_test.out
+	@! grep -q '^FAIL' /tmp/generator_test.out
 
 .IGNORE: clean cleangzip realclean obliterate  
 .DEFAULT_GOAL := build
