@@ -9,7 +9,6 @@ setup(
     entry_points='''
         [console_scripts]
         helper-css-remap=helper:css_remap
-        helper-url-absolute=helper:url_absolute
         helper-otro=helper:otro
     ''',
 )

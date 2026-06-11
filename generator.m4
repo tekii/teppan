@@ -63,8 +63,10 @@ m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relati
 m4_define([__RELATIVE],[$1])dnl
 #
 # ABS(URL,[BASE|SCHEME]) MACRO
+# turns a __DOC__-relative filesystem path into an absolute URL by
+# treating the first path component (relative to __DOC__) as the host
 #
-m4_define([__ABSOLUTE],[m4_esyscmd_s(helper-url-absolute --scheme http --start __DOC__ --path $1)])dnl
+m4_define([__ABSOLUTE],[http://__HREF([$1],__DOC__)])dnl
 
 dnl[m4_divert_text([PAPER],[<!-- __file__ __line__ --$1-- -->])[]
 

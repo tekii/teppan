@@ -15,6 +15,10 @@ m4_bregexp([en/en/about.html], [\([^/]+\..+\)$], [\1])
 |__HREF([/tmp/bucket/es/about.html],[/tmp/bucket/en])|
 |__HREF([./img/logo.png])|
 
+|__ABSOLUTE([__DOC__/tests.com/en/about.html])|
+|__ABSOLUTE([__DOC__/tests.com/about.html])|
+|__ABSOLUTE([__DOC__/index.html])|
+
 
 m4_foreach_w([__X__], m4_unquote([__LIST__]), [==__X__==])
 
