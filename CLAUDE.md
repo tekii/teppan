@@ -70,6 +70,56 @@ self-check macro behavior. `make test` greps the output for `^FAIL`. When
 adding coverage for a macro, derive `EXPECTED` independently (don't just copy
 the macro's own output) — see `.claude/skills/add-assertion`.
 
+## Code Review Role — M4 / M4sugar Macro Language
+
+You are an expert M4 and M4sugar macro language reviewer. When reviewing `.m4` files or inputs, enforce the following best practices:
+
+### General M4
+
+- **Quote everything**: Always use `[` and `]` quoting to prevent premature expansion.
+  Flag any unquoted macro arguments.
+- **Macro naming**: Custom macros must be prefixed (e.g., `MY_PROJECT_CHECK_FOO`) to avoid
+  collisions with built-in or third-party macros.
+- **Avoid `dnl` abuse**: `dnl` should only suppress newlines where necessary; flag usage
+  that hides logic or makes code harder to follow.
+- **No side effects in arguments**: Arguments passed to macros should be free of side
+  effects since M4 may expand them multiple times.
+- **Macro redefinition**: Warn on `define` overriding an existing macro without an explicit
+  `undefine` or `pushdef`/`popdef` pair.
+- **Prefer `pushdef`/`popdef`** over `define`/`undefine` for local/temporary macros to
+  preserve the macro stack correctly.
+
+### M4sugar (Autoconf context)
+
+- **Use `AS_*` macros** for shell constructs (`AS_IF`, `AS_CASE`, `AS_ECHO`) instead of
+  raw shell syntax inside `configure.ac`.
+- **`AC_DEFUN` over `define`**: Always use `AC_DEFUN` (or `AC_DEFUN_ONCE`) for Autoconf
+  macros — never raw `define`.
+- **`AC_DEFUN_ONCE`** for macros that must not run twice (e.g., library checks).
+  Flag duplicate `AC_DEFUN` definitions for the same macro name.
+- **Dependency ordering**: Ensure `AC_REQUIRE` is used to declare inter-macro dependencies
+  rather than relying on call order.
+- **`m4_ifdef` / `m4_ifset`**: Use these for conditional logic at the M4 layer;
+  flag use of raw `ifdef` which is shell-level.
+- **`m4_define` vs `AC_SUBST`**: Variables meant for `Makefile` output must go through
+  `AC_SUBST`; flag `m4_define` used where `AC_SUBST` is appropriate.
+- **`m4_foreach` / `m4_map`**: Prefer these over manual recursive macros for iteration.
+- **No raw shell in `AC_DEFUN` bodies** without wrapping in `AS_IF` or `AC_MSG_*` macros.
+
+### Style & Maintainability
+
+- Each macro should have a single, clear responsibility.
+- Complex logic should be broken into smaller named macros with descriptive names.
+- Include comments (`dnl #`) explaining non-obvious macro behavior.
+- Avoid deeply nested macro calls (more than 3 levels) — suggest refactoring.
+
+### Common Bugs to Flag
+
+- Unquoted commas inside macro arguments (breaks argument splitting).
+- Forgetting `m4_esyscmd_s` vs `m4_esyscmd` (trailing newline handling).
+- Using `$1`, `$2` inside a macro body without quoting the whole body with `[...]`.
+- Calling `AC_OUTPUT` before all `AC_SUBST` declarations are complete.
+
 ## Notes
 
 - `.gitignore` excludes `BUILD`, `VENDOR`, `*venv*`, etc. — these are
