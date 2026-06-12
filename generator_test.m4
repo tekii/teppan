@@ -31,6 +31,22 @@ __ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__DOC__/tests.com/en/about.html])
 __ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__DOC__/tests.com/about.html]),[http://tests.com/about.html])
 __ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__DOC__/index.html]),[http://index.html])
 
+__ASSERT_EQ([LANG_NAME en],__LANG_NAME([en]),[English])
+__ASSERT_EQ([LANG_NAME es],__LANG_NAME([es]),[Español])
+__ASSERT_EQ([LANG_NAME br],__LANG_NAME([br]),[Português])
+__ASSERT_EQ([LANG_NAME unknown],__LANG_NAME([nn]),[UNDEFINED LANG])
+__ASSERT_EQ([LOOKUP_LANG_NAME 2-arg],__LOOKUP_LANG_NAME([xx],[yy]),[UNDEFINED LANG])
+
+dnl __LANG_NAME__ is defined as m4_define([__LANG_NAME__], __LANG_NAME(__LANG__))
+dnl with an UNQUOTED second argument, so it is resolved once at the point
+dnl generator.m4 is m4_include'd here -- NOT dynamically per m4_pushdef([__LANG__],...).
+dnl Since generator_test.m4 never -D's __LANG__, it is literally "__LANG__" (undefined)
+dnl at that point, so __LANG_NAME__ is frozen to "UNDEFINED LANG" for this whole file,
+dnl regardless of any later pushdef.
+m4_pushdef([__LANG__],[es])dnl
+__ASSERT_EQ([LANG_NAME__ ignores later pushdef],__LANG_NAME__,[UNDEFINED LANG])
+m4_popdef([__LANG__])dnl
+
 
 m4_foreach_w([__X__], m4_unquote([__LIST__]), [==__X__==])
 
@@ -64,23 +80,6 @@ m4_define([m4_foreach_xxx],
 #m4_divert([DEFAULT])dnl
 
 
-m4_define([__L],
-[m4_if([$#], 0, [m4_fatal([$0: cannot be called without arguments]],
-       [$#], 1, [m4_fatal([$0: cannot be called with 1 arguments])],
-       [$#], 2, [UNDEFINED LANG],
-       [m4_if($1,$2,$3,[__L($1,m4_shift(m4_shift(m4_shift($@))))])])])
-
-
-dnl m4_traceon([__LANG_NAME3])
----------------------------------------
-dnl >>>>>__LOOKUP_LANG_NAME(en,m4_unquote(__LANGS__))<<<<<
-dnl >>>>>__LOOKUP_LANG_NAME(es,m4_unquote(__LANGS__))<<<<<
-dnl >>>>>__LOOKUP_LANG_NAME(pt,m4_unquote(__LANGS__))<<<<<
-dnl >>>>>__LOOKUP_LANG_NAME(nn,m4_unquote(__LANGS__))<<<<<
-dnl >>>>>__LANG_NAME(en)<<<<<
-dnl >>>>>__LOOKUP_LANG_NAME(nn)<<<<<
----------------------------------------
-dnl m4_traceoff([__LANG_NAME3])dnl
 dnl m4_traceon([__PAGE])dnl
 dnl m4_traceon([__LOCALIZE_URL_NAME])dnl
 dnl m4_traceon([__LOCALIZE_URL_PATH])dnl

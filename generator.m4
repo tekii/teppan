@@ -38,9 +38,7 @@ dnl
 m4_define([__LANGS__],[[en,[English]],[es,[Español]],[br,[Português]]])
 
 m4_define([__LOOKUP_LANG_NAME],
-[m4_if([$#], 0, [m4_fatal([$0: cannot be called without arguments]],
-       [$#], 1, [m4_fatal([$0: cannot be called with 1 arguments])],
-       [$#], 2, [UNDEFINED LANG],
+[m4_if([$#], 2, [UNDEFINED LANG],
        [m4_if($1,$2,$3,[__LOOKUP_LANG_NAME($1,m4_shift3($@))])])])
 
 m4_define([__LANG_NAME], [__LOOKUP_LANG_NAME($1,m4_unquote(__LANGS__))])
