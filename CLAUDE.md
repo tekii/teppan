@@ -47,6 +47,21 @@ manual inspection in a browser.
 - `www.tekii.com.ar` — main site, with `en/`, `es/`, `br/` locale subdirs
 - `tekii.us`, `tekii.ar` — redirect-only domains (`redirect.html`)
 
+### Page source conventions
+
+A `*.in.html` source typically:
+
+- Pushes content into the `HEAD` diversion via `m4_divert_text([HEAD], [...])`
+  for `<title>`/`<meta>` tags.
+- Pushes body content into `MAIN` via `m4_divert_push([MAIN]) ... m4_divert_pop([MAIN])`,
+  starting with a `__NAV_ITEM(...)` call to register the page in the nav menu.
+- Pulls in reusable sections with `__INCL([fragment-*.html])` (see
+  `fragment-home.html`, `fragment-services.html`, `fragment-customers.html`).
+- Uses `__ENES([English text],[Spanish text])` / `__ESEN([Spanish],[English])`
+  for inline per-language strings, rather than separate files per locale.
+- Asset references go through `__ASSET`, `__CP_ASSET`, `__DEFERRED_ASSET` to
+  get copied/hashed into the build output.
+
 ## Testing conventions
 
 `generator_test.m4` includes `generator.m4`, diverts into `TESTS`, and uses
