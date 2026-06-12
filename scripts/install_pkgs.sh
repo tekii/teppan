@@ -1,8 +1,8 @@
 #!/bin/bash
+set -euo pipefail
 
-if [ "$CLAUDE_CODE_REMOTE" != "true" ]; then
+if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
-apt install autoconf
-exit 0
+apt-get install -y autoconf
