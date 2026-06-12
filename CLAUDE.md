@@ -1,0 +1,61 @@
+# TEKii static site
+
+A static website (multi-domain, multi-language) generated with GNU `m4` +
+autoconf's `m4sugar`. There is no application server — everything is rendered
+ahead of time into plain HTML/CSS/assets under `BUILD/DOC`.
+
+## Build & test commands
+
+- `make build` — generate the full site into `BUILD/DOC`
+- `make test` — run `generator_test.m4`; fails if any `__ASSERT_EQ` assertion
+  prints `FAIL` (see `.claude/skills/run-tests`)
+- `make clean` / `make realclean` — remove generated output
+
+Use the `build-preview` skill to build and serve `BUILD/DOC` locally for
+manual inspection in a browser.
+
+## Architecture
+
+- **`generator.m4`** — core macro library: page/layout helpers, language
+  (`__ES__`/`__EN__`/`__BR__`) and localization macros (`__LOCALIZE_URL_*`),
+  path helpers (`__HREF`, `__ABSOLUTE`), and the diversion/phase dispatch at
+  the bottom of the file.
+- **`configure.m4`** / **`configure-fontawesome.m4`** — site-wide constants
+  and macro definitions (org info, layout defaults, etc.), included by
+  `generator.m4`.
+- **`*.in.html`** (e.g. `main.in.html`, `news.in.html`, `contact.in.html`,
+  `jobs.in.html`, `404.in.html`, `redirect.in.html`, `srl-default.in.html`) —
+  per-page m4 sources. Each stem gets a generated `.mk` under `BUILD/DEP`,
+  `-include`d by the `Makefile`.
+- **`layout.html`** / **`layout-redirect.html`** — page shells that consume
+  the diversions produced by a page source.
+- **`Makefile`** / **`Rules.mk`** — build orchestration; defines `M4_FLAGS`,
+  domain/output paths (`__SRC__`, `__DOC__`, `__BUILD__`, `__VENDOR__`,
+  `__ZIP__`), and per-stem rules.
+
+### Diversion/phase model
+
+`generator.m4` writes content into named m4 diversions (`MAKEFILE`, `HEAD`,
+`MAIN`, `NAVIGATION`, `HTML`, `DEFERRED_MK`, `TESTS`, ...) and a final
+`m4_case(__PHASE__, ...)` dispatch picks which diversion gets emitted to
+`DEFAULT` (stdout) for a given run: `GENERATE_MAKEFILE`,
+`GENERATE_NAVIGATION`, `GENERATE_HTML`, `GENERATE_DEFERRED_MK`, `MAKEPUB`,
+`TEST_PHASE`. An unmatched `__PHASE__` is a hard `m4_fatal`.
+
+### Domains
+
+- `www.tekii.com.ar` — main site, with `en/`, `es/`, `br/` locale subdirs
+- `tekii.us`, `tekii.ar` — redirect-only domains (`redirect.html`)
+
+## Testing conventions
+
+`generator_test.m4` includes `generator.m4`, diverts into `TESTS`, and uses
+`__ASSERT_EQ(NAME, ACTUAL, EXPECTED)` (defined at the top of that file) to
+self-check macro behavior. `make test` greps the output for `^FAIL`. When
+adding coverage for a macro, derive `EXPECTED` independently (don't just copy
+the macro's own output) — see `.claude/skills/add-assertion`.
+
+## Notes
+
+- `.gitignore` excludes `BUILD`, `VENDOR`, `*venv*`, etc. — these are
+  generated/vendored, not source.
