@@ -18,9 +18,9 @@ dnl
 dnl
 dnl
 m4_define([__MAIN_PUSH__],[m4_divert_push([MAIN])<!-- ])
-m4_define([__MAIN__POP__],[ -->m4_newline([])[]m4_divert_pop([MAIN])])
+m4_define([__MAIN_POP__],[ -->m4_newline([])[]m4_divert_pop([MAIN])])
 m4_define([__HEAD_PUSH__],[m4_divert_push([HEAD])<!-- ])
-m4_define([__HEAD__POP__],[ -->m4_newline([])[]m4_divert_pop([HEAD])])
+m4_define([__HEAD_POP__],[ -->m4_newline([])[]m4_divert_pop([HEAD])])
 
 dnl
 dnl CONSTANTS
