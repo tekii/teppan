@@ -102,6 +102,8 @@ You are an expert M4 and M4sugar macro language reviewer. When reviewing `.m4` f
 - Complex logic should be broken into smaller named macros with descriptive names.
 - Include comments (`dnl #`) explaining non-obvious macro behavior.
 - Avoid deeply nested macro calls (more than 3 levels) — suggest refactoring.
+- Each macro should have an opening comment documenting the macro responsabilities and
+  enumarating any parameters needed.
 
 ### Common Bugs to Flag
 
