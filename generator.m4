@@ -69,7 +69,7 @@ m4_define([__FNAME],
 [m4_bregexp($1,[\([^/]+\..+\)$], [\1])])
 
 m4_define([__RDATE],
-[m4_chomp_all(m4_esyscmd(date --reference=$1 +%Y-%m-%d))])
+[m4_esyscmd_s(date --reference=$1 +%Y-%m-%d)])
 
 dnl
 dnl LOCALIZE_*(DOMAIN,LANG,STEM) MACROS

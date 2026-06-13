@@ -47,6 +47,12 @@ m4_pushdef([__LANG__],[es])dnl
 __ASSERT_EQ([LANG_NAME__ ignores later pushdef],__LANG_NAME__,[UNDEFINED LANG])
 m4_popdef([__LANG__])dnl
 
+dnl __RDATE(FILE) shells out to `date --reference=FILE +%Y-%m-%d` and chomps
+dnl the trailing newline. Fix the reference file's mtime so the expected
+dnl date is independent of when the test happens to run.
+m4_esyscmd([touch -d 2020-03-04 /tmp/__rdate_test_file])dnl
+__ASSERT_EQ([RDATE fixed mtime],__RDATE([/tmp/__rdate_test_file]),[2020-03-04])
+
 
 m4_foreach_w([__X__], m4_unquote([__LIST__]), [==__X__==])
 
