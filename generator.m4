@@ -153,7 +153,7 @@ m4_set_add([__ALTERNATES__],m4_quote(__LANG__,__DOC__/__DOMAIN__,__DOC__/__PATH_
 m4_set_add([__BUILD_TARGETS__],m4_quote(__DOC__/__DOMAIN__,__DOC__/__PATH_STEM__.html))dnl
 dnl
 m4_divert_push([MAKEFILE])
-m4_text_box(__STEM__ MAKEFILE BEGINS,[+])
+m4_text_box(__STEM__ MAKEFILE BEGINS (__LANG__),[+])
 [#] NAVIGATION
 __NAV__/__PATH_STEM__.m4 : __SRC__/generator.m4
 __NAV__/__PATH_STEM__.m4 : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ 
@@ -202,7 +202,7 @@ m4_popdef([__DOMAIN__])dnl
 dnl 
 build : __DOC__/__PATH_STEM__.html
 clean-makefile :: ; [$(RM)] -f __TARGET__
-m4_text_box(__STEM__ MAKEFILE ENDS  ,[-])
+m4_text_box(__STEM__ MAKEFILE ENDS  (__LANG__) ,[-])
 m4_divert_pop([MAKEFILE])
 dnl
 m4_divert_push([NAVIGATION])dnl
