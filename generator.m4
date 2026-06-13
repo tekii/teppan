@@ -178,7 +178,7 @@ __DOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 
 clean-makefile :: ; -rm -f __DOC__/__PATH_STEM__.mk
 [#] -include __DOC__/__PATH_STEM__.mk
 cp-deferred-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
-clean-asset gzip-asset :: ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
+clean-asset gzip-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [$]@
 dnl
 [#] ZIP
 .SECONDARY : __ZIP__/__PATH_STEM__.html
