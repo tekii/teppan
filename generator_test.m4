@@ -47,6 +47,19 @@ m4_pushdef([__LANG__],[es])dnl
 __ASSERT_EQ([LANG_NAME__ ignores later pushdef],__LANG_NAME__,[UNDEFINED LANG])
 m4_popdef([__LANG__])dnl
 
+dnl __ESEN(SPANISH,ENGLISH) / __ENES(ENGLISH,SPANISH) pick a branch based on
+dnl __LANG__ at call time (their bodies are quoted m4_case(__LANG__,...)
+dnl calls, re-evaluated per call, not frozen at m4_include time).
+m4_pushdef([__LANG__],[es])dnl
+__ASSERT_EQ([ESEN under es],__ESEN([Hola],[Hello]),[Hola])
+__ASSERT_EQ([ENES under es],__ENES([Hello],[Hola]),[Hola])
+m4_popdef([__LANG__])dnl
+
+m4_pushdef([__LANG__],[en])dnl
+__ASSERT_EQ([ESEN under en],__ESEN([Hola],[Hello]),[Hello])
+__ASSERT_EQ([ENES under en],__ENES([Hello],[Hola]),[Hello])
+m4_popdef([__LANG__])dnl
+
 dnl __RDATE(FILE) shells out to `date --reference=FILE +%Y-%m-%d` and chomps
 dnl the trailing newline. Fix the reference file's mtime so the expected
 dnl date is independent of when the test happens to run.

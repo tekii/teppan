@@ -45,10 +45,10 @@ m4_define([__LANG_NAME], [__LOOKUP_LANG_NAME($1,m4_unquote(__LANGS__))])
 m4_define([__LANG_NAME__], __LANG_NAME(__LANG__))
 
 m4_define([__ESEN],
-m4_case(__LANG__,__ES__,$1,__EN__,$2))
+[m4_case(__LANG__,__ES__,[$1],__EN__,[$2])])
 
 m4_define([__ENES],
-m4_case(__LANG__,__EN__,$1,__ES__,$2))
+[m4_case(__LANG__,__EN__,[$1],__ES__,[$2])])
 
 #
 # calculate path jump relative to __TDIR__ or $2
