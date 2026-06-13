@@ -56,10 +56,6 @@ m4_case(__LANG__,__EN__,$1,__ES__,$2))
 #
 m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relative-to=m4_default([$2],[__TDIR__]))])
 
-# 
-# REL(URL,[BASE]) MACRO 
-#
-m4_define([__RELATIVE],[$1])dnl
 #
 # ABS(URL,[BASE|SCHEME]) MACRO
 # turns a __DOC__-relative filesystem path into an absolute URL by
