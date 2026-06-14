@@ -186,9 +186,33 @@ realclean:: clean
 # mimetype --brief /tmp/bucketgz/favicon.ico | tr -d '\n'
 
 #
+# WITH_XXX MACRO TESTS
+#
+__TEST_FX__:=$(__SRC__)/tests/fixtures
+__TEST_GOLDEN__:=$(__SRC__)/tests/golden
+
+MOCK_FLAGS:= -D __STEM__=mock-page \
+	-D __NAV__=$(__TEST_FX__)/MOCK_NAV \
+	-D __ZIP__=$(__TEST_FX__)/MOCK_ZIP \
+	-D __VENDOR__=$(__TEST_FX__)/MOCK_VENDOR \
+	-D __TARGET__=MOCK_TARGET.mk \
+	-D __FIRST__=$(__TEST_FX__)/mock-page.in.html
+
+.PHONY: test-with-xxx-macros
+test-with-xxx-macros:
+	@for phase in GENERATE_MAKEFILE GENERATE_NAVIGATION; do \
+		ext=$$(echo $$phase | tr A-Z a-z) ; \
+		$(M4) -D __PHASE__=$$phase $(M4_FLAGS) $(MOCK_FLAGS) generator.m4 \
+			| sed 's,$(__SRC__),@SRC@,g' > /tmp/mock-page.$$ext ; \
+		diff -u $(__TEST_GOLDEN__)/mock-page.$$ext /tmp/mock-page.$$ext || exit 1 ; \
+	done
+	@echo "test-with-xxx-macros: PASS"
+
+#
 # COMMANDS --debug=aeqt
 #
 .PHONY: test
+test: test-with-xxx-macros
 test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
 test: generator_test.m4
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
