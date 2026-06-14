@@ -44,6 +44,16 @@ m4_define([__LOOKUP_LANG_NAME],
 m4_define([__LANG_NAME], [__LOOKUP_LANG_NAME($1,m4_unquote(__LANGS__))])
 m4_define([__LANG_NAME__], __LANG_NAME(__LANG__))
 
+dnl
+dnl __LANG__'s internal codes (en/es/br) are used for URL paths and are not
+dnl all valid BCP 47 language tags (notably __BR__'s "br" is the ISO 639-1
+dnl code for Breton, not Brazilian Portuguese). __LANG_TAG maps an internal
+dnl code to the BCP 47 tag to use in HTML lang/hreflang attributes.
+dnl
+m4_define([__LANG_TAGS__],[[en,[en]],[es,[es]],[br,[pt-BR]]])
+m4_define([__LANG_TAG], [__LOOKUP_LANG_NAME($1,m4_unquote(__LANG_TAGS__))])
+m4_define([__LANG_TAG__], __LANG_TAG(__LANG__))
+
 m4_define([__ESEN],
 [m4_case(__LANG__,__ES__,[$1],__EN__,[$2])])
 

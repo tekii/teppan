@@ -1,12 +1,12 @@
 dnl m4_include(./configure-fontawesome.m4)dnl
 m4_divert_push([HTML])dnl
 <!DOCTYPE html>
-<html ⚡ lang="__LANG__">
+<html ⚡ lang="__LANG_TAG__">
     <head>
         <meta charset="utf-8">
         <!-- m4_quote(__ALTERNATES__) -->
 __RENDER_SET(m4_quote(__ALTERNATES__),[dnl
-        <link rel="alternate" hreflang="$1" href="__ABSOLUTE($3)"/>
+        <link rel="alternate" hreflang="__LANG_TAG($1)" href="__ABSOLUTE($3)"/>
 m4_if(__LANG__,$1,[dnl
         <link rel="canonical" href="__ABSOLUTE($3)">
 ])dnl
