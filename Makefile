@@ -222,7 +222,7 @@ test: generator_test.m4
 	@cat /tmp/generator_test.out
 	@! grep -q '^FAIL' /tmp/generator_test.out
 
-.IGNORE: clean cleangzip realclean obliterate
+.IGNORE: clean cleangzip realclean
 .DEFAULT_GOAL := build
 
 #
