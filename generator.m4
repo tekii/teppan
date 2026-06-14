@@ -80,14 +80,16 @@ m4_define([__LOCALIZE_URL_NULL],[$1/$3])
 m4_define([__LOCALIZE_URL_DOMAIN],[$2.$1/$3])
 
 dnl
-dnl WITH_LAYOUT MACRO
+dnl WITH_LAYOUT(LAYOUT,BODY) MACRO
+dnl $1 path to an alternate layout file -- required. If a page doesn't need
+dnl    a layout other than configure.m4's default __LAYOUT__, it should not
+dnl    call this macro at all.
+dnl $2 body to expand under the alternate __LAYOUT__
 dnl
 m4_define([__WITH_LAYOUT],[dnl
-m4_pushdef([__LAYOUT__],m4_default($1,__LAYOUT__))dnl
+m4_if([$1],[],[m4_fatal([__WITH_LAYOUT requires a non-empty LAYOUT argument])])dnl
+m4_define([__LAYOUT__],$1)dnl
 $2dnl
-m4_popdef([__LAYOUT__])dnl
-dnl next line its a temporary hack (but i forgot the problem... :( )
-m4_define([__LAYOUT__],m4_default($1,__LAYOUT__))dnl
 ])
 
 dnl
