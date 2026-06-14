@@ -12,15 +12,13 @@ __DEP__:=$(__BUILD__)/DEP
 __ZIP__:=$(__BUILD__)/ZIP
 __NAV__:=$(__DOC__)
 
-__LAYOUT__:=$(__SRC__)/dummy-layout.html
-
-RM:= @-rm 
+RM:= @-rm
 RMDIR:= @-rmdir
 
 #
 # M4
 #
-M4= $(shell which m4)
+M4:=$(shell which m4)
 M4_FLAGS:= -I $(__SRC__)
 ##
 ifeq ($(shell uname -s),Linux)
@@ -35,7 +33,7 @@ M4_FLAGS+= \
 	-D __REALPATH__=$(shell which grealpath)
 endif
 M4_FLAGS+= \
-	-D __DOC__=$(__DOC__) -D __SRC__=$(__SRC__) 
+	-D __DOC__=$(__DOC__) -D __SRC__=$(__SRC__)
 #
 # RULES START HERE
 #
@@ -75,8 +73,8 @@ endef
 
 $(__NAV__)/%/NAVIGATION.m4 : | $$(@D)/
 	# we compare checksum to see if actually change and avoid the ripples of the circularity
-	# cat $^ | cmp -s $@ - || cat $^ > $@ 
-	cat $^ > $@ 
+	# cat $^ | cmp -s $@ - || cat $^ > $@
+	cat $^ > $@
 
 define do-generate-html
 $(M4) -D __PHASE__=GENERATE_HTML $(M4_FLAGS) \
@@ -106,7 +104,7 @@ endef
 #		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 
 #
-# COPY ASSETS TODO: this could be moved to an static generated rule 
+# COPY ASSETS TODO: this could be moved to an static generated rule
 #
 $(__DOC__)/%.ico : | $$(@D)/
 	cp $< $@
@@ -121,7 +119,7 @@ $(__DOC__)/%.svg : | $$(@D)/
 	cp $< $@
 
 $(__DOC__)/%.jpg : | $$(@D)/
-	cp $< $@	
+	cp $< $@
 
 $(__DOC__)/%.ttf : | $$(@D)/
 	cp $< $@
@@ -224,12 +222,12 @@ test: generator_test.m4
 	@cat /tmp/generator_test.out
 	@! grep -q '^FAIL' /tmp/generator_test.out
 
-.IGNORE: clean cleangzip realclean obliterate  
+.IGNORE: clean cleangzip realclean obliterate
 .DEFAULT_GOAL := build
 
 #
 # TEMPLATE MAKEFILES
-# 
+#
 $(__DEP__)/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
 	$(M4) -D __PHASE__=GENERATE_MAKEFILE $(M4_FLAGS) \
 		-D __STEM__=$* \

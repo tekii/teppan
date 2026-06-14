@@ -22,8 +22,8 @@ clean-build :: ; -rm -f @SRC@/BUILD/DOC/mock-a.test/page-a.html
 @SRC@/BUILD/DOC/mock-a.test/page-a.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4 ; $(do-generate-deferred-mk)
 clean-makefile :: ; -rm -f @SRC@/BUILD/DOC/mock-a.test/page-a.mk
 # -include @SRC@/BUILD/DOC/mock-a.test/page-a.mk
-cp-deferred-asset :: | @SRC@/BUILD/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-a.test/page-a.mk $@
-clean-asset gzip-asset :: | @SRC@/BUILD/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-a.test/page-a.mk $@
+cp-deferred-asset :: | @SRC@/BUILD/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-a.test/page-a.mk __SRC__=@SRC@ $@
+clean-asset gzip-asset :: | @SRC@/BUILD/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-a.test/page-a.mk __SRC__=@SRC@ $@
 # ZIP
 .SECONDARY : @SRC@/tests/fixtures/MOCK_ZIP/mock-a.test/page-a.html
 @SRC@/tests/fixtures/MOCK_ZIP/mock-a.test/page-a.html : GZIP_EXTRA_FLAGS:= 
@@ -68,8 +68,8 @@ clean-build :: ; -rm -f @SRC@/BUILD/DOC/mock-b.test/en/page-b.html
 @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 ; $(do-generate-deferred-mk)
 clean-makefile :: ; -rm -f @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk
 # -include @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk
-cp-deferred-asset :: | @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk $@
-clean-asset gzip-asset :: | @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk $@
+cp-deferred-asset :: | @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
+clean-asset gzip-asset :: | @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
 # ZIP
 .SECONDARY : @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/en/page-b.html
 @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/en/page-b.html : GZIP_EXTRA_FLAGS:= 
@@ -114,8 +114,8 @@ clean-build :: ; -rm -f @SRC@/BUILD/DOC/mock-b.test/br/page-b.html
 @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 ; $(do-generate-deferred-mk)
 clean-makefile :: ; -rm -f @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk
 # -include @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk
-cp-deferred-asset :: | @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk $@
-clean-asset gzip-asset :: | @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk $@
+cp-deferred-asset :: | @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
+clean-asset gzip-asset :: | @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/BUILD/DOC/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
 # ZIP
 .SECONDARY : @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/br/page-b.html
 @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/br/page-b.html : GZIP_EXTRA_FLAGS:= 
