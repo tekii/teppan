@@ -27,6 +27,21 @@ __ASSERT_EQ([HREF relative to base],__HREF([/tmp/bucket/es/about.html],[/tmp/buc
 dnl __HREF([./img/logo.png]) depends on the build's PWD (relative to __TDIR__), kept for manual inspection only:
 |__HREF([./img/logo.png])|
 
+dnl __TDIR__ is /tmp/test during `make test` (see Makefile); __CSS_REMAP_URLS
+dnl rewrites url(...) paths relative to /tmp/test/vendor/css to be relative
+dnl to /tmp/test instead.
+__ASSERT_EQ([CSS_REMAP_URLS quoted url],dnl
+__CSS_REMAP_URLS([@font-face{src:url("../webfonts/a.woff2") format("woff2")}],[/tmp/test/vendor/css]),dnl
+[@font-face{src:url("vendor/webfonts/a.woff2") format("woff2")}])
+
+__ASSERT_EQ([CSS_REMAP_URLS bare url],dnl
+__CSS_REMAP_URLS([@font-face{src:url(../webfonts/b.eot)}],[/tmp/test/vendor/css]),dnl
+[@font-face{src:url(vendor/webfonts/b.eot)}])
+
+__ASSERT_EQ([CSS_REMAP_URLS mixed quoted and bare urls],dnl
+__CSS_REMAP_URLS([url("../webfonts/a.woff2");url(../webfonts/b.eot)],[/tmp/test/vendor/css]),dnl
+[url("vendor/webfonts/a.woff2");url(vendor/webfonts/b.eot)])
+
 __ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__DOC__/tests.com/en/about.html]),[http://tests.com/en/about.html])
 __ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__DOC__/tests.com/about.html]),[http://tests.com/about.html])
 __ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__DOC__/index.html]),[http://index.html])

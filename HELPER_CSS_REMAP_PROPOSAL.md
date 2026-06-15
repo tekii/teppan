@@ -1,4 +1,10 @@
-# `helper-css-remap` — M4/M4sugar-only replacement proposal
+# `helper-css-remap` — M4/M4sugar-only replacement
+
+**Status: implemented** as `__CSS_REMAP_URLS` (`generator.m4`), wired into
+`configure-fontawesome.m4`, with `__ASSERT_EQ` coverage in
+`generator_test.m4`. `configure-fontawesome.m4` itself remains
+`dnl`-disabled (see below) — merge this branch whenever FontAwesome
+self-hosting is actually needed.
 
 ## What it did
 
@@ -62,7 +68,7 @@ also `__CP_ASSET`-ing the webfont files into `BUILD/DOC` and rewriting
 enough; the icon-delivery story needs deciding first (see "Recommendation"
 below).
 
-## Proposed M4/M4sugar-only mechanism (prototyped, works)
+## M4/M4sugar-only mechanism
 
 The project already has a relpath primitive — `__HREF` (`generator.m4:67`),
 which wraps `realpath --canonicalize-missing ... --relative-to=...` (a
@@ -77,14 +83,25 @@ by m4 — so a replacement template containing `__HREF([...\N...])` gets each
 `__HREF` call expanded independently per match, with that match's own `\N`.
 
 ```m4
-dnl __CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR)
-dnl Rewrites every url("...") / url(...) path in CSS-TEXT — interpreted
-dnl relative to CSS-SRC-DIR — to a path relative to __TDIR__, via __HREF.
+#
+# CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR) MACRO
+# rewrites every url("...")/url(...) path in CSS-TEXT -- each interpreted
+# relative to CSS-SRC-DIR -- to a path relative to __TDIR__ via __HREF,
+# preserving whichever quote style (or lack of one) the source used.
+# CSS-TEXT should be read as plain text (e.g. m4_esyscmd_s([cat FILE])),
+# not m4_include'd, since third-party CSS isn't safe to parse as m4.
+# Two passes (quoted urls, then bare urls) so the "?"-free regexes stay
+# within GNU m4's regex dialect; m4_dquote re-quotes the first pass's
+# result so commas in the rewritten CSS don't get mistaken for argument
+# separators by the second pass, and m4_unquote forces a final rescan so
+# the second pass's __HREF calls get expanded too.
+#
 m4_define([__CSS_REMAP_URLS],[dnl
-m4_bpatsubst([$1],[url(\("\)?\([^"')]*\)\1)],[url(\1__HREF([$2/\2])\1)])])
+m4_unquote(m4_bpatsubst(m4_dquote(m4_bpatsubst([$1],[url("\([^"]*\)")],[url("__HREF([$2/\1])")])),dnl
+[url(\([^"')]*\))],[url(__HREF([$2/\1]))]))])
 ```
 
-Usage (replacing `configure-fontawesome.m4:24-27`):
+Usage (`configure-fontawesome.m4:24-27`):
 
 ```m4
 m4_divert_push([CUSTOM_STYLES])dnl
@@ -97,16 +114,14 @@ Notes:
 - `m4_esyscmd_s` (not `m4_include`) reads the vendor CSS as a plain string —
   safer than `m4_include`ing third-party CSS as m4 source (no risk of CSS
   tokens colliding with defined macro names).
-- Prototyped both quoted (`url("...")`) and bare (`url(...)`) forms, and
-  multiple matches in one string — `m4_bpatsubst` replaces all matches, each
-  `\2` correctly bound to its own match when rescanned.
-- The `\("\)?` group handles both quote styles so the output preserves
-  whichever style the source used.
-
-I verified this end-to-end with a standalone `m4 -R m4sugar.m4f` test
-(diverted to `0`/DEFAULT, since m4sugar's init otherwise suppresses direct
-output) — happy to fold it into `generator_test.m4` as a real
-`__ASSERT_EQ` once we land on the approach.
+- Handles both quoted (`url("...")`) and bare (`url(...)`) forms, and
+  multiple matches (including a mix of both styles) in one string —
+  `m4_bpatsubst` replaces all matches, each `\1` correctly bound to its own
+  match when rescanned.
+- Covered by three `__ASSERT_EQ`s in `generator_test.m4` (quoted, bare,
+  mixed), run via `make test`. Full `make clean && make build` and
+  `make test-with-xxx-macros` also pass (configure-fontawesome.m4 stays
+  inert either way, see below).
 
 ## Recommendation
 
