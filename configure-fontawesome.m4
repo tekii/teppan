@@ -21,7 +21,7 @@ m4_unquote(m4_cdr(__I__)) : __VENDOR__/fontawesome-free-5.13.0-web/css/all.css
 m4_text_box(FONTAWESOME DEPS END  ,[-])
 m4_divert_pop([MAKEFILE])dnl
 dnl
-m4_divert_push([AMP_CUSTOM_STYLES])dnl
+m4_divert_push([CUSTOM_STYLES])dnl
 /** helper-css-remap --base __TDIR__ __VENDOR__/fontawesome-free-5.13.0-web/css/all.css **/
 m4_esyscmd(helper-css-remap --base __TDIR__ __VENDOR__/fontawesome-free-5.13.0-web/css/all.css - )dnl
-m4_divert_pop([AMP_CUSTOM_STYLES])dnl
+m4_divert_pop([CUSTOM_STYLES])dnl
