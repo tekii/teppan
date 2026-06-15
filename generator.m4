@@ -336,7 +336,7 @@ m4_include([./configure.m4])dnl
 dnl
 dnl HERE WE FILL THE DIVERSIONS
 dnl
-m4_if(__PHASE__,[GENERATE_HTML],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],__PHASE__,[GENERATE_DEFERRED_MK],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],[])dnl
+m4_if(__PHASE__,[GENERATE_HTML_PHASE],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],__PHASE__,[GENERATE_DEFERRED_MK_PHASE],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],[])dnl
 dnl m4_sinclude(__NAV__/__DOMAIN__/NAVIGATION)
 m4_include(__FIRST__)dnl
 dnl
@@ -347,11 +347,11 @@ dnl
 dnl AND CHOOSE WHAT TO EMIT INTO DEFAULT
 dnl
 m4_case(__PHASE__,
-[GENERATE_MAKEFILE],[m4_divert_text([DEFAULT],[m4_undivert([MAKEFILE])])],
-[GENERATE_NAVIGATION],[m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])],
-[GENERATE_HTML],[m4_divert_text([DEFAULT],[m4_undivert([HTML])])],
-[GENERATE_DEFERRED_MK],[m4_divert_text([DEFAULT],[m4_undivert([DEFERRED_MK])])],
-[MAKEPUB],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
+[GENERATE_MAKEFILE_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([MAKEFILE])])],
+[GENERATE_NAVIGATION_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])],
+[GENERATE_HTML_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([HTML])])],
+[GENERATE_DEFERRED_MK_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([DEFERRED_MK])])],
+[MAKEPUB_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
 
 [TEST_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([TESTS])])],
 

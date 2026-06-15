@@ -65,7 +65,7 @@ vendor:
 #%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
 
 define do-generate-navigation
-	$(M4) -D __PHASE__=GENERATE_NAVIGATION $(M4_FLAGS) \
+	$(M4) -D __PHASE__=GENERATE_NAVIGATION_PHASE $(M4_FLAGS) \
 	$(EXTRA_NAV_FLAGS) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 > $@
@@ -77,7 +77,7 @@ $(__NAV__)/%/NAVIGATION.m4 : | $$(@D)/
 	cat $^ > $@
 
 define do-generate-html
-$(M4) -D __PHASE__=GENERATE_HTML $(M4_FLAGS) \
+$(M4) -D __PHASE__=GENERATE_HTML_PHASE $(M4_FLAGS) \
 	$(EXTRA_HTML_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
@@ -85,7 +85,7 @@ $(M4) -D __PHASE__=GENERATE_HTML $(M4_FLAGS) \
 endef
 
 define do-generate-deferred-mk
-$(M4) -D __PHASE__=GENERATE_DEFERRED_MK $(M4_FLAGS) \
+$(M4) -D __PHASE__=GENERATE_DEFERRED_MK_PHASE $(M4_FLAGS) \
 	$(EXTRA_DEFERRED_MK_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
@@ -198,7 +198,7 @@ MOCK_FLAGS:= -D __STEM__=mock-page \
 
 .PHONY: test-with-xxx-macros
 test-with-xxx-macros:
-	@for phase in GENERATE_MAKEFILE GENERATE_NAVIGATION; do \
+	@for phase in GENERATE_MAKEFILE_PHASE GENERATE_NAVIGATION_PHASE; do \
 		ext=$$(echo $$phase | tr A-Z a-z) ; \
 		$(M4) -D __PHASE__=$$phase $(M4_FLAGS) $(MOCK_FLAGS) generator.m4 \
 			| sed 's,$(__SRC__),@SRC@,g' > /tmp/mock-page.$$ext ; \
@@ -229,7 +229,7 @@ test: generator_test.m4
 # TEMPLATE MAKEFILES
 #
 $(__DEP__)/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
-	$(M4) -D __PHASE__=GENERATE_MAKEFILE $(M4_FLAGS) \
+	$(M4) -D __PHASE__=GENERATE_MAKEFILE_PHASE $(M4_FLAGS) \
 		-D __STEM__=$* \
 		-D __NAV__=$(__NAV__) \
 		-D __ZIP__=$(__ZIP__) \
