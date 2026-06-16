@@ -154,13 +154,13 @@ from-scratch component work turns out larger than expected.
 ## Overall view (user)
 The following is an incomplete enumeration of first impressions:
 
-- The adoption of the 'Design tokens' as a light guideline without introducing dependencies in the tool-chain sound great, im in.
-- In line with the above line, Open props UI (core components no JS) sound perfect to the project, i want to know how to maintain at least 2 simple themes (dark, light) and be sure the overall design is mobile friendly.
-- The content of all generated pages is static, mostly text, some chart here and there.
-- All domains are related, there will be links betwen them, we will cover that when we start working in the inners of the NAVIGATION_PHASE, not related to the CSS-cleanup.
-- We eventually can use M4 macros to tailor the CSS 'Design tokens' type of variable if is not an overkill.
-- I check that the distribution mechanism of Open Props UI is a ZIP file (not sure if is the only one), similar to the fontawesome, may be the helper-css-remap you migrate from python to M4 (see the not merged yet branch) will became handy to adjust the url if they are no relative.
-- We will preserve the CSS diversion to make minor twiks in the pages they needed. 
+- Adopting "design tokens" as a light guideline without introducing toolchain dependencies sounds great — I'm in.
+- In line with the above, Open Props UI (core components, no JS) sounds perfect for the project. I want to know how to maintain at least 2 simple themes (dark, light) and ensure the overall design is mobile-friendly.
+- The content of all generated pages is static — mostly text, with some charts here and there.
+- All domains are related; there will be links between them. We will cover that when we start working on the internals of `NAVIGATION_PHASE` — not related to the CSS cleanup.
+- We could eventually use M4 macros to define the CSS "design token" variables, if that is not overkill.
+- I checked that the distribution mechanism for Open Props UI is a ZIP file (not sure if it is the only one), similar to FontAwesome. Perhaps the `helper-css-remap` macro you migrated from Python to M4 (see the not-yet-merged branch) will come in handy to adjust URLs if they are not relative.
+- We will preserve the CSS diversion to make minor tweaks on the pages that need them.
 
-- more to came, stay tuned.
+- More to come — stay tuned.
 
