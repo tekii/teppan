@@ -152,5 +152,15 @@ from-scratch component work turns out larger than expected.
 - [The "Checkbox Hack" (and things you can do with it) — CSS-Tricks](https://css-tricks.com/the-checkbox-hack/)
 
 ## Overall view (user)
+The following is an incomplete enumeration of first impressions:
 
-<!-- fill in -->
+- The adoption of the 'Design tokens' as a light guideline without introducing dependencies in the tool-chain sound great, im in.
+- In line with the above line, Open props UI (core components no JS) sound perfect to the project, i want to know how to maintain at least 2 simple themes (dark, light) and be sure the overall design is mobile friendly.
+- The content of all generated pages is static, mostly text, some chart here and there.
+- All domains are related, there will be links betwen them, we will cover that when we start working in the inners of the NAVIGATION_PHASE, not related to the CSS-cleanup.
+- We eventually can use M4 macros to tailor the CSS 'Design tokens' type of variable if is not an overkill.
+- I check that the distribution mechanism of Open Props UI is a ZIP file (not sure if is the only one), similar to the fontawesome, may be the helper-css-remap you migrate from python to M4 (see the not merged yet branch) will became handy to adjust the url if they are no relative.
+- We will preserve the CSS diversion to make minor twiks in the pages they needed. 
+
+- more to came, stay tuned.
+
