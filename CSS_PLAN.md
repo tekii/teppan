@@ -98,6 +98,26 @@ type, shadow, animation scales). Pairs naturally with the project's existing
 components on top, targeting modern browsers (Chrome 90+ / Firefox 88+ /
 Safari 14+) — a reasonable 2026 baseline.
 
+#### What "design tokens" means in this context
+
+"Design tokens" is an overloaded term. At its heaviest, it refers to the
+[W3C Design Tokens Community Group](https://www.designtokens.org/tr/drafts/)
+spec: a JSON format where each token carries a `$type` field
+(`"color"`, `"dimension"`, etc.) that build tools (Style Dictionary, Theo)
+use to validate values and compile them into platform-specific outputs —
+CSS variables for the web, Swift constants for iOS, XML for Android, and so
+on. The browser never sees that JSON; `$type` is purely a build-time
+annotation that drives the compiler. That pipeline is designed for
+multi-platform design systems that need to keep web, native apps, and design
+tools (Figma) in sync. **None of that applies here.** When this plan says
+"design tokens", it means only the browser-facing end of that pipeline: a
+`  :root { --color-brand: #1a2e4a; --space-md: 1rem; … }` block in a plain
+`.css` file, authored directly, with no JSON source and no build tool in
+between. The project already does this with `--logo-text-color` and
+`--logo-bird-color`; the proposal is simply to extend that same pattern to
+cover the full color palette, spacing scale, and typography — zero new
+toolchain dependencies.
+
 ### Hand-rolled components
 Modern CSS-only patterns exist for off-canvas/hamburger nav: the classic
 checkbox-hack (`:checked` + sibling selectors, no JS) or a newer
