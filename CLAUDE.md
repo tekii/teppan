@@ -363,3 +363,7 @@ it's really just an AMP artifact (see "Common Bugs to Flag").
 
 - `.gitignore` excludes `BUILD`, `VENDOR`, `*venv*`, etc. — these are
   generated/vendored, not source.
+
+## Git
+
+When commit messages mention AI agents, always use `Assisted-By`, never use `Co-Authored-By`.
