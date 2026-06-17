@@ -1,6 +1,12 @@
-# Notes
+---
+type: Design Note
+title: __ASSET rule duplication
+description: Why __ASSET emits duplicate Makefile blocks for repeated asset references, and why it's harmless.
+tags: [design-note, makefile, m4]
+timestamp: 2026-06-17
+---
 
-## `__ASSET` rule duplication (e.g. `img/logo.png` in `news.mk`)
+# `__ASSET` rule duplication (e.g. `img/logo.png` in `news.mk`)
 
 `generator.m4`'s `__ASSET` macro (around line 226) pushes a full
 `## ... ASSET BEGINS/ENDS ##` block into the `MAKEFILE` diversion on
@@ -37,20 +43,5 @@ Makefile text and a couple of harmless extra `rm -f` calls per repeated
 `__ASSET` invocation of the same file. Not worth fixing unless the
 generated `.mk` size/readability becomes a real concern.
 
-## Code Review Role — GNU Makefile (CLAUDE.md addition)
-
-It's tailored to patterns already present in this project's
-`Makefile`/`Rules.mk`/generated `.mk` files: `:=` vs `=` (esp.
-`$(shell which m4)`), `.PHONY`, double-colon `::` rule semantics (ties back
-to the `logo.png`/`clean-asset` finding in `NOTES.md`), order-only `|`
-prerequisites (ties to the `cd11eed` fix), `.SECONDEXPANSION`/`$$`
-expansion, `-include`'d generated `.mk` bootstrapping, and recursive
-`$(MAKE)` variable propagation — plus style and common-bugs checklists in
-the same format as the M4 section.
-
-Sources:
-- [Recursive Make Considered Harmful (Peter Miller)](https://aegis.sourceforge.net/auug97.pdf)
-- [Makefile Conventions — GNU Coding Standards](https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html)
-- [Makefile Tutorial by Example](https://makefiletutorial.com/)
-- [GNU Makefiles - best practices](http://rahul.gopinath.org/post/2025/10/17/makefiles/)
-- [Makefile Best Practices — Cloud Posse](https://docs.cloudposse.com/best-practices/developer/makefile/)
+See also: [GNU Makefile code review guidelines](../code-review/makefile.md),
+[why that guideline was added](makefile-review-rationale.md).
