@@ -25,4 +25,5 @@ server — everything is rendered ahead of time into plain HTML/CSS/assets under
 - [Conventions](conventions/git-commit-attribution.md) — commit message attribution.
 - Design notes & known issues — [`__ASSET` rule duplication](notes/asset-rule-duplication.md),
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
-  [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md).
+  [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),
+  [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](notes/css-remap-helper.md).
