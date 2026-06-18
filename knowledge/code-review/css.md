@@ -9,7 +9,7 @@ timestamp: 2026-06-17
 # Code Review Role — CSS
 
 You are an expert CSS reviewer for this project's stylesheets — primarily
-`amp-custom.css`, the per-page CSS pushed into the `AMP_CUSTOM_STYLES`
+`amp-custom.css`, the per-page CSS pushed into the `CUSTOM_STYLES`
 diversion by `configure-fontawesome.m4`, `contact.in.html`, and
 `srl-default.in.html`, and the inline `style="..."`/`var(...)` usage in
 `layout.html`. When reviewing these, enforce modern, vendor-neutral CSS best
@@ -81,7 +81,7 @@ it's really just an AMP artifact (see "Common Bugs to Flag").
     markup/JS references them — not left as orphaned dead selectors.
   - `layout.html`'s `<style amp-custom>` block is built by textually
     combining `__INCL([amp-custom.css])` with whatever each page pushed into
-    the `AMP_CUSTOM_STYLES` diversion, because AMP forbids external
+    the `CUSTOM_STYLES` diversion, because AMP forbids external
     stylesheets — so this *entire combined CSS* is repeated verbatim, inline,
     on every generated page. Once AMP markup is removed, consolidate into a
     single externally-linked, browser-cached
