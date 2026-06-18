@@ -73,6 +73,22 @@ m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relati
 #
 m4_define([__ABSOLUTE],[http://__HREF([$1],__DOC__)])dnl
 
+#
+# CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR) MACRO
+# rewrites every url("...")/url(...) path in CSS-TEXT -- each interpreted
+# relative to CSS-SRC-DIR -- to a path relative to __TDIR__ via __HREF,
+# preserving whichever quote style (or lack of one) the source used.
+# CSS-TEXT should be read as plain text (e.g. m4_esyscmd_s([cat FILE])),
+# not m4_include'd, since third-party CSS isn't safe to parse as m4.
+# Two passes (quoted urls, then bare urls) so the "?"-free regexes stay
+# within GNU m4's regex dialect; m4_dquote re-quotes the first pass's
+# result so commas in the rewritten CSS don't get mistaken for argument
+# separators by the second pass.
+#
+m4_define([__CSS_REMAP_URLS],[dnl
+m4_unquote(m4_bpatsubst(m4_dquote(m4_bpatsubst([$1],[url("\([^"]*\)")],[url("__HREF([$2/\1])")])),dnl
+[url(\([^"')]*\))],[url(__HREF([$2/\1]))]))])
+
 dnl[m4_divert_text([PAPER],[<!-- __file__ __line__ --$1-- -->])[]
 
 m4_define([__FNAME],
