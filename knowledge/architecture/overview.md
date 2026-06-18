@@ -14,7 +14,8 @@ timestamp: 2026-06-17
   the bottom of the file. See [Diversion/phase model](diversion-phase-model.md).
 - **`configure.m4`** / **`configure-fontawesome.m4`** — site-wide constants
   and macro definitions (org info, layout defaults, etc.), included by
-  `generator.m4`.
+  `generator.m4`. `configure-fontawesome.m4` is currently `dnl`-disabled —
+  see [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md).
 - **`*.in.html`** (e.g. `main.in.html`, `news.in.html`, `contact.in.html`,
   `jobs.in.html`, `404.in.html`, `redirect.in.html`, `srl-default.in.html`) —
   per-page m4 sources. Each stem gets a generated `.mk` under `BUILD/DEP`,
@@ -30,4 +31,5 @@ timestamp: 2026-06-17
 `.gitignore` excludes `BUILD`, `VENDOR`, `*venv*`, etc. — these are
 generated/vendored, not source.
 
-See also: [Domains](domains.md), [`WITH_LAYOUT`/`__LAYOUT__` known issue](../notes/layout-mechanism-duplication.md).
+See also: [Domains](domains.md), [`WITH_LAYOUT`/`__LAYOUT__` known issue](../notes/layout-mechanism-duplication.md),
+[`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md).

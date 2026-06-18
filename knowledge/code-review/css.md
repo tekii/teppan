@@ -89,4 +89,5 @@ it's really just an AMP artifact (see "Common Bugs to Flag").
     keeps emitting per-page inline `<style>` blocks instead of moving toward
     one shared stylesheet.
 
-See also: [HTML code review guidelines](html.md).
+See also: [HTML code review guidelines](html.md),
+[`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md).
