@@ -100,6 +100,15 @@ cross-domain linking/navigation above, it will be addressed as part of the
 general are meant to live, so the redirect-target mechanism belongs there
 too rather than as a one-off fix here.
 
+**Alternative avenue:** a DNS-level redirect (e.g. registrar/DNS-provider
+URL forwarding, or a CNAME/ALIAS plus redirect rule at the DNS/hosting
+layer) could replace some or all of this app-level mechanism entirely,
+*if* this project ever gains DNS-update capabilities (see the
+DNS-zone-update mechanism mentioned above, currently split across Google and
+Squarespace DNS). Worth exploring once that capability exists, rather than
+building out a more elaborate `__WITH_DOMAIN`-based cross-domain redirect
+mechanism that DNS-level redirects might make unnecessary.
+
 ## Verification (once target state is filled in and implemented)
 
 - `make build` should produce the new/changed domain(s) under
