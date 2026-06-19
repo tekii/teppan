@@ -94,6 +94,12 @@ needs a way to specify a redirect *target* domain that's distinct from the
 page's own `__DOMAIN__`. This is a real gap, not just "add more
 `__WITH_DOMAIN` blocks following the existing pattern."
 
+**Scoping decision:** fixing this is out of scope for this plan. Like
+cross-domain linking/navigation above, it will be addressed as part of the
+`NAVIGATION_PHASE` work — that's where domain-to-domain relationships in
+general are meant to live, so the redirect-target mechanism belongs there
+too rather than as a one-off fix here.
+
 ## Verification (once target state is filled in and implemented)
 
 - `make build` should produce the new/changed domain(s) under
