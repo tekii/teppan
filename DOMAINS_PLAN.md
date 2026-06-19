@@ -109,6 +109,34 @@ Squarespace DNS). Worth exploring once that capability exists, rather than
 building out a more elaborate `__WITH_DOMAIN`-based cross-domain redirect
 mechanism that DNS-level redirects might make unnecessary.
 
+### Light research: is "DNS-update capability" viable for the Squarespace-hosted zones?
+
+- **Squarespace has no public DNS API.** Their public developer APIs
+  (`developers.squarespace.com`) only cover Commerce features — Orders,
+  Inventory, Products, Contacts, Transactions, Analytics. There is no
+  domain/DNS-record API; DNS records can only be added or edited through
+  the manual web UI (domain's *DNS Settings* panel).
+- **Workaround: move the zone off Squarespace's nameservers to a provider
+  with a real DNS API** (Cloudflare is the pairing Squarespace's own docs
+  describe). Once a domain's nameservers point elsewhere, Squarespace's DNS
+  panel becomes inert for it — every existing record (MX/TXT/CNAME for
+  email, etc.) has to be re-created at the new provider — and from then on
+  programmatic DNS management (Cloudflare API, Route 53, etc.) is
+  straightforward.
+- Squarespace explicitly discourages custom nameservers for most users
+  ("only do this if you need DNSSEC or know what you're doing"), but for
+  this project's goal it's the realistic path — there's no Squarespace-side
+  capability to build "DNS-update capabilities" against directly.
+- **Bottom line:** automating DNS for the Squarespace-managed domains isn't
+  a Squarespace-API integration (none exists) — it's a one-time migration
+  of those domains' nameservers to an API-capable DNS provider, after which
+  automation (and the DNS-level redirect avenue above) becomes possible.
+
+Sources: [Developer Tools APIs at Squarespace](https://support.squarespace.com/hc/en-us/articles/41325887099533-Developer-Tools-APIs-at-Squarespace),
+[Edit your domain's DNS records](https://support.squarespace.com/hc/en-us/articles/360002101888-Adding-DNS-records-to-your-domain),
+[Using Cloudflare with Squarespace](https://support.squarespace.com/hc/en-us/articles/213469948-Using-Cloudflare-with-Squarespace),
+[Making changes to nameservers](https://support.squarespace.com/hc/en-us/articles/4404183898125-Making-changes-to-nameservers).
+
 ## Verification (once target state is filled in and implemented)
 
 - `make build` should produce the new/changed domain(s) under
