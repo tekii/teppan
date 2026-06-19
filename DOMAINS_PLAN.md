@@ -63,17 +63,17 @@ list and category changes:
   reasoning as the CSS plan — covered separately whenever the
   `NAVIGATION_PHASE` internals are worked on, not as part of this plan.
 
-## The new domain structure (what Im planing to do, this is imput)
+## The new domain structure (what I'm planning to do, this is input)
 
-The new collection of sites will be compose of two related site (`tekii.ar` and `tekii.us`) the first will contain the mostly the legacy traceability business stuff an will still be i18n trougth the `en`/`es`/`br` locale subdirs. Actually the spanish branch of the site most probable will lose the `es` if favor of beeing the default lang.
-The second one (`tekii.us`) will be the new and "international" part of the business, it will be english only (at least by now), there is some small posibility of some cross-site links with the `tekii.ar` if necesary.
-The rest of the domain properties are mostly redirects, `tekii.com.ar` (currently the main spanish site) will become a redirect to `tekii.ar` spanish branch, also `teky.com.ar`, `teky.ar`, `teki.com.ar` (this list need to be revised an completed).
+The new collection of sites will be composed of two related sites (`tekii.ar` and `tekii.us`); the first will mostly contain the legacy traceability business stuff and will still be i18n through the `en`/`es`/`br` locale subdirs. Actually, the Spanish branch of the site will most likely lose the `es` in favor of being the default lang.
+The second one (`tekii.us`) will be the new and "international" part of the business, it will be English only (at least for now); there is some small possibility of some cross-site links with `tekii.ar` if necessary.
+The rest of the domain properties are mostly redirects: `tekii.com.ar` (currently the main Spanish site) will become a redirect to `tekii.ar`'s Spanish branch, also `teky.com.ar`, `teky.ar`, `teki.com.ar` (this list needs to be revised and completed).
 The `tekii.com` will redirect to `tekii.us`.
-Also loose related to this plan (but complex enougth to deserve his own plan) is very important to convert the current hosting environment / mechanism (not documented yet) to support https, this has an impact on the domains plan.
-A mechanism (i need a synonim better suited for this context) to update the dns zones (currently managed in a mix of google and Squarespace DNS based on the registrar) wich each new domain whould constitute a mayor improvement.
-As you correctly state, the cross domain linking will be adressed in the `NAVIGATION_PHASE`.
+Also loosely related to this plan (but complex enough to deserve its own plan) is the need to convert the current hosting environment/mechanism (not documented yet) to support HTTPS; this has an impact on the domains plan.
+A mechanism (I need a better synonym for this context) to update the DNS zones (currently managed in a mix of Google and Squarespace DNS, depending on the registrar) for each new domain would constitute a major improvement.
+As you correctly state, the cross-domain linking will be addressed in the `NAVIGATION_PHASE`.
 
-This is incomplete, more input is comming, I will consider the future of the current page stems.
+This is incomplete, more input is coming. I will consider the future of the current page stems.
 
 
 ## Verification (once target state is filled in and implemented)
