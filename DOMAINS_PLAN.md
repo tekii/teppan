@@ -75,6 +75,24 @@ As you correctly state, the cross-domain linking will be addressed in the `NAVIG
 
 This is incomplete, more input is coming. I will consider the future of the current page stems.
 
+## Finding: the current redirect mechanism doesn't support cross-domain redirects
+
+`redirect.in.html` + `layout-redirect.html` is the only existing
+redirect-only-domain mechanism, and as built today it can only redirect a
+domain to *itself*, not to another domain. `layout-redirect.html:6` embeds
+`<meta http-equiv="refresh" content="0;URL=http://__DOMAIN__">`, and
+`__DOMAIN__` is always the domain the page is being generated for (set via
+`-D __DOMAIN__=...` per `__WITH_DOMAIN` block in `redirect.in.html`). So the
+generated `tekii.ar/redirect.html` today redirects to `http://tekii.ar`
+(itself) and `tekii.us/redirect.html` to `http://tekii.us` (itself) — these
+look like placeholders, not working cross-domain redirects.
+
+None of the redirects this plan calls for (`tekii.com.ar` → `tekii.ar`,
+`teky.com.ar`/`teky.ar`/`teki.com.ar` → `tekii.ar`, `tekii.com` →
+`tekii.us`) can be expressed with the mechanism as it exists today — it
+needs a way to specify a redirect *target* domain that's distinct from the
+page's own `__DOMAIN__`. This is a real gap, not just "add more
+`__WITH_DOMAIN` blocks following the existing pattern."
 
 ## Verification (once target state is filled in and implemented)
 
