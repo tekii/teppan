@@ -46,6 +46,25 @@ __ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__DOC__/tests.com/en/about.html])
 __ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__DOC__/tests.com/about.html]),[http://tests.com/about.html])
 __ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__DOC__/index.html]),[http://index.html])
 
+dnl __WITH_LAYOUT's extra positional args (after the mandatory LAYOUT,BODY)
+dnl must be visible -- as __LAYOUT_EXTRA_ARGN__/__LAYOUT_EXTRA_ARGC__ -- by
+dnl the time BODY expands, since that's where a page source nests its
+dnl __MAKE_PAGE call. Assert from inside BODY itself (not just after the
+dnl call returns) so the test actually pins body-time visibility rather
+dnl than only the chosen persist-after-call lifetime.
+dnl the embedded newline before the closing bracket is required: $2dnl in
+dnl __WITH_LAYOUT's own definition directly concatenates onto $2's expanded
+dnl text with no separator, so a body expanding to plain text ending in a
+dnl word character (our PASS/FAIL message) would otherwise fuse with the
+dnl literal "dnl" into one unrecognized token instead of two.
+__WITH_LAYOUT([dummy-layout.html],dnl
+[__ASSERT_EQ([WITH_LAYOUT extra arg visible in body],__LAYOUT_EXTRA_ARG1__,[first])
+],dnl
+[first],[second])dnl
+__ASSERT_EQ([WITH_LAYOUT extra arg 1],__LAYOUT_EXTRA_ARG1__,[first])
+__ASSERT_EQ([WITH_LAYOUT extra arg 2],__LAYOUT_EXTRA_ARG2__,[second])
+__ASSERT_EQ([WITH_LAYOUT extra arg count],__LAYOUT_EXTRA_ARGC__,[2])
+
 __ASSERT_EQ([LANG_NAME en],__LANG_NAME([en]),[English])
 __ASSERT_EQ([LANG_NAME es],__LANG_NAME([es]),[Español])
 __ASSERT_EQ([LANG_NAME br],__LANG_NAME([br]),[Português])

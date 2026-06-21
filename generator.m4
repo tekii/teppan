@@ -106,15 +106,28 @@ m4_define([__LOCALIZE_URL_NULL],[$1/$3])
 m4_define([__LOCALIZE_URL_DOMAIN],[$2.$1/$3])
 
 dnl
-dnl WITH_LAYOUT(LAYOUT,BODY) MACRO
+dnl WITH_LAYOUT(LAYOUT,BODY,[EXTRA...]) MACRO
 dnl $1 path to an alternate layout file -- required. If a page doesn't need
 dnl    a layout other than configure.m4's default __LAYOUT__, it should not
 dnl    call this macro at all.
 dnl $2 body to expand under the alternate __LAYOUT__
+dnl $3... any further arguments are optional and positional: the Nth extra
+dnl    argument (1-based) is exposed as __LAYOUT_EXTRA_ARGN__, and the count
+dnl    of extra arguments actually passed as __LAYOUT_EXTRA_ARGC__. Both are
+dnl    defined before $2 expands, so they are visible to anything $2 calls,
+dnl    including a nested __MAKE_PAGE. Like __LAYOUT__ itself, they persist
+dnl    for the rest of the run (no pushdef/popdef -- only one __WITH_LAYOUT
+dnl    call is expected per page generation).
 dnl
 m4_define([__WITH_LAYOUT],[dnl
 m4_if([$1],[],[m4_fatal([__WITH_LAYOUT requires a non-empty LAYOUT argument])])dnl
 m4_define([__LAYOUT__],$1)dnl
+m4_define([__LAYOUT_EXTRA_ARGC__],m4_eval([$#] - 2))dnl
+m4_if(m4_eval([$#] > 2),[1],[dnl
+m4_for([__I__],[3],[$#],[1],[dnl
+m4_define([__LAYOUT_EXTRA_ARG]m4_eval(__I__ - 2)[__],m4_argn(__I__,$@))dnl
+])dnl
+])dnl
 $2dnl
 ])
 

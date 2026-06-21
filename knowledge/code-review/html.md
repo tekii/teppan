@@ -54,6 +54,12 @@ output in `BUILD/DOC`, enforce the following.
   logos in `fragment-customers.html`) — those need a descriptive `alt`.
 - `id` attributes must be unique per document — watch for collisions when
   copying blocks between `layout.html` and `layout-redirect.html`.
+- **`<!-- -->` wrapping the top-level `__WITH_LAYOUT(...)`/`__WITH_DOMAIN(...)`
+  macro call** in some page sources (`redirect.in.html`, `news.in.html`) is
+  intentional — it keeps the editor's HTML syntax highlighter from
+  misinterpreting the raw m4 macro text, not a build requirement (the call
+  sits outside any diversion push, so it lands in the default `KILL`
+  diversion and is discarded either way). 
 
 ## Common Bugs to Flag
 
