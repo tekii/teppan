@@ -15,3 +15,5 @@ browsable, OKF-formatted source.)*
 @knowledge/code-review/html.md
 @knowledge/code-review/css.md
 @knowledge/conventions/git-commit-attribution.md
+@knowledge/conventions/m4-conditional-formatting.md
+@knowledge/conventions/m4-comment-style.md

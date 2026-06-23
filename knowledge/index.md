@@ -22,7 +22,9 @@ server — everything is rendered ahead of time into plain HTML/CSS/assets under
 - [Testing conventions](testing/conventions.md) — `generator_test.m4` and `__ASSERT_EQ`.
 - [Code review guidelines](code-review/index.md) — M4, GNU Makefile, HTML,
   and CSS review checklists.
-- [Conventions](conventions/git-commit-attribution.md) — commit message attribution.
+- Conventions — [commit message attribution](conventions/git-commit-attribution.md),
+  [M4 conditional formatting](conventions/m4-conditional-formatting.md),
+  [M4 comment style](conventions/m4-comment-style.md).
 - Design notes & known issues — [`__ASSET` rule duplication](notes/asset-rule-duplication.md),
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
   [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),

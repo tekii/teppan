@@ -1,6 +1,4 @@
-dnl
-dnl Font Awesome MACROS
-dnl
+# Font Awesome MACROS
 m4_divert_push([MAKEFILE])dnl
 m4_text_box(FONTAWESOME DEPS BEGIN,[+])
 ifndef __VENDOR_FA__
