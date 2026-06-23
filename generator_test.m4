@@ -1,9 +1,6 @@
 # Include the file to be tested
 m4_include([generator.m4])dnl
 
-# Set the TESTS out divert
-m4_divert([TESTS])dnl
-
 #
 # ASSERT_EQ(NAME, ACTUAL, EXPECTED) -- self-checking test helper.
 # pass ACTUAL as a macro call (unquoted) so it is expanded before
@@ -11,24 +8,42 @@ m4_divert([TESTS])dnl
 #
 m4_define([__ASSERT_EQ],[m4_if([$2],[$3],[PASS $1],[FAIL $1: got [$2] expected [$3]])])
 
-m4_bregexp([index.html],       [\([^/]+\..+\)$], [\1])
-m4_bregexp([en/about.html],    [\([^/]+\..+\)$], [\1])
-m4_bregexp([en/en/about.html], [\([^/]+\..+\)$], [\1])
+#
+# __FNAME extracts the bare filename (last path component) from a path,
+# via m4_bregexp's [^/]+\..+ pattern anchored at end of string -- stripping
+# any leading directories regardless of how many levels deep.
+#
+m4_divert_push([TESTS])dnl
+__ASSERT_EQ([FNAME no directory],__FNAME([index.html]),[index.html])
+__ASSERT_EQ([FNAME one directory],__FNAME([en/about.html]),[about.html])
+__ASSERT_EQ([FNAME nested directories],__FNAME([en/en/about.html]),[about.html])
+m4_divert_pop([TESTS])dnl
 
 
+#
 # __HREF computes a relative path between two locations (via `realpath
 # --relative-to`), independent of the current working directory.
+#
+m4_divert_push([TESTS])dnl
 __ASSERT_EQ([HREF relative to base],__HREF([/tmp/bucket/es/about.html],[/tmp/bucket/en]),[../es/about.html])
+m4_divert_pop([TESTS])dnl
 
 
+#
 # __HREF([./img/logo.png]) depends on the build's PWD (relative to __TDIR__),
-# kept for manual inspection only:
+# kept for manual inspection only -- intentionally left outside any TESTS
+# push, so it (and this comment) land in KILL and never appear in
+# `make test` output:
+#
 |__HREF([./img/logo.png])|
 
 
+#
 # __TDIR__ is /tmp/test during `make test` (see Makefile); __CSS_REMAP_URLS
 # rewrites url(...) paths relative to /tmp/test/vendor/css to be relative
 # to /tmp/test instead.
+#
+m4_divert_push([TESTS])dnl
 __ASSERT_EQ([CSS_REMAP_URLS quoted url],dnl
 __CSS_REMAP_URLS([@font-face{src:url("../webfonts/a.woff2") format("woff2")}],[/tmp/test/vendor/css]),dnl
 [@font-face{src:url("vendor/webfonts/a.woff2") format("woff2")}])
@@ -40,13 +55,18 @@ __CSS_REMAP_URLS([@font-face{src:url(../webfonts/b.eot)}],[/tmp/test/vendor/css]
 __ASSERT_EQ([CSS_REMAP_URLS mixed quoted and bare urls],dnl
 __CSS_REMAP_URLS([url("../webfonts/a.woff2");url(../webfonts/b.eot)],[/tmp/test/vendor/css]),dnl
 [url("vendor/webfonts/a.woff2");url(vendor/webfonts/b.eot)])
+m4_divert_pop([TESTS])dnl
 
 
+#
 # __ABSOLUTE turns a __DOC__-relative path into a http://host/path URL,
 # treating the first path segment (relative to __DOC__) as the host.
+#
+m4_divert_push([TESTS])dnl
 __ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__DOC__/tests.com/en/about.html]),[http://tests.com/en/about.html])
 __ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__DOC__/tests.com/about.html]),[http://tests.com/about.html])
 __ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__DOC__/index.html]),[http://index.html])
+m4_divert_pop([TESTS])dnl
 
 
 #
@@ -62,6 +82,7 @@ __ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__DOC__/index.html]),[http://index.h
 # word character (our PASS/FAIL message) would otherwise fuse with the
 # literal "dnl" into one unrecognized token instead of two.
 #
+m4_divert_push([TESTS])dnl
 __WITH_LAYOUT([dummy-layout.html],dnl
 [__ASSERT_EQ([WITH_LAYOUT extra arg visible in body],__LAYOUT_EXTRA_ARG1__,[first])
 ],dnl
@@ -69,15 +90,20 @@ __WITH_LAYOUT([dummy-layout.html],dnl
 __ASSERT_EQ([WITH_LAYOUT extra arg 1],__LAYOUT_EXTRA_ARG1__,[first])
 __ASSERT_EQ([WITH_LAYOUT extra arg 2],__LAYOUT_EXTRA_ARG2__,[second])
 __ASSERT_EQ([WITH_LAYOUT extra arg count],__LAYOUT_EXTRA_ARGC__,[2])
+m4_divert_pop([TESTS])dnl
 
 
+#
 # __LANG_NAME looks up a language's display name from __LANGS__ by its
 # internal code, returning "UNDEFINED LANG" for unknown/short argument lists.
+#
+m4_divert_push([TESTS])dnl
 __ASSERT_EQ([LANG_NAME en],__LANG_NAME([en]),[English])
 __ASSERT_EQ([LANG_NAME es],__LANG_NAME([es]),[Español])
 __ASSERT_EQ([LANG_NAME br],__LANG_NAME([br]),[Português])
 __ASSERT_EQ([LANG_NAME unknown],__LANG_NAME([nn]),[UNDEFINED LANG])
 __ASSERT_EQ([LOOKUP_LANG_NAME 2-arg],__LOOKUP_LANG_NAME([xx],[yy]),[UNDEFINED LANG])
+m4_divert_pop([TESTS])dnl
 
 
 #
@@ -88,9 +114,11 @@ __ASSERT_EQ([LOOKUP_LANG_NAME 2-arg],__LOOKUP_LANG_NAME([xx],[yy]),[UNDEFINED LA
 # at that point, so __LANG_NAME__ is frozen to "UNDEFINED LANG" for this whole file,
 # regardless of any later pushdef.
 #
+m4_divert_push([TESTS])dnl
 m4_pushdef([__LANG__],[es])dnl
 __ASSERT_EQ([LANG_NAME__ ignores later pushdef],__LANG_NAME__,[UNDEFINED LANG])
 m4_popdef([__LANG__])dnl
+m4_divert_pop([TESTS])dnl
 
 
 #
@@ -98,18 +126,24 @@ m4_popdef([__LANG__])dnl
 # __LANG__ at call time (their bodies are quoted m4_case(__LANG__,...)
 # calls, re-evaluated per call, not frozen at m4_include time).
 #
+m4_divert_push([TESTS])dnl
 m4_pushdef([__LANG__],[es])dnl
 __ASSERT_EQ([ESEN under es],__ESEN([Hola],[Hello]),[Hola])
 __ASSERT_EQ([ENES under es],__ENES([Hello],[Hola]),[Hola])
 m4_popdef([__LANG__])dnl
+m4_divert_pop([TESTS])dnl
 
 
+#
 # same ESEN/ENES check as above, with __LANG__ pushed to __EN__ instead --
 # confirms the other branch of both macros also resolves correctly.
+#
+m4_divert_push([TESTS])dnl
 m4_pushdef([__LANG__],[en])dnl
 __ASSERT_EQ([ESEN under en],__ESEN([Hola],[Hello]),[Hello])
 __ASSERT_EQ([ENES under en],__ENES([Hello],[Hola]),[Hello])
 m4_popdef([__LANG__])dnl
+m4_divert_pop([TESTS])dnl
 
 
 #
@@ -117,12 +151,17 @@ m4_popdef([__LANG__])dnl
 # the trailing newline. Fix the reference file's mtime so the expected
 # date is independent of when the test happens to run.
 #
+m4_divert_push([TESTS])dnl
 m4_esyscmd([touch -d 2020-03-04 /tmp/__rdate_test_file])dnl
 __ASSERT_EQ([RDATE fixed mtime],__RDATE([/tmp/__rdate_test_file]),[2020-03-04])
+m4_divert_pop([TESTS])dnl
 
 
+#
 # LEGACY -- exploratory/scratch m4sugar experiments kept for historical
-# reference, not real tests.
+# reference, not real tests. Left unwrapped (outside any TESTS push) so
+# their output lands in KILL and never appears in `make test`.
+#
 #m4_changequote(`«', `»')#m4_fatal(«bye»)
 dnl m4_translit(«a.html b.html   c/d.html»,« »,«,»)
 dnl m4_patsubst(«a.html b.html   c/d.html»,«\ +»,«,»)

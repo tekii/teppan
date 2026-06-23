@@ -344,7 +344,7 @@ m4_case(__PHASE__,
 [GENERATE_DEFERRED_MK_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([DEFERRED_MK])])],
 [MAKEPUB_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
 [TEST_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([TESTS])])],
-[m4_fatal(Unmached! [__PHASE__]==__PHASE__)])dnl
+[m4_fatal([Unmached! __PHASE__==]__PHASE__)])dnl
 dnl
 # DISCARD ALL OFF-PHASE TEXT
 m4_cleardivert([MAKEFILE])

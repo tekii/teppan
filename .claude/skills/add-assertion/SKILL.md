@@ -34,12 +34,20 @@ regressions).
 
 ## 3. Add the assertion
 
-In `generator_test.m4`, inside the `TESTS` divert (after the `__ASSERT_EQ`
-definition), near related assertions, add:
+In `generator_test.m4`, find the existing `m4_divert_push([TESTS])dnl ...
+m4_divert_pop([TESTS])dnl` group for the related macro and add a line inside
+it:
 
 ```
 __ASSERT_EQ([<short description>],<MACRO_CALL>,[<expected>])
 ```
+
+If no related group exists yet, add a new one — **the assertion must sit
+inside its own `m4_divert_push([TESTS])dnl ... m4_divert_pop([TESTS])dnl`
+pair**, not bare at the top level. The top level of this file stays in
+`KILL`-diversion context; an `__ASSERT_EQ` call placed outside any `TESTS`
+push silently never appears in `make test`'s output (no error, just
+missing) — see [testing conventions](../../../knowledge/testing/conventions.md).
 
 ## 4. Verify
 
