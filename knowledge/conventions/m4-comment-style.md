@@ -76,10 +76,5 @@ macro-name header followed by a one-line parameter note), stack them as
 plain consecutive `#` lines with no blank between — don't box each
 individually and don't merge them into one box.
 
-## Spelling: "diversion", not "divertion"
-
-The correct term — matching GNU m4's own manual and this project's
-`_m4_divert`/`m4_divert_push`/`m4_divert_pop`/`m4_undivert`/`m4_cleardivert`
-macro names — is **diversion**. "Divertion" is not a word.
 
 See also: [M4 code review guidelines](../code-review/m4.md).
