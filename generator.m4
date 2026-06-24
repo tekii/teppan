@@ -173,11 +173,28 @@ m4_divert_pop([MAKEFILE])dnl
 
 m4_define([__UP],[m4_translit($1,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__])])
 
+#
+# AS_LANDING(BODY) MACRO
+# wraps BODY (a nested __MAKE_PAGE call) marking it as __DOMAIN__'s landing
+# page. __MAKE_PAGE checks __LANDING_CONTEXT__ (m4_ifdef) instead of taking
+# an explicit argument -- same dynamic-scope idiom as __WITH_LAYOUT's
+# __LAYOUT_EXTRA_ARGN__: pushdef'd before BODY expands, visible to whatever
+# __MAKE_PAGE call BODY contains, popped after.
+#
+m4_define([__AS_LANDING],[dnl
+m4_pushdef([__LANDING_CONTEXT__])dnl
+$1[]dnl
+m4_popdef([__LANDING_CONTEXT__])dnl
+])
+
+#
 # MAKE_PAGE MACRO
 # $1 LinkType
-# $2 optional literal token [landing] -- registers this page as __DOMAIN__'s
-#    landing page, exposing __LANDING_<DOMAIN>_URL__ (domain-qualified, via
-#    __UP) for cross-domain linking through NAVIGATION-LANDING.m4
+# wrap the call in __AS_LANDING([...]) to register this page as
+#    __DOMAIN__'s landing page, exposing __LANDING_<DOMAIN>_URL__
+#    (domain-qualified, via __UP) for cross-domain linking through
+#    NAVIGATION-LANDING.m4
+#
 m4_define([__MAKE_PAGE],[
 # TODO: add some check in the composing of the id to avoid clashes
 m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__STEM__[]_[]__LANG__[]_URL__))
@@ -198,7 +215,7 @@ __NAV__/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-navigation)]
 clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__.m4
 __NAV__/__DOMAIN__/NAVIGATION.m4 : __NAV__/__PATH_STEM__.m4
 clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION.m4
-m4_if([$2],[landing],[dnl
+m4_ifdef([__LANDING_CONTEXT__],[dnl
 [#] LANDING -- separate fragment/phase from NAVIGATION above: the NAVIGATION
 [#] fragment carries this domain's whole NAVIGATION diversion (nav-menu
 [#] items, every page's URL macro on this domain); reusing it for the
@@ -261,7 +278,7 @@ m4_text_box(__PATH_STEM__,[-])
 dnl [m4_set_add](m4_quote(__UP(__[]__STEM__[]_ALTERNATES__),m4_dquote(m4_dquote(__LANG__,__LOCAL_URL_ID__))))
 m4_divert_pop([NAVIGATION])
 dnl
-m4_if([$2],[landing],[dnl
+m4_ifdef([__LANDING_CONTEXT__],[dnl
 m4_set_contains([__LANDING_PAGES__],__DOMAIN__,dnl
 [m4_fatal([__MAKE_PAGE: domain __DOMAIN__ already has a landing page registered])])dnl
 m4_set_add([__LANDING_PAGES__],__DOMAIN__)dnl

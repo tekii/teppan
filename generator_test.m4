@@ -112,6 +112,22 @@ m4_divert_pop([TESTS])dnl
 
 
 #
+# __AS_LANDING(BODY) pushdefs __LANDING_CONTEXT__ around BODY's expansion --
+# visible to whatever BODY contains (e.g. a nested __MAKE_PAGE call), gone
+# once __AS_LANDING returns. Assert both sides directly, same shape as the
+# WITH_LAYOUT extra-arg visibility check above.
+#
+m4_divert_push([TESTS])dnl
+__AS_LANDING([dnl
+__ASSERT_EQ([AS_LANDING context visible in body],dnl
+m4_ifdef([__LANDING_CONTEXT__],[yes],[no]),[yes])
+])dnl
+__ASSERT_EQ([AS_LANDING context not visible after],dnl
+m4_ifdef([__LANDING_CONTEXT__],[yes],[no]),[no])
+m4_divert_pop([TESTS])dnl
+
+
+#
 # __LANG_NAME looks up a language's display name from __LANGS__ by its
 # internal code, returning "UNDEFINED LANG" for unknown/short argument lists.
 #
