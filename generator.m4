@@ -11,6 +11,7 @@ m4_define([_m4_divert(HTML)], 8)
 m4_define([_m4_divert(DEFERRED_MK)], 9)
 m4_define([_m4_divert(EPILOG)], 10)
 m4_define([_m4_divert(TESTS)], 11)
+m4_define([_m4_divert(LANDING)], 12)
 
 dnl
 dnl
@@ -66,6 +67,16 @@ m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relati
 # treating the first path component (relative to __DOC__) as the host
 #
 m4_define([__ABSOLUTE],[http://__HREF([$1],__DOC__)])dnl
+
+#
+# REDIRECT_URL(DOMAIN) MACRO
+# resolves DOMAIN's registered landing page (__LANDING_<DOMAIN>_URL__, as
+# aggregated into NAVIGATION-LANDING.m4 -- see __MAKE_PAGE's [landing] arg)
+# if one is registered, otherwise falls back to DOMAIN's bare root.
+#
+m4_define([__REDIRECT_URL],[m4_ifdef([__LANDING_]__UP([$1])[_URL__],dnl
+[__ABSOLUTE(__LANDING_]__UP([$1])[_URL__)],dnl
+[http://$1])])dnl
 
 #
 # CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR) MACRO
@@ -162,11 +173,32 @@ m4_divert_pop([MAKEFILE])dnl
 
 m4_define([__UP],[m4_translit($1,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__])])
 
+#
+# AS_LANDING(BODY) MACRO
+# wraps BODY (a nested __MAKE_PAGE call) marking it as __DOMAIN__'s landing
+# page. __MAKE_PAGE checks __LANDING_CONTEXT__ (m4_ifdef) instead of taking
+# an explicit argument -- same dynamic-scope idiom as __WITH_LAYOUT's
+# __LAYOUT_EXTRA_ARGN__: pushdef'd before BODY expands, visible to whatever
+# __MAKE_PAGE call BODY contains, popped after.
+#
+m4_define([__AS_LANDING],[dnl
+m4_pushdef([__LANDING_CONTEXT__])dnl
+$1[]dnl
+m4_popdef([__LANDING_CONTEXT__])dnl
+])
+
+#
 # MAKE_PAGE MACRO
 # $1 LinkType
+# wrap the call in __AS_LANDING([...]) to register this page as
+#    __DOMAIN__'s landing page, exposing __LANDING_<DOMAIN>_URL__
+#    (domain-qualified, via __UP) for cross-domain linking through
+#    NAVIGATION-LANDING.m4
+#
 m4_define([__MAKE_PAGE],[
 # TODO: add some check in the composing of the id to avoid clashes
 m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__STEM__[]_[]__LANG__[]_URL__))
+m4_pushdef([__LANDING_URL_ID__],__UP(__LANDING_[]__DOMAIN__[]_URL__))
 m4_pushdef([__PATH_STEM__],$1(__DOMAIN__,__L__,__STEM__))
 # TODO rewiew next 2 lines
 dnl m4_set_add([__CURRENT_BUILD_TARGETS__],__DOC__/__PATH_STEM__.html)dnl
@@ -183,6 +215,19 @@ __NAV__/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-navigation)]
 clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__.m4
 __NAV__/__DOMAIN__/NAVIGATION.m4 : __NAV__/__PATH_STEM__.m4
 clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION.m4
+m4_ifdef([__LANDING_CONTEXT__],[dnl
+[#] LANDING -- separate fragment/phase from NAVIGATION above: the NAVIGATION
+[#] fragment carries this domain's whole NAVIGATION diversion (nav-menu
+[#] items, every page's URL macro on this domain); reusing it for the
+[#] cross-domain NAVIGATION-LANDING.m4 aggregate would leak all of that into
+[#] every other domain that includes NAVIGATION-LANDING.m4.
+__NAV__/__PATH_STEM__.landing.m4 : __SRC__/generator.m4
+__NAV__/__PATH_STEM__.landing.m4 : EXTRA_LANDING_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
+__NAV__/__PATH_STEM__.landing.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-landing)]
+clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__.landing.m4
+__NAV__/NAVIGATION-LANDING.m4 : __NAV__/__PATH_STEM__.landing.m4
+clean-navigation :: ; -rm -f __NAV__/NAVIGATION-LANDING.m4
+],[])dnl
 dnl
 [#] HTML 
 dnl TODO: is VENDOR really needed in this PHASE?
@@ -190,13 +235,13 @@ dnl TODO: is VENDOR really needed in this PHASE?
 __DOC__/__PATH_STEM__.html : __LAYOUT__
 __DOC__/__PATH_STEM__.html : __SRC__/generator.m4
 __DOC__/__PATH_STEM__.html : EXTRA_HTML_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
-__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 ; [$(do-generate-html)]
+__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 __NAV__/NAVIGATION-LANDING.m4 ; [$(do-generate-html)]
 clean-build :: ; -rm -f __DOC__/__PATH_STEM__.html
 dnl
 [#] DEFERRED MAKEFILE
 __DOC__/__PATH_STEM__.mk : __SRC__/generator.m4
 __DOC__/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
-__DOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 ; [$(do-generate-deferred-mk)]
+__DOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 __NAV__/NAVIGATION-LANDING.m4 ; [$(do-generate-deferred-mk)]
 clean-makefile :: ; -rm -f __DOC__/__PATH_STEM__.mk
 [#] -include __DOC__/__PATH_STEM__.mk
 cp-deferred-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
@@ -233,9 +278,18 @@ m4_text_box(__PATH_STEM__,[-])
 dnl [m4_set_add](m4_quote(__UP(__[]__STEM__[]_ALTERNATES__),m4_dquote(m4_dquote(__LANG__,__LOCAL_URL_ID__))))
 m4_divert_pop([NAVIGATION])
 dnl
-$2dnl
+m4_ifdef([__LANDING_CONTEXT__],[dnl
+m4_set_contains([__LANDING_PAGES__],__DOMAIN__,dnl
+[m4_fatal([__MAKE_PAGE: domain __DOMAIN__ already has a landing page registered])])dnl
+m4_set_add([__LANDING_PAGES__],__DOMAIN__)dnl
+m4_divert_push([LANDING])dnl
+m4_text_box(__PATH_STEM__,[-])
+[m4_define](m4_dquote(__LANDING_URL_ID__),m4_dquote(__DOC__/__PATH_STEM__.html))
+m4_divert_pop([LANDING])dnl
+],[])dnl
 dnl
 m4_popdef([__PATH_STEM__])
+m4_popdef([__LANDING_URL_ID__])
 m4_popdef([__LOCAL_URL_ID__])
 ])
 
@@ -333,6 +387,7 @@ __PHASE__,[GENERATE_HTML_PHASE],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],
 __PHASE__,[GENERATE_DEFERRED_MK_PHASE],[m4_include(__NAV__/__DOMAIN__/NAVIGATION.m4)],
 [])dnl
 dnl m4_sinclude(__NAV__/__DOMAIN__/NAVIGATION)
+m4_sinclude(__NAV__/NAVIGATION-LANDING.m4)dnl
 m4_include(__FIRST__)dnl
 # NOW THE LAYOUT CONSUME THE DIVERSIONS
 m4_include(__LAYOUT__)dnl
@@ -340,6 +395,7 @@ m4_include(__LAYOUT__)dnl
 m4_case(__PHASE__,
 [GENERATE_MAKEFILE_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([MAKEFILE])])],
 [GENERATE_NAVIGATION_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([NAVIGATION])])],
+[GENERATE_LANDING_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([LANDING])])],
 [GENERATE_HTML_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([HTML])])],
 [GENERATE_DEFERRED_MK_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([DEFERRED_MK])])],
 [MAKEPUB_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
@@ -349,6 +405,7 @@ dnl
 # DISCARD ALL OFF-PHASE TEXT
 m4_cleardivert([MAKEFILE])
 m4_cleardivert([DEFERRED_MK])
+m4_cleardivert([LANDING])
 dnl m4_cleardivert([SITEMAP])
 m4_cleardivert([HEAD])
 m4_cleardivert([MAIN])
