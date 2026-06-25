@@ -9,7 +9,7 @@ Before processing any prompt, detect the language of the input.
   - **Grammar and spelling**: if errors are found, respond ONLY with:
     1. A list of the specific errors found (e.g. "❌ 'provede' → 'provide'", "❌ Missing comma after 'case'")
     2. A corrected version of the full prompt under the heading **"Suggested revision:"**
-    3. Ask: "Shall I proceed with the corrected version, or did you mean something different?"
+    3. Use `AskUserQuestion` with two options: **"Proceed"** (use the corrected version) and **"I meant something different"** (user will clarify). Do not ask as plain text.
   - **Ambiguous references**: if the prompt contains a vague pronoun or noun (`it`, `this`, `that`, `the thing`, etc.) whose referent cannot be determined from the prompt itself — only from prior conversation context — flag each one and ask what it refers to before proceeding. Do not flag when the antecedent is clear within the same message.
   - If neither check finds anything: proceed normally without any mention of this check.
 
