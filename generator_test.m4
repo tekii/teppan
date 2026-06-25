@@ -68,6 +68,24 @@ __ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__DOC__/tests.com/about.h
 __ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__DOC__/index.html]),[http://index.html])
 m4_divert_pop([TESTS])dnl
 
+#
+# __REDIRECT_URL(DOMAIN) resolves to DOMAIN's registered landing page
+# (__LANDING_<UP(DOMAIN)>_URL__, as __MAKE_PAGE's [landing] arg would define
+# it once NAVIGATION-LANDING.m4 is sincluded) when one is registered, and
+# falls back to DOMAIN's bare root otherwise. __UP translits "." to "_" and
+# upcases, so "tekii.ar" registers under __LANDING_TEKII_AR_URL__ -- defined
+# here directly (without going through __MAKE_PAGE/NAVIGATION-LANDING.m4) to
+# pin __REDIRECT_URL's own lookup/fallback logic in isolation.
+#
+m4_divert_push([TESTS])dnl
+m4_pushdef([__LANDING_TEKII_AR_URL__],[__DOC__/tekii.ar/index.html])dnl
+__ASSERT_EQ([REDIRECT_URL with registered landing page],dnl
+__REDIRECT_URL([tekii.ar]),[http://tekii.ar/index.html])
+m4_popdef([__LANDING_TEKII_AR_URL__])dnl
+__ASSERT_EQ([REDIRECT_URL without registered landing page],dnl
+__REDIRECT_URL([nowhere.test]),[http://nowhere.test])
+m4_divert_pop([TESTS])dnl
+
 
 #
 # __WITH_LAYOUT's extra positional args (after the mandatory LAYOUT,BODY)
@@ -90,6 +108,22 @@ __WITH_LAYOUT([dummy-layout.html],dnl
 __ASSERT_EQ([WITH_LAYOUT extra arg 1],__LAYOUT_EXTRA_ARG1__,[first])
 __ASSERT_EQ([WITH_LAYOUT extra arg 2],__LAYOUT_EXTRA_ARG2__,[second])
 __ASSERT_EQ([WITH_LAYOUT extra arg count],__LAYOUT_EXTRA_ARGC__,[2])
+m4_divert_pop([TESTS])dnl
+
+
+#
+# __AS_LANDING(BODY) pushdefs __LANDING_CONTEXT__ around BODY's expansion --
+# visible to whatever BODY contains (e.g. a nested __MAKE_PAGE call), gone
+# once __AS_LANDING returns. Assert both sides directly, same shape as the
+# WITH_LAYOUT extra-arg visibility check above.
+#
+m4_divert_push([TESTS])dnl
+__AS_LANDING([dnl
+__ASSERT_EQ([AS_LANDING context visible in body],dnl
+m4_ifdef([__LANDING_CONTEXT__],[yes],[no]),[yes])
+])dnl
+__ASSERT_EQ([AS_LANDING context not visible after],dnl
+m4_ifdef([__LANDING_CONTEXT__],[yes],[no]),[no])
 m4_divert_pop([TESTS])dnl
 
 

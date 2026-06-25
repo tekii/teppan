@@ -71,9 +71,22 @@ define do-generate-navigation
 	generator.m4 > $@
 endef
 
+define do-generate-landing
+	$(M4) -D __PHASE__=GENERATE_LANDING_PHASE $(M4_FLAGS) \
+	$(EXTRA_LANDING_FLAGS) \
+	-D __TARGET__=$@ -D __FIRST__=$< \
+	generator.m4 > $@
+endef
+
 $(__NAV__)/%/NAVIGATION.m4 : | $$(@D)/
 	# we compare checksum to see if actually change and avoid the ripples of the circularity
 	# cat $^ | cmp -s $@ - || cat $^ > $@
+	cat $^ > $@
+
+# DOC-level aggregate of just the domains' landing pages (one stem-fragment
+# per domain that opted in via __MAKE_PAGE([LinkType],[landing])), so any
+# page can cross-link to another domain's landing page.
+$(__NAV__)/NAVIGATION-LANDING.m4 : | $$(@D)/
 	cat $^ > $@
 
 define do-generate-html
@@ -198,7 +211,7 @@ MOCK_FLAGS:= -D __STEM__=mock-page \
 
 .PHONY: test-with-xxx-macros
 test-with-xxx-macros:
-	@for phase in GENERATE_MAKEFILE_PHASE GENERATE_NAVIGATION_PHASE; do \
+	@for phase in GENERATE_MAKEFILE_PHASE GENERATE_NAVIGATION_PHASE GENERATE_LANDING_PHASE; do \
 		ext=$$(echo $$phase | tr A-Z a-z) ; \
 		$(M4) -D __PHASE__=$$phase $(M4_FLAGS) $(MOCK_FLAGS) generator.m4 \
 			| sed 's,$(__SRC__),@SRC@,g' > /tmp/mock-page.$$ext ; \

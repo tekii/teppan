@@ -2,7 +2,9 @@ __WITH_LAYOUT([__SRC__/tests/fixtures/mock-layout.html],[
     __WITH_DOMAIN([mock-a.test],[
         __WITH_LANG([__ES__],[
             __WITH_STEM([page-a],[
-                __MAKE_PAGE([__LOCALIZE_URL_NULL])
+                __AS_LANDING([
+                    __MAKE_PAGE([__LOCALIZE_URL_NULL])
+                ])
             ])
         ])
     ])
