@@ -196,8 +196,7 @@ m4_popdef([__LANDING_CONTEXT__])dnl
 #    NAVIGATION-LANDING.m4
 #
 m4_define([__MAKE_PAGE],[
-# TODO: add some check in the composing of the id to avoid clashes
-m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__STEM__[]_[]__LANG__[]_URL__))
+m4_pushdef([__LOCAL_URL_ID__],__UP(__[]__DOMAIN__[]_[]__STEM__[]_[]__LANG__[]_URL__))
 m4_pushdef([__LANDING_URL_ID__],__UP(__LANDING_[]__DOMAIN__[]_URL__))
 m4_pushdef([__PATH_STEM__],$1(__DOMAIN__,__L__,__STEM__))
 # TODO rewiew next 2 lines
