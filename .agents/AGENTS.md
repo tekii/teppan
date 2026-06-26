@@ -33,6 +33,12 @@ Before performing any code modifications, agents **MUST** read and familiarize t
 - Never submit or finish a task if `make test` fails or contains errors.
 - Preserve existing comments, docstrings, and headers unless explicitly instructed otherwise.
 
+### D. Workspace Setup & Dependencies (Antigravity-Specific)
+> [!NOTE]
+> This section applies **only** to Antigravity (Gemini) agents. Claude Code / Claude agents should ignore these guidelines, as they rely on the automated `SessionStart` hooks in `.claude/settings.json`.
+- **No Startup Hooks**: Antigravity does not natively execute automated background session hooks (like those in `.claude/settings.json`).
+- **Manual Dependency Handling**: If `make test` or `make build` fails because `autoconf` or `m4sugar` is missing, Antigravity agents must manually run `./scripts/install_pkgs.sh` or request permission to install the necessary packages.
+
 ---
 
 ## 3. Communication and Reporting
