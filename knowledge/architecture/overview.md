@@ -16,8 +16,7 @@ timestamp: 2026-06-17
   and macro definitions (org info, layout defaults, etc.), included by
   `generator.m4`. `configure-fontawesome.m4` is currently `dnl`-disabled —
   see [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md).
-- **`*.in.html`** (e.g. `main.in.html`, `news.in.html`, `contact.in.html`,
-  `jobs.in.html`, `404.in.html`, `redirect.in.html`, `srl-default.in.html`) —
+- **`*.in.html`** —
   per-page m4 sources. Each stem gets a generated `.mk` under `TEKII_BUILD/DEP`,
   `-include`d by the `Makefile`. See [Page source conventions](page-source-conventions.md).
 - **`layout.html`** / **`layout-redirect.html`** — page shells that consume
