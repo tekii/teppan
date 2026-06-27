@@ -47,11 +47,9 @@ m4_divert_push([TESTS])dnl
 __ASSERT_EQ([CSS_REMAP_URLS quoted url],dnl
 __CSS_REMAP_URLS([@font-face{src:url("../webfonts/a.woff2") format("woff2")}],[/tmp/test/vendor/css]),dnl
 [@font-face{src:url("vendor/webfonts/a.woff2") format("woff2")}])
-
 __ASSERT_EQ([CSS_REMAP_URLS bare url],dnl
 __CSS_REMAP_URLS([@font-face{src:url(../webfonts/b.eot)}],[/tmp/test/vendor/css]),dnl
 [@font-face{src:url(vendor/webfonts/b.eot)}])
-
 __ASSERT_EQ([CSS_REMAP_URLS mixed quoted and bare urls],dnl
 __CSS_REMAP_URLS([url("../webfonts/a.woff2");url(../webfonts/b.eot)],[/tmp/test/vendor/css]),dnl
 [url("vendor/webfonts/a.woff2");url(vendor/webfonts/b.eot)])
