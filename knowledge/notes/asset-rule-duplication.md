@@ -8,12 +8,12 @@ timestamp: 2026-06-17
 
 # `__ASSET` rule duplication (e.g. `img/logo.png` in `news.mk`)
 
-`generator.m4`'s `__ASSET` macro (around line 226) pushes a full
+`generator.m4`'s `__ASSET` macro (around line 297) pushes a full
 `## ... ASSET BEGINS/ENDS ##` block into the `MAKEFILE` diversion on
 *every invocation*, regardless of whether the same asset was already
 emitted earlier in the same page. `layout.html` calls
 `__ASSET([img/logo.png])` twice (once for the AMP `<amp-img>`, once for
-its `<img>` fallback — generator.m4:137/139), so `news.mk` ends up with
+its `<img>` fallback — layout.html:137/139), so `news.mk` ends up with
 two identical `## img/logo.png ASSET BEGINS/ENDS ##` blocks, each
 containing:
 

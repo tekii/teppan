@@ -12,7 +12,7 @@ When a conditional macro call (`m4_if`, `m4_case`, or any similar
 comma-separated multi-branch macro) has more than one branch, write each
 branch on its own line rather than packing every `(condition, value,
 action)` triple (or `m4_case` label/action pair) onto a single line.
-`m4_case(__PHASE__, ...)` (`generator.m4:381-390`) is the model to follow.
+`m4_case(__PHASE__, ...)` (`generator.m4:394-402`) is the model to follow.
 
 ## Why this is safe without a `dnl` on every line
 

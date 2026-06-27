@@ -10,18 +10,18 @@ timestamp: 2026-06-19
 
 `Makefile:16` defines `RMDIR:= @-rmdir`. The leading `-` tells Make to
 ignore the recipe's exit code, and `rmdir` itself only removes a directory
-when it's already empty — it doesn't recurse. `realclean` (`Makefile:174-178`)
-calls `$(RMDIR) $(__DEP__)`, `$(RMDIR) $(__DOC__)`, `$(RMDIR) $(__ZIP__)`
-after running `clean`. Since `BUILD/DOC` always still contains per-domain
-subdirectories/files at that point, the `rmdir` call fails — visibly, as
-`make: [Makefile:177: realclean] Error 1 (ignored)` — and `realclean`
-reports `[[[ DONE realclean ]]]` having removed nothing beyond what `clean`
-already removed.
+when it's already empty — it doesn't recurse. `realclean` (`Makefile:188-193`)
+calls `$(RMDIR) $(__NAV__)`, `$(RMDIR) $(__DEP__)`, `$(RMDIR) $(__DOC__)`,
+`$(RMDIR) $(__ZIP__)` after running `clean`. Since `BUILD/NAV` and `BUILD/DOC`
+always still contain per-domain subdirectories/files at that point, those
+`rmdir` calls fail — visibly, as `make: [Makefile:189: realclean] Error 1
+(ignored)` — and `realclean` reports `[[[ DONE realclean ]]]` having removed
+nothing beyond what `clean` already removed.
 
 ## Compounding factor: stale output from dropped domain/stem/lang registrations
 
 `clean`'s own removal recipes (`clean-build`, `clean-navigation`, etc., see
-`__MAKE_PAGE` in `generator.m4:173-246`) are generated dynamically per
+`__MAKE_PAGE` in `generator.m4:198-273`) are generated dynamically per
 `*.in.html` source during the `GENERATE_MAKEFILE_PHASE`, the same mechanism
 that generates the build rules themselves (see
 [Domains](../architecture/domains.md) on the lack of a central domain

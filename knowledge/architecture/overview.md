@@ -24,7 +24,17 @@ timestamp: 2026-06-17
   the diversions produced by a page source.
 - **`Makefile`** / **`Rules.mk`** — build orchestration; defines `M4_FLAGS`,
   domain/output paths (`__SRC__`, `__DOC__`, `__BUILD__`, `__VENDOR__`,
-  `__ZIP__`), and per-stem rules. See [Build & test commands](../build/commands.md).
+  `__ZIP__`, `__NAV__`), and per-stem rules. See [Build & test commands](../build/commands.md).
+
+## Build output layout
+
+- `BUILD/DOC/` — published HTML output, assets, and per-page `.mk` deferred rules.
+  This is what gets rsynced/published.
+- `BUILD/NAV/` — navigation intermediates only: per-stem `.m4` fragments
+  (e.g. `BUILD/NAV/www.tekii.com.ar/index.m4`) assembled into per-domain
+  `NAVIGATION.m4` files and the cross-domain `NAVIGATION-LANDING.m4`. Not
+  published. Kept separate from `BUILD/DOC` so the published tree contains
+  only HTML/assets.
 
 ## Generated/vendored paths
 

@@ -32,12 +32,12 @@ different purposes:
 expansion within them and copies the text through to whatever diversion
 happens to be active at that point. Confirmed empirically: temporarily
 replacing the `dnl`-commented TODO inside `__MAKE_PAGE`'s `MAKEFILE`
-diversion span (`generator.m4:207`, between `m4_divert_push([MAKEFILE])` at
-line 196 and `m4_divert_pop([MAKEFILE])` at line 247) with a bare `#`
+diversion span (`generator.m4:233`, between `m4_divert_push([MAKEFILE])` at
+line 208 and `m4_divert_pop([MAKEFILE])` at line 273) with a bare `#`
 comment leaked that TODO text verbatim into the generated `Makefile`
 output, because the active diversion there is `MAKEFILE`, not `KILL`. The
 same risk applies to disabled/commented-out code sitting inside a diversion
-span (e.g. `generator.m4:252`, inside the `NAVIGATION` span) — keeping it
+span (e.g. `generator.m4:277`, inside the `NAVIGATION` span) — keeping it
 `dnl`-prefixed is what keeps it inert.
 
 So a documentation comment is only safe as `#` where it's provably in
@@ -69,8 +69,8 @@ remark look as weighty as a multi-paragraph doc block. Write it bare:
 m4_define([__WITH_LANG],[...])
 ```
 
-`generator.m4:100-113` (`WITH_LAYOUT` doc, multi-line, boxed) and
-`generator.m4:126` (`WITH_LANG MACRO`, single-line, bare) are the models for
+`generator.m4:111-124` (`WITH_LAYOUT` doc, multi-line, boxed) and
+`generator.m4:137` (`WITH_LANG MACRO`, single-line, bare) are the models for
 each case. When two distinct single-line notes sit back to back (e.g. a
 macro-name header followed by a one-line parameter note), stack them as
 plain consecutive `#` lines with no blank between — don't box each
