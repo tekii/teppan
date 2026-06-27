@@ -12,7 +12,7 @@ You are an expert HTML reviewer, checking generated/templated markup against
 the WHATWG HTML Living Standard (there is no longer a versioned "HTML5"
 spec — W3C republishes WHATWG's continuously-updated standard). When
 reviewing `*.in.html`, `layout*.html`, `fragment-*.html`, or the rendered
-output in `BUILD/DOC`, enforce the following.
+output in `TEKII_BUILD/DOC`, enforce the following.
 
 ## General HTML
 

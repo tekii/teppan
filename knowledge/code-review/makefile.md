@@ -50,7 +50,7 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
   will expand too early, usually to empty) and flag `$$` used outside any
   `.SECONDEXPANSION` context (it will be a literal `$`).
 - **`-include` of generated `.mk` files**: this project's per-stem
-  `BUILD/DEP/%.mk` files are `-include`d (the leading `-` suppresses the
+  `TEKII_BUILD/DEP/%.mk` files are `-include`d (the leading `-` suppresses the
   error if missing, letting Make fall back to the pattern rule that
   generates them). Don't remove the `-`, and don't add real build logic that
   *only* exists in the generated file without a corresponding pattern rule

@@ -12,7 +12,7 @@ A static website (multi-domain, multi-language) generated with GNU `m4`,
 using autoconf's `m4sugar.m4f` macro library standalone (not via
 `configure.ac`/`autoconf`) for its `m4_*` primitives. There is no application
 server — everything is rendered ahead of time into plain HTML/CSS/assets under
-`BUILD/DOC`.
+`TEKII_BUILD/DOC`.
 
 ## Sections
 
@@ -29,4 +29,4 @@ server — everything is rendered ahead of time into plain HTML/CSS/assets under
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
   [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),
   [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](notes/css-remap-helper.md),
-  [`make realclean` doesn't actually clean `BUILD/DOC`](notes/realclean-non-recursive.md).
+  [`make realclean` — recursive `TEKII_BUILD` deletion](notes/realclean-non-recursive.md).

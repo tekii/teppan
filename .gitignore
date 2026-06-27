@@ -8,7 +8,7 @@ www.code-workspace
 *venv*
 *.egg-info
 __pycache__
-BUILD
+TEKII_BUILD
 VENDOR
 notas.txt
 .attic/*

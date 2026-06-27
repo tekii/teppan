@@ -20,7 +20,7 @@ GNU m4 strips leading whitespace — including newlines — immediately
 following a comma (or an opening parenthesis) while collecting a macro
 call's arguments. Splitting an argument list across multiple source lines
 therefore never leaks a stray blank line or whitespace into the generated
-output. Confirmed empirically: building `BUILD/DOC` from variants with and
+output. Confirmed empirically: building `TEKII_BUILD/DOC` from variants with and
 without `dnl` on each internal line of a multi-line `m4_if`/`m4_case`
 produced byte-identical output both ways.
 

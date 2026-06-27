@@ -1,49 +1,39 @@
 ---
-type: Known Issue
-title: make realclean doesn't actually clean BUILD/DOC
-description: RMDIR (Makefile:16) is a non-recursive rmdir with errors ignored, so realclean silently no-ops on BUILD/DOC, BUILD/DEP, BUILD/ZIP whenever they aren't empty — which they never are after a build.
-tags: [known-issue, makefile, build]
-timestamp: 2026-06-19
+type: Design Note
+title: make realclean — recursive TEKII_BUILD deletion
+description: realclean uses rm -rf TEKII_BUILD (a literal, project-namespaced directory name) to wipe the entire build tree, safely handling stale output from dropped domain/stem/lang registrations that clean cannot remove.
+tags: [makefile, build]
+timestamp: 2026-06-27
 ---
 
-# `make realclean` doesn't actually clean `BUILD/DOC`
+# `make realclean` — recursive `TEKII_BUILD` deletion
 
-`Makefile:16` defines `RMDIR:= @-rmdir`. The leading `-` tells Make to
-ignore the recipe's exit code, and `rmdir` itself only removes a directory
-when it's already empty — it doesn't recurse. `realclean` (`Makefile:188-193`)
-calls `$(RMDIR) $(__NAV__)`, `$(RMDIR) $(__DEP__)`, `$(RMDIR) $(__DOC__)`,
-`$(RMDIR) $(__ZIP__)` after running `clean`. Since `BUILD/NAV` and `BUILD/DOC`
-always still contain per-domain subdirectories/files at that point, those
-`rmdir` calls fail — visibly, as `make: [Makefile:189: realclean] Error 1
-(ignored)` — and `realclean` reports `[[[ DONE realclean ]]]` having removed
-nothing beyond what `clean` already removed.
+`realclean` runs `clean` first (removing all files whose rules are still
+registered in the current source tree), then executes `rm -rf TEKII_BUILD`
+to wipe the entire build tree: `TEKII_BUILD/DOC`, `TEKII_BUILD/NAV`,
+`TEKII_BUILD/DEP`, and `TEKII_BUILD/ZIP`.
 
-## Compounding factor: stale output from dropped domain/stem/lang registrations
+## Why `rm -rf` and not `rmdir`
 
-`clean`'s own removal recipes (`clean-build`, `clean-navigation`, etc., see
-`__MAKE_PAGE` in `generator.m4:198-273`) are generated dynamically per
-`*.in.html` source during the `GENERATE_MAKEFILE_PHASE`, the same mechanism
-that generates the build rules themselves (see
-[Domains](../architecture/domains.md) on the lack of a central domain
-registry). So once a `__WITH_DOMAIN`/`__WITH_STEM`/`__WITH_LANG` call is
-removed from a source file, the matching `clean` rule for its *old* output
-disappears too — there's nothing left in the current source tree to declare
-"go remove this file." The old generated file becomes orphaned: neither
-`make clean` nor `make realclean` will ever remove it.
+`clean`'s removal recipes (`clean-build`, `clean-navigation`, etc.) are
+generated dynamically per `*.in.html` source by `__MAKE_PAGE`
+(`generator.m4:198-273`). Once a `__WITH_DOMAIN`/`__WITH_STEM`/
+`__WITH_LANG` call is removed from a source file, the matching `clean`
+rule for its old output disappears too — there is nothing left in the
+current source tree to declare "go remove this file." Those orphaned
+outputs survive `make clean`. A non-recursive `rmdir` would also fail
+because `TEKII_BUILD/DOC` is never empty after a build. Only a recursive
+delete is reliable.
 
-Concretely hit this after dropping the `tekii.ar` `__WITH_DOMAIN` block from
-`redirect.in.html` (now that `tekii-ar-default.in.html` gives `tekii.ar` real
-content instead of a redirect): `BUILD/DOC/tekii.ar/redirect.html` and
-`redirect.m4` survived `make clean`, `make realclean`, and a fresh
-`make build` on top, because no current source declares a clean rule for
-them anymore.
+## Why `TEKII_BUILD` (literal) and not `$(__BUILD__)` (variable)
 
-## Practical workaround
-
-`rm -rf BUILD` is the only reliable way to get a truly clean generated tree.
-Don't trust `make realclean` to remove stale per-domain output left over
-from a source change that dropped a domain/stem/lang registration — verify
-with a manual `rm -rf BUILD && make build` instead when in doubt.
+The [GNU Makefile code review guidelines](../code-review/makefile.md)
+forbid `rm -rf $(VARIABLE)` in build recipes — if a variable expands to
+an empty string or an unexpected path, the command silently deletes an
+arbitrary directory tree. Using the project-namespaced literal
+`TEKII_BUILD` sidesteps this entirely: no variable expansion, and the
+name is unique enough that `rm -rf TEKII_BUILD` is a no-op if Make is
+accidentally invoked from a directory where `TEKII_BUILD/` doesn't exist.
 
 See also: [Build & test commands](../build/commands.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md),

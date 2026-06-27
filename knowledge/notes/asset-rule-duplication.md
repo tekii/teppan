@@ -17,11 +17,11 @@ its `<img>` fallback — layout.html:137/139), so `news.mk` ends up with
 two identical `## img/logo.png ASSET BEGINS/ENDS ##` blocks, each
 containing:
 
-- `BUILD/DOC/.../img/logo.png : __SRC__/img/logo.png` (prerequisite-only;
+- `TEKII_BUILD/DOC/.../img/logo.png : __SRC__/img/logo.png` (prerequisite-only;
   the actual copy recipe comes from the `%.png:` pattern rule in
   `Makefile`)
-- `clean-asset :: ; -rm -f BUILD/DOC/.../img/logo.png`
-- `BUILD/DOC/.../es/news.html : BUILD/DOC/.../img/logo.png`
+- `clean-asset :: ; -rm -f TEKII_BUILD/DOC/.../img/logo.png`
+- `TEKII_BUILD/DOC/.../es/news.html : TEKII_BUILD/DOC/.../img/logo.png`
 
 Agreed: this is not a bug per se.
 

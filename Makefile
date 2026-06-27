@@ -5,7 +5,7 @@
 
 __SRC__	:=$(PWD)
 __TMP__:=/tmp
-__BUILD__:=$(PWD)/BUILD
+__BUILD__:=$(PWD)/TEKII_BUILD
 __VENDOR__:=$(PWD)/VENDOR
 __DOC__:=$(__BUILD__)/DOC
 __DEP__:=$(__BUILD__)/DEP
@@ -186,10 +186,7 @@ clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
 
 .PHONY: realclean
 realclean:: clean
-	$(RMDIR) $(__NAV__)
-	$(RMDIR) $(__DEP__)
-	$(RMDIR) $(__DOC__)
-	$(RMDIR) $(__ZIP__)
+	rm -rf TEKII_BUILD
 	@echo [[[ DONE $@ ]]]
 
 #gsutil -m rsync -ndr ../bucket/ gs://www.teky.io
