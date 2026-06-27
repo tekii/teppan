@@ -10,7 +10,7 @@ __VENDOR__:=$(PWD)/VENDOR
 __DOC__:=$(__BUILD__)/DOC
 __DEP__:=$(__BUILD__)/DEP
 __ZIP__:=$(__BUILD__)/ZIP
-__NAV__:=$(__DOC__)
+__NAV__:=$(__BUILD__)/NAV
 
 RM:= @-rm
 RMDIR:= @-rmdir
@@ -186,6 +186,7 @@ clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
 
 .PHONY: realclean
 realclean:: clean
+	$(RMDIR) $(__NAV__)
 	$(RMDIR) $(__DEP__)
 	$(RMDIR) $(__DOC__)
 	$(RMDIR) $(__ZIP__)

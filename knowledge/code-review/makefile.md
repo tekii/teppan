@@ -1,7 +1,7 @@
 ---
 type: Code Review Guideline
 title: Code Review Role — GNU Makefile
-description: GNU Make review checklist — tab-indented recipes, := vs =, .PHONY, double-colon rule semantics, order-only prerequisites, .SECONDEXPANSION, -include bootstrapping, recursive $(MAKE).
+description: GNU Make review checklist — tab-indented recipes, := vs =, .PHONY, double-colon rule semantics, order-only prerequisites, .SECONDEXPANSION, -include bootstrapping, recursive $(MAKE), rm -rf prohibition.
 tags: [code-review, makefile]
 timestamp: 2026-06-17
 ---
@@ -85,6 +85,14 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
 
 ## Common Bugs to Flag
 
+- **`rm -rf $(VARIABLE)` is forbidden in build recipes**: if the variable
+  expands to an empty string, an unexpected path, or `/`, the command silently
+  deletes an arbitrary directory tree outside the project. Flag any recipe that
+  uses `rm -rf` on a Make variable. The safe alternatives are `rmdir` (only
+  removes empty directories — refuses and fails if the target has contents) for
+  directory cleanup, and `rm -f $@` or `rm -f <explicit-path>` for targeted
+  single-file removal. This project defines `RM:= @-rm` and `RMDIR:= @-rmdir`
+  as the sanctioned idioms; new recipes must use those, not raw `rm -rf`.
 - Missing `.PHONY` on non-file targets (stale-file false negatives).
 - `rm`/`mv`/`cp` in a `::` recipe that isn't safe to run more than once
   (missing `-f`, `-p`, etc.).
