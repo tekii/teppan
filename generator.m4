@@ -65,8 +65,11 @@ m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relati
 # ABS(URL,[BASE|SCHEME]) MACRO
 # turns a __DOC__-relative filesystem path into an absolute URL by
 # treating the first path component (relative to __DOC__) as the host
+# TODO: __PREVIEW__ guard is a first/temporary implementation -- improvements pending
 #
-m4_define([__ABSOLUTE],[http://__HREF([$1],__DOC__)])dnl
+m4_define([__ABSOLUTE],[m4_ifdef([__PREVIEW__],
+[__HREF([$1])],
+[http://__HREF([$1],__DOC__)])])dnl
 
 #
 # REDIRECT_URL(DOMAIN) MACRO

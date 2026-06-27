@@ -11,6 +11,10 @@ __DOC__:=$(__BUILD__)/DOC
 __DEP__:=$(__BUILD__)/DEP
 __ZIP__:=$(__BUILD__)/ZIP
 __NAV__:=$(__BUILD__)/NAV
+__PBUILD__:=$(PWD)/TEKII_PREVIEW
+__PREV__:=$(__PBUILD__)/DOC
+__PREV_DEP__:=$(__PBUILD__)/DEP
+__PREV_NAV__:=$(__PBUILD__)/NAV
 
 RM:= @-rm
 RMDIR:= @-rmdir
@@ -34,6 +38,7 @@ M4_FLAGS+= \
 endif
 M4_FLAGS+= \
 	-D __DOC__=$(__DOC__) -D __SRC__=$(__SRC__)
+M4_FLAGS+= $(EXTRA_M4_FLAGS)
 #
 # RULES START HERE
 #
@@ -160,6 +165,13 @@ endef
 build:
 	@echo [[[ DONE $@ ]]]
 
+# TODO: first/temporary preview implementation -- improvements pending
+.PHONY: preview
+preview:
+	$(MAKE) __DOC__=$(__PREV__) __DEP__=$(__PREV_DEP__) \
+	        __NAV__=$(__PREV_NAV__) \
+	        EXTRA_M4_FLAGS='-D __PREVIEW__=1' build
+
 #example.com/% : $(__ZIP__)/%
 #	@echo "gsutil $(GSUTIL_EXTRA_FLAGS) -h "Content-Encoding:gzip" -h "Content-Type:$(shell mimetype --brief $< | tr -d '\n')" cp -a public-read -r $<  gs://$@"
 #	@echo [[[ DONE $@ ]]]
@@ -187,6 +199,7 @@ clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
 .PHONY: realclean
 realclean:: clean
 	rm -rf TEKII_BUILD
+	rm -rf TEKII_PREVIEW
 	@echo [[[ DONE $@ ]]]
 
 #gsutil -m rsync -ndr ../bucket/ gs://www.teky.io

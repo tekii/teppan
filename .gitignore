@@ -9,6 +9,7 @@ www.code-workspace
 *.egg-info
 __pycache__
 TEKII_BUILD
+TEKII_PREVIEW
 VENDOR
 notas.txt
 .attic/*
