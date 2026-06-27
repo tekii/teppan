@@ -8,7 +8,9 @@ timestamp: 2026-06-17
 
 # Domains
 
-- `www.tekii.com.ar` — main site, with `en/`, `es/`, `br/` locale subdirs
-- `tekii.us`, `tekii.ar` — redirect-only domains (`redirect.html`)
+- `tekii.ar` — main Spanish site: ES at root, `en/` and `br/` locale subdirs
+- `tekii.us` — main English site: EN at root
+- `www.tekii.com.ar`, `tekii.srl`, `teky.com.ar`, `teky.ar` — redirect-only (→ `tekii.ar`)
+- `tekii.com`, `tekii.llc`, `tekii.info` — redirect-only (→ `tekii.us`)
 
 See also: [Overview](overview.md).

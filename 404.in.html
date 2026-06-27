@@ -1,13 +1,17 @@
-__WITH_DOMAIN([www.tekii.com.ar],[
+__WITH_DOMAIN([tekii.ar],[
     __WITH_LANG([__ES__],[
         __MAKE_PAGE([__LOCALIZE_URL_NULL])
     ])
+    __WITH_LANG([__EN__,__BR__],[
+        __MAKE_PAGE([__LOCALIZE_URL_PATH])
+    ])
 ])
-dnl __WITH_DOMAIN([www.tekii.com],[
-dnl     __WITH_LANG([__EN__],[
-dnl         __MAKE_PAGE([__LOCALIZE_URL_NULL])
-dnl     ])
-dnl ])
+__WITH_DOMAIN([tekii.us],[
+    __WITH_LANG([__EN__],[
+        __MAKE_PAGE([__LOCALIZE_URL_NULL])
+    ])
+])
+
 
 m4_divert_push([HEAD])dnl
 <meta name="robots" content="noindex, nofollow">
