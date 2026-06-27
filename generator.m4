@@ -212,6 +212,7 @@ __NAV__/__PATH_STEM__.m4 : __SRC__/generator.m4
 __NAV__/__PATH_STEM__.m4 : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ 
 __NAV__/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-navigation)]
 clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__.m4
+.SECONDARY: __NAV__/__PATH_STEM__.m4
 __NAV__/__DOMAIN__/NAVIGATION.m4 : __NAV__/__PATH_STEM__.m4
 clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION.m4
 m4_ifdef([__LANDING_CONTEXT__],[dnl
@@ -272,8 +273,7 @@ m4_text_box(__STEM__ MAKEFILE ENDS  (__LANG__) ,[-])
 m4_divert_pop([MAKEFILE])
 dnl
 m4_divert_push([NAVIGATION])dnl
-m4_text_box(__PATH_STEM__,[-])
-[m4_define](m4_dquote(__LOCAL_URL_ID__),m4_dquote(__DOC__/__PATH_STEM__.html))
+[m4_define](m4_dquote(__LOCAL_URL_ID__),m4_dquote(__DOC__/__PATH_STEM__.html)) [#] __PATH_STEM__
 dnl [m4_set_add](m4_quote(__UP(__[]__STEM__[]_ALTERNATES__),m4_dquote(m4_dquote(__LANG__,__LOCAL_URL_ID__))))
 m4_divert_pop([NAVIGATION])
 dnl

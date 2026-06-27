@@ -7,6 +7,7 @@
 @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__ 
 @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
 clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4
+.SECONDARY: @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4
 @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4 : @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4
 clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4
 # LANDING -- separate fragment/phase from NAVIGATION above: the NAVIGATION
@@ -64,6 +65,7 @@ clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
 @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__ 
 @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
 clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4
+.SECONDARY: @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4
 @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 : @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4
 clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4
 # HTML 
@@ -110,6 +112,7 @@ clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
 @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__ 
 @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
 clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4
+.SECONDARY: @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4
 @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 : @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4
 clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4
 # HTML 

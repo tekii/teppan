@@ -80,8 +80,8 @@ endef
 
 $(__NAV__)/%/NAVIGATION.m4 : | $$(@D)/
 	# we compare checksum to see if actually change and avoid the ripples of the circularity
-	# cat $^ | cmp -s $@ - || cat $^ > $@
-	cat $^ > $@
+	# cat $^ | cmp -s $@ - || sort -u $^ > $@
+	sort -u $^ | grep -v '^$$' > $@
 
 # DOC-level aggregate of just the domains' landing pages (one stem-fragment
 # per domain that opted in via __MAKE_PAGE([LinkType],[landing])), so any
