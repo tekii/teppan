@@ -1,7 +1,6 @@
 #!/usr/bin/make -rsf
 
 .SUFFIXES:
-#.SUFFIXES: .html .m4 .png .gif
 
 __SRC__	:=$(PWD)
 __TMP__:=/tmp
@@ -16,7 +15,6 @@ endif
 #
 M4:=$(shell which m4)
 M4_FLAGS:= -I $(__SRC__)
-##
 ifeq ($(shell uname -s),Linux)
 M4_FLAGS+= \
 	-I /usr/share/autoconf \
@@ -36,6 +34,8 @@ endif
 #
 # RULES START HERE
 #
+# .SECONDEXPANSION enables $$(@D)/ in prerequisites — Make expands $$ a second
+# time after automatic variables are set, so $$(@D)/ resolves to the target's dir.
 .SECONDEXPANSION:
 #
 # CREATE DIR ON DEMAND
@@ -53,16 +53,10 @@ $(__TMP__)/%/:
 #
 .PHONY: vendor
 vendor:
-#realclean::
-#	-rmdir --ignore-fail-on-non-empty $(__VENDOR__)
 
 #
 # NAVIGATION MAP
 #
-#$(__DEP__)/%.d:   EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-#$(__DEP__)/%.txt: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-#%.html: EXTRA_BUILD_FLAGS+=  -D __D__=$(dir $<) -D __N__=$(notdir $(basename $<)) -D __S__=$(suffix $<)
-
 define do-generate-navigation
 	$(M4) -D __PHASE__=GENERATE_NAVIGATION_PHASE $(M4_FLAGS) \
 	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
@@ -80,8 +74,6 @@ define do-generate-landing
 endef
 
 $(__BUILD_ROOT__)/NAV/%/NAVIGATION.m4 : | $$(@D)/
-	# we compare checksum to see if actually change and avoid the ripples of the circularity
-	# cat $^ | cmp -s $@ - || sort -u $^ > $@
 	sort -u $^ | grep -v '^$$' > $@
 
 # DOC-level aggregate of just the domains' landing pages (one stem-fragment
@@ -108,19 +100,9 @@ $(M4) -D __PHASE__=GENERATE_DEFERRED_MK_PHASE $(M4_FLAGS) \
 	generator.m4 >$@ || rm $@
 endef
 
-##
-## SITEMAP.XML
-##
-# contemplar el uso de $^, falta la dependencia con los
-# sources de los htmls (puede que esto no sea necesario y no haya problema
-# en regenerarlo siempre que tomemos la fecha del source
-#$(__DOC__)/sitemap.xml : $(__SRC__)/sitemap.xml | $$(@D)/
-#	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-#		-D __TNAME__=$(@F) \
-#		-D __LIST__="$(filter-out 404.html,$(PAGES))" $(__SRC__)/sitemap.xml >$@
 
 #
-# COPY ASSETS TODO: this could be moved to an static generated rule
+# COPY ASSETS
 #
 $(__BUILD_ROOT__)/DOC/%.ico : | $$(@D)/
 	cp $< $@
@@ -152,13 +134,14 @@ $(__BUILD_ROOT__)/DOC/%.woff2 : | $$(@D)/
 #
 # GZIPED TARGETS
 #
+# reset to empty; per-target rules set this to add -h "Cache-Control:..." etc.
 GSUTIL_EXTRA_FLAGS:=
-#$(__GZIP__)/$(__IMG__)/logo.png: GSUTIL_EXTRA_FLAGS=-h "Cache-Control:public,max-age=3600"
 
 define do-gzip
 	gzip -c --no-name --rsyncable $< >$@
 endef
 
+# no explicit prerequisites: the -include'd DEP/*.mk files wire all real deps.
 .PHONY: build
 build:
 	@echo [[[ DONE $@ ]]]
@@ -168,10 +151,6 @@ build:
 preview:
 	$(MAKE) PREVIEW=1
 
-#example.com/% : $(__ZIP__)/%
-#	@echo "gsutil $(GSUTIL_EXTRA_FLAGS) -h "Content-Encoding:gzip" -h "Content-Type:$(shell mimetype --brief $< | tr -d '\n')" cp -a public-read -r $<  gs://$@"
-#	@echo [[[ DONE $@ ]]]
-
 define do-publish
 	@echo "++++++ gsutil $(GSUTIL_EXTRA_FLAGS) -h "Content-Encoding:gzip" cp -a public-read -r $<  gs://$@"
 	@echo [[[ PUBLISHED $@ ]]]
@@ -179,15 +158,12 @@ endef
 
 .PHONY: publish
 publish: #$(ALL_GZIP)
-#	@echo [[[ DONE $@ ]]]
+	@echo [[[ DONE $@ ]]]
 
 .PHONY: all
 all: build
 
-##
-## mmm... this rule will attemp to build everything first in order to
-## make the dep list then delete all
-##
+# clean-* base rules: double-colon so generated .mk files can append recipes.
 .PHONY: clean-build clean-asset clean-gzip clean-makefile clean-navigation
 clean-build ::
 clean-asset ::
@@ -205,10 +181,6 @@ realclean:: clean
 	@rm -rf TEKII_PREVIEW
 	@echo [[[ DONE $@ ]]]
 
-#gsutil -m rsync -ndr ../bucket/ gs://www.teky.io
-#gsutil web set -m en/index.html -e en/404.html gs://www.teky.io
-#gsutil acl ch -r -u AllUsers:R gs://www.teky.io/
-# mimetype --brief /tmp/bucketgz/favicon.ico | tr -d '\n'
 
 #
 # WITH_XXX MACRO TESTS
@@ -246,6 +218,7 @@ test: generator_test.m4
 	@cat $(__TMP__)/generator_test.out
 	@! grep -q '^FAIL' $(__TMP__)/generator_test.out
 
+# suppress errors: files may already be absent, which is expected during clean.
 .IGNORE: clean clean-gzip realclean
 .DEFAULT_GOAL := build
 
@@ -262,8 +235,6 @@ $(__BUILD_ROOT__)/DEP/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefil
 		generator.m4 >$@ || rm $@
 endif
 
-# TODO: check what abaut this .PRECIOUS
-#.PRECIOUS: $(__BUILD_ROOT__)/DEP/%.d
-# THIS INCLUDE FIRES THE RULE ABOVE
+# triggers the DEP pattern rule above for any stem missing its .mk
 -include $(patsubst %.in.html,$(__BUILD_ROOT__)/DEP/%.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))
 
