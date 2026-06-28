@@ -137,7 +137,7 @@ $(__BUILD_ROOT__)/DOC/%.woff2 : | $$(@D)/
 # reset to empty; per-target rules set this to add -h "Cache-Control:..." etc.
 GSUTIL_EXTRA_FLAGS:=
 
-define do-gzip
+define do-compress
 	gzip -c --no-name --rsyncable $< >$@
 endef
 
@@ -164,15 +164,15 @@ publish: #$(ALL_GZIP)
 all: build
 
 # clean-* base rules: double-colon so generated .mk files can append recipes.
-.PHONY: clean-build clean-asset clean-gzip clean-makefile clean-navigation
-clean-build ::
-clean-asset ::
-clean-gzip ::
-clean-makefile ::
-clean-navigation ::
+.PHONY: build-clean assets-clean compressed-files-clean makefiles-clean navigation-files-clean
+build-clean ::
+assets-clean ::
+compressed-files-clean ::
+makefiles-clean ::
+navigation-files-clean ::
 
 .PHONY: clean
-clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
+clean : build-clean assets-clean compressed-files-clean makefiles-clean navigation-files-clean
 	@echo [[[ DONE $@ ]]]
 
 .PHONY: realclean
@@ -219,7 +219,7 @@ test: generator_test.m4
 	@! grep -q '^FAIL' $(__TMP__)/generator_test.out
 
 # suppress errors: files may already be absent, which is expected during clean.
-.IGNORE: clean clean-gzip realclean
+.IGNORE: clean compressed-files-clean realclean
 .DEFAULT_GOAL := build
 
 #

@@ -12,8 +12,17 @@ In this project, custom page assets are deferred using the `__DEFERRED_ASSET2` m
 
 To compile or clean these assets, the main `Makefile` invokes a recursive sub-make command targeting the specific page's `.mk` file:
 ```makefile
-$(MAKE) -f Rules.mk -f $(__BUILD_ROOT__)/DOC/<page>.mk cp-deferred-asset
+$(MAKE) -f Rules.mk -f $(__BUILD_ROOT__)/DOC/<page>.mk assets-copy
 ```
+
+Here `assets-copy` is the phony target the deferred-make mechanism actually
+drives. When a page registers deferred assets (via `__DEFERRED_ASSET2` in
+`generator.m4`), the generated `<page>.mk` appends real file prerequisites to
+`assets-copy` (alongside its siblings `assets-compress` and `assets-clean`);
+the recursive sub-make above is what realizes those copies. Pages with no
+deferred assets fall back to `Rules.mk`'s empty `assets-copy` stub (see §2),
+so the identical invocation is a harmless no-op rather than a fatal
+"No rule to make target" error.
 
 The separate `Rules.mk` file is loaded before `<page>.mk` to provide essential runtime context, safety, and performance isolation. Below is the technical rationale for keeping it decoupled from both the main `Makefile` and the generated `<page>.mk` files.
 
@@ -37,17 +46,17 @@ Because the generated `.mk` contains only these asset-copy declarations, it lack
 ---
 
 ## 2. Polymorphic Interface for Asset-less Pages
-Many pages do not define any deferred assets. For these pages, the generated `<page>.mk` contains no rules for `cp-deferred-asset`, `gzip-asset`, or `clean-asset`.
+Many pages do not define any deferred assets. For these pages, the generated `<page>.mk` contains no rules for `assets-copy`, `assets-compress`, or `assets-clean`.
 
 If the sub-make were to run on `<page>.mk` alone, GNU Make would immediately abort with a fatal error:
-`make: *** No rule to make target 'cp-deferred-asset'. Stop.`
+`make: *** No rule to make target 'assets-copy'. Stop.`
 
 To prevent this, `Rules.mk` defines empty default targets:
 ```makefile
-.PHONY: cp-deferred-asset gzip-asset clean-asset
-cp-deferred-asset :
-gzip-asset :
-clean-asset ::
+.PHONY: assets-copy assets-compress assets-clean
+assets-copy :
+assets-compress :
+assets-clean ::
 ```
 By layering `Rules.mk` first via `-f Rules.mk -f <page>.mk`, GNU Make merges the definitions. If `<page>.mk` does not implement the target, the call falls back to the empty phony rule in `Rules.mk` and exits cleanly.
 

@@ -76,7 +76,7 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
   overlap is unavoidable.
 - Keep embedded shell in recipes short and readable; for anything beyond a
   couple of pipeline stages, prefer a small `define ... endef` recipe
-  variable (as `do-generate-html`, `do-gzip`, etc. already do) over inlining
+  variable (as `do-generate-html`, `do-compress`, etc. already do) over inlining
   long pipelines into a target body.
 - **Prefix `rm` recipe lines with `@`** to suppress Make's echoing of the
   command: write `@rm -rf TEKII_BUILD` or `@test -f path && rm path || true`,
