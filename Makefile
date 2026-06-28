@@ -204,8 +204,8 @@ clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
 
 .PHONY: realclean
 realclean:: clean
-	rm -rf TEKII_BUILD
-	rm -rf TEKII_PREVIEW
+	$(RM) -rf TEKII_BUILD
+	$(RM) -rf TEKII_PREVIEW
 	@echo [[[ DONE $@ ]]]
 
 #gsutil -m rsync -ndr ../bucket/ gs://www.teky.io
@@ -252,7 +252,7 @@ test: generator_test.m4
 	@cat /tmp/generator_test.out
 	@! grep -q '^FAIL' /tmp/generator_test.out
 
-.IGNORE: clean cleangzip realclean
+.IGNORE: clean clean-gzip realclean
 .DEFAULT_GOAL := build
 
 #
