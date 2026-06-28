@@ -25,7 +25,7 @@ outputs survive `make clean`. A non-recursive `rmdir` would also fail
 because `TEKII_BUILD/DOC` is never empty after a build. Only a recursive
 delete is reliable.
 
-## Why `TEKII_BUILD` (literal) and not `$(__BUILD__)` (variable)
+## Why `TEKII_BUILD` (literal) and not `$(__BUILD_ROOT__)` (variable)
 
 The [GNU Makefile code review guidelines](../code-review/makefile.md)
 forbid `rm -rf $(VARIABLE)` in build recipes — if a variable expands to

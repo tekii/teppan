@@ -57,13 +57,13 @@ m4_divert_pop([TESTS])dnl
 
 
 #
-# __ABSOLUTE turns a __BUILD__/DOC-relative path into a http://host/path URL,
-# treating the first path segment (relative to __BUILD__/DOC) as the host.
+# __ABSOLUTE turns a __BUILD_ROOT__/DOC-relative path into a http://host/path URL,
+# treating the first path segment (relative to __BUILD_ROOT__/DOC) as the host.
 #
 m4_divert_push([TESTS])dnl
-__ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__BUILD__/DOC/tests.com/en/about.html]),[http://tests.com/en/about.html])
-__ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__BUILD__/DOC/tests.com/about.html]),[http://tests.com/about.html])
-__ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__BUILD__/DOC/index.html]),[http://index.html])
+__ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__BUILD_ROOT__/DOC/tests.com/en/about.html]),[http://tests.com/en/about.html])
+__ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__BUILD_ROOT__/DOC/tests.com/about.html]),[http://tests.com/about.html])
+__ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__BUILD_ROOT__/DOC/index.html]),[http://index.html])
 m4_divert_pop([TESTS])dnl
 
 #
@@ -76,7 +76,7 @@ m4_divert_pop([TESTS])dnl
 # pin __REDIRECT_URL's own lookup/fallback logic in isolation.
 #
 m4_divert_push([TESTS])dnl
-m4_pushdef([__LANDING_TEKII_AR_URL__],[__BUILD__/DOC/tekii.ar/index.html])dnl
+m4_pushdef([__LANDING_TEKII_AR_URL__],[__BUILD_ROOT__/DOC/tekii.ar/index.html])dnl
 __ASSERT_EQ([REDIRECT_URL with registered landing page],dnl
 __REDIRECT_URL([tekii.ar]),[http://tekii.ar/index.html])
 m4_popdef([__LANDING_TEKII_AR_URL__])dnl

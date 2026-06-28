@@ -5,10 +5,10 @@
 
 __SRC__	:=$(PWD)
 __TMP__:=/tmp
-__BUILD__:=$(PWD)/TEKII_BUILD
+__BUILD_ROOT__:=$(PWD)/TEKII_BUILD
 __VENDOR__:=$(PWD)/VENDOR
 ifdef PREVIEW
-__BUILD__:=$(PWD)/TEKII_PREVIEW
+__BUILD_ROOT__:=$(PWD)/TEKII_PREVIEW
 endif
 
 RM:= @-rm
@@ -32,7 +32,7 @@ M4_FLAGS+= \
 	-D __REALPATH__=$(shell which grealpath)
 endif
 M4_FLAGS+= \
-	-D __BUILD__=$(__BUILD__) -D __SRC__=$(__SRC__)
+	-D __BUILD_ROOT__=$(__BUILD_ROOT__) -D __SRC__=$(__SRC__)
 ifdef PREVIEW
 M4_FLAGS+= -D __PREVIEW__=1
 endif
@@ -80,7 +80,7 @@ define do-generate-landing
 	generator.m4 > $@
 endef
 
-$(__BUILD__)/NAV/%/NAVIGATION.m4 : | $$(@D)/
+$(__BUILD_ROOT__)/NAV/%/NAVIGATION.m4 : | $$(@D)/
 	# we compare checksum to see if actually change and avoid the ripples of the circularity
 	# cat $^ | cmp -s $@ - || sort -u $^ > $@
 	sort -u $^ | grep -v '^$$' > $@
@@ -88,7 +88,7 @@ $(__BUILD__)/NAV/%/NAVIGATION.m4 : | $$(@D)/
 # DOC-level aggregate of just the domains' landing pages (one stem-fragment
 # per domain that opted in via __MAKE_PAGE([LinkType],[landing])), so any
 # page can cross-link to another domain's landing page.
-$(__BUILD__)/NAV/NAVIGATION-LANDING.m4 : | $$(@D)/
+$(__BUILD_ROOT__)/NAV/NAVIGATION-LANDING.m4 : | $$(@D)/
 	cat $^ > $@
 
 define do-generate-html
@@ -121,31 +121,31 @@ endef
 #
 # COPY ASSETS TODO: this could be moved to an static generated rule
 #
-$(__BUILD__)/DOC/%.ico : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.ico : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.png : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.png : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.gif : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.gif : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.svg : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.svg : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.jpg : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.jpg : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.ttf : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.ttf : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.eot : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.eot : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.woff : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.woff : | $$(@D)/
 	cp $< $@
 
-$(__BUILD__)/DOC/%.woff2 : | $$(@D)/
+$(__BUILD_ROOT__)/DOC/%.woff2 : | $$(@D)/
 	cp $< $@
 
 #
@@ -245,7 +245,7 @@ test: generator_test.m4
 #
 # TEMPLATE MAKEFILES
 #
-$(__BUILD__)/DEP/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
+$(__BUILD_ROOT__)/DEP/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
 	$(M4) -D __PHASE__=GENERATE_MAKEFILE_PHASE $(M4_FLAGS) \
 		-D __STEM__=$* \
 		-D __VENDOR__=$(__VENDOR__) \
@@ -253,6 +253,6 @@ $(__BUILD__)/DEP/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $
 		generator.m4 >$@ || rm $@
 
 # TODO: check what abaut this .PRECIOUS
-#.PRECIOUS: $(__BUILD__)/DEP/%.d
+#.PRECIOUS: $(__BUILD_ROOT__)/DEP/%.d
 # THIS INCLUDE FIRES THE RULE ABOVE
--include $(patsubst %.in.html,$(__BUILD__)/DEP/%.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))
+-include $(patsubst %.in.html,$(__BUILD_ROOT__)/DEP/%.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))

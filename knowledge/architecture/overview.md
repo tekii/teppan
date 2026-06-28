@@ -22,7 +22,7 @@ timestamp: 2026-06-17
 - **`layout.html`** / **`layout-redirect.html`** — page shells that consume
   the diversions produced by a page source.
 - **`Makefile`** / **`Rules.mk`** — build orchestration; defines `M4_FLAGS`,
-  domain/output paths (`__SRC__`, `__DOC__`, `__BUILD__`, `__VENDOR__`,
+  domain/output paths (`__SRC__`, `__DOC__`, `__BUILD_ROOT__`, `__VENDOR__`,
   `__ZIP__`, `__NAV__`), and per-stem rules. See [Build & test commands](../build/commands.md).
 
 ## Build output layout
