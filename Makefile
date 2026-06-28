@@ -213,22 +213,19 @@ realclean:: clean
 #
 # WITH_XXX MACRO TESTS
 #
-__TEST_FX__:=$(__SRC__)/tests/fixtures
-__TEST_GOLDEN__:=$(__SRC__)/tests/golden
-
-MOCK_FLAGS:= -D __STEM__=mock-page \
-	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
-	-D __VENDOR__=$(__TEST_FX__)/MOCK_VENDOR \
-	-D __TARGET__=MOCK_TARGET.mk \
-	-D __FIRST__=$(__TEST_FX__)/mock-page.in.html
-
 .PHONY: test-with-xxx-macros
 test-with-xxx-macros:
 	@for phase in GENERATE_MAKEFILE_PHASE GENERATE_NAVIGATION_PHASE GENERATE_LANDING_PHASE; do \
 		ext=$$(echo $$phase | tr A-Z a-z) ; \
-		$(M4) -D __PHASE__=$$phase $(M4_FLAGS) $(MOCK_FLAGS) generator.m4 \
-			| sed 's,$(__SRC__),@SRC@,g' > /tmp/mock-page.$$ext ; \
-		diff -u $(__TEST_GOLDEN__)/mock-page.$$ext /tmp/mock-page.$$ext || exit 1 ; \
+		$(M4) -D __PHASE__=$$phase $(M4_FLAGS) \
+			-D __STEM__=mock-page \
+			-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
+			-D __VENDOR__=$(__SRC__)/tests/fixtures/MOCK_VENDOR \
+			-D __TARGET__=MOCK_TARGET.mk \
+			-D __FIRST__=$(__SRC__)/tests/fixtures/mock-page.in.html \
+			generator.m4 \
+			| sed 's,$(__SRC__),@SRC@,g' > $(__TMP__)/mock-page.$$ext ; \
+		diff -u $(__SRC__)/tests/golden/mock-page.$$ext $(__TMP__)/mock-page.$$ext || exit 1 ; \
 	done
 	@echo "test-with-xxx-macros: PASS"
 
@@ -243,11 +240,11 @@ test: generator_test.m4
 	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
 	--debug= \
 	-D __PHASE__=TEST_PHASE \
-	-D __TDIR__="/tmp/test" \
-	-D __TARGET__=/tmp/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
-	generator_test.m4 > /tmp/generator_test.out
-	@cat /tmp/generator_test.out
-	@! grep -q '^FAIL' /tmp/generator_test.out
+	-D __TDIR__="$(__TMP__)/test" \
+	-D __TARGET__=$(__TMP__)/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
+	generator_test.m4 > $(__TMP__)/generator_test.out
+	@cat $(__TMP__)/generator_test.out
+	@! grep -q '^FAIL' $(__TMP__)/generator_test.out
 
 .IGNORE: clean clean-gzip realclean
 .DEFAULT_GOAL := build
