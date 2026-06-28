@@ -32,7 +32,7 @@ M4_FLAGS+= \
 	-D __REALPATH__=$(shell which grealpath)
 endif
 M4_FLAGS+= \
-	-D __BUILD_ROOT__=$(__BUILD_ROOT__) -D __SRC__=$(__SRC__)
+	-D __SRC__=$(__SRC__)
 ifdef PREVIEW
 M4_FLAGS+= -D __PREVIEW__=1
 endif
@@ -68,6 +68,7 @@ vendor:
 
 define do-generate-navigation
 	$(M4) -D __PHASE__=GENERATE_NAVIGATION_PHASE $(M4_FLAGS) \
+	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
 	$(EXTRA_NAV_FLAGS) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 > $@
@@ -75,6 +76,7 @@ endef
 
 define do-generate-landing
 	$(M4) -D __PHASE__=GENERATE_LANDING_PHASE $(M4_FLAGS) \
+	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
 	$(EXTRA_LANDING_FLAGS) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 > $@
@@ -93,6 +95,7 @@ $(__BUILD_ROOT__)/NAV/NAVIGATION-LANDING.m4 : | $$(@D)/
 
 define do-generate-html
 $(M4) -D __PHASE__=GENERATE_HTML_PHASE $(M4_FLAGS) \
+	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
 	$(EXTRA_HTML_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
@@ -101,6 +104,7 @@ endef
 
 define do-generate-deferred-mk
 $(M4) -D __PHASE__=GENERATE_DEFERRED_MK_PHASE $(M4_FLAGS) \
+	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
 	$(EXTRA_DEFERRED_MK_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
@@ -209,6 +213,7 @@ __TEST_FX__:=$(__SRC__)/tests/fixtures
 __TEST_GOLDEN__:=$(__SRC__)/tests/golden
 
 MOCK_FLAGS:= -D __STEM__=mock-page \
+	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
 	-D __VENDOR__=$(__TEST_FX__)/MOCK_VENDOR \
 	-D __TARGET__=MOCK_TARGET.mk \
 	-D __FIRST__=$(__TEST_FX__)/mock-page.in.html
@@ -231,6 +236,7 @@ test: test-with-xxx-macros
 test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
 test: generator_test.m4
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
+	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
 	--debug= \
 	-D __PHASE__=TEST_PHASE \
 	-D __TDIR__="/tmp/test" \
@@ -243,7 +249,8 @@ test: generator_test.m4
 .DEFAULT_GOAL := build
 
 #
-# TEMPLATE MAKEFILES
+# __BUILD_ROOT__ is intentionally absent: GENERATE_MAKEFILE_PHASE emits [$(__BUILD_ROOT__)]/...
+# so generated .mk files carry Make variable references, not literal paths.
 #
 $(__BUILD_ROOT__)/DEP/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
 	$(M4) -D __PHASE__=GENERATE_MAKEFILE_PHASE $(M4_FLAGS) \
