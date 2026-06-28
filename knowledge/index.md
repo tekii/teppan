@@ -14,6 +14,9 @@ using autoconf's `m4sugar.m4f` macro library standalone (not via
 server — everything is rendered ahead of time into plain HTML/CSS/assets under
 `TEKII_BUILD/DOC`.
 
+This knowledge base is authored in the [Open Knowledge Format (OKF)](okf.md) —
+a directory of markdown files with YAML frontmatter.
+
 ## Sections
 
 - [Architecture](architecture/index.md) — how the site is built: core
@@ -29,4 +32,4 @@ server — everything is rendered ahead of time into plain HTML/CSS/assets under
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
   [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),
   [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](notes/css-remap-helper.md),
-  [`make realclean` — recursive `TEKII_BUILD` deletion](notes/realclean-non-recursive.md).
+  [`make realclean` — recursive `TEKII_BUILD` deletion](notes/realclean-recursive.md).
