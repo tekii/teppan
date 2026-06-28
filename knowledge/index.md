@@ -32,7 +32,7 @@ a directory of markdown files with YAML frontmatter.
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
   [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),
   [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](notes/css-remap-helper.md),
-  [`make realclean` — recursive `TEKII_BUILD` deletion](notes/realclean-recursive.md).
+  [`make realclean` — recursive `TEKII_BUILD` deletion](notes/realclean-recursive.md),
   [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
-  [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md).
+  [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
   [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md).
