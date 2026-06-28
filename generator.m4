@@ -72,6 +72,16 @@ m4_define([__ABSOLUTE],[m4_ifdef([__PREVIEW__],
 [http://__HREF([$1],__DOC__)])])dnl
 
 #
+# MKDOC/MKNAV/MKZIP MACROS
+# emit Make variable references $(__DOC__), $(__NAV__), $(__ZIP__) for use in
+# the MAKEFILE diversion -- keeps generated .mk files mode-independent so the
+# same files serve both production (make build) and preview (make PREVIEW=1).
+#
+m4_define([__MKDOC__],[$([__DOC__])])dnl
+m4_define([__MKNAV__],[$([__NAV__])])dnl
+m4_define([__MKZIP__],[$([__ZIP__])])dnl
+
+#
 # REDIRECT_URL(DOMAIN) MACRO
 # resolves DOMAIN's registered landing page (__LANDING_<DOMAIN>_URL__, as
 # aggregated into NAVIGATION-LANDING.m4 -- see __MAKE_PAGE's [landing] arg)
@@ -211,66 +221,66 @@ dnl
 m4_divert_push([MAKEFILE])
 m4_text_box(__STEM__ MAKEFILE BEGINS (__LANG__),[+])
 [#] NAVIGATION
-__NAV__/__PATH_STEM__.m4 : __SRC__/generator.m4
-__NAV__/__PATH_STEM__.m4 : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ 
-__NAV__/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-navigation)]
-clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__.m4
-.SECONDARY: __NAV__/__PATH_STEM__.m4
-__NAV__/__DOMAIN__/NAVIGATION.m4 : __NAV__/__PATH_STEM__.m4
-clean-navigation :: ; -rm -f __NAV__/__DOMAIN__/NAVIGATION.m4
+__MKNAV__/__PATH_STEM__.m4 : __SRC__/generator.m4
+__MKNAV__/__PATH_STEM__.m4 : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
+__MKNAV__/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-navigation)]
+clean-navigation :: ; -rm -f __MKNAV__/__PATH_STEM__.m4
+.SECONDARY: __MKNAV__/__PATH_STEM__.m4
+__MKNAV__/__DOMAIN__/NAVIGATION.m4 : __MKNAV__/__PATH_STEM__.m4
+clean-navigation :: ; -rm -f __MKNAV__/__DOMAIN__/NAVIGATION.m4
 m4_ifdef([__LANDING_CONTEXT__],[dnl
 [#] LANDING -- separate fragment/phase from NAVIGATION above: the NAVIGATION
 [#] fragment carries this domain's whole NAVIGATION diversion (nav-menu
 [#] items, every page's URL macro on this domain); reusing it for the
 [#] cross-domain NAVIGATION-LANDING.m4 aggregate would leak all of that into
 [#] every other domain that includes NAVIGATION-LANDING.m4.
-__NAV__/__PATH_STEM__.landing.m4 : __SRC__/generator.m4
-__NAV__/__PATH_STEM__.landing.m4 : EXTRA_LANDING_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
-__NAV__/__PATH_STEM__.landing.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-landing)]
-clean-navigation :: ; -rm -f __NAV__/__PATH_STEM__.landing.m4
-__NAV__/NAVIGATION-LANDING.m4 : __NAV__/__PATH_STEM__.landing.m4
-clean-navigation :: ; -rm -f __NAV__/NAVIGATION-LANDING.m4
+__MKNAV__/__PATH_STEM__.landing.m4 : __SRC__/generator.m4
+__MKNAV__/__PATH_STEM__.landing.m4 : EXTRA_LANDING_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
+__MKNAV__/__PATH_STEM__.landing.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-landing)]
+clean-navigation :: ; -rm -f __MKNAV__/__PATH_STEM__.landing.m4
+__MKNAV__/NAVIGATION-LANDING.m4 : __MKNAV__/__PATH_STEM__.landing.m4
+clean-navigation :: ; -rm -f __MKNAV__/NAVIGATION-LANDING.m4
 ],[])dnl
 dnl
-[#] HTML 
+[#] HTML
 dnl TODO: is VENDOR really needed in this PHASE?
-[#] __DOC__/__PATH_STEM__.html : __NAV__/__DOMAIN__/NAVIGATION.m4
-__DOC__/__PATH_STEM__.html : __LAYOUT__
-__DOC__/__PATH_STEM__.html : __SRC__/generator.m4
-__DOC__/__PATH_STEM__.html : EXTRA_HTML_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
-__DOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 __NAV__/NAVIGATION-LANDING.m4 ; [$(do-generate-html)]
-clean-build :: ; -rm -f __DOC__/__PATH_STEM__.html
+[#] __MKDOC__/__PATH_STEM__.html : __MKNAV__/__DOMAIN__/NAVIGATION.m4
+__MKDOC__/__PATH_STEM__.html : __LAYOUT__
+__MKDOC__/__PATH_STEM__.html : __SRC__/generator.m4
+__MKDOC__/__PATH_STEM__.html : EXTRA_HTML_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__MKDOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__MKNAV__
+__MKDOC__/__PATH_STEM__.html : __FIRST__ | $$(@D)/ __MKNAV__/__DOMAIN__/NAVIGATION.m4 __MKNAV__/NAVIGATION-LANDING.m4 ; [$(do-generate-html)]
+clean-build :: ; -rm -f __MKDOC__/__PATH_STEM__.html
 dnl
 [#] DEFERRED MAKEFILE
-__DOC__/__PATH_STEM__.mk : __SRC__/generator.m4
-__DOC__/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__DOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__NAV__   
-__DOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __NAV__/__DOMAIN__/NAVIGATION.m4 __NAV__/NAVIGATION-LANDING.m4 ; [$(do-generate-deferred-mk)]
-clean-makefile :: ; -rm -f __DOC__/__PATH_STEM__.mk
-[#] -include __DOC__/__PATH_STEM__.mk
-cp-deferred-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
-clean-asset gzip-asset :: | __DOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __DOC__/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
+__MKDOC__/__PATH_STEM__.mk : __SRC__/generator.m4
+__MKDOC__/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=__MKDOC__/__DOMAIN__ -D [__VENDOR__]=__VENDOR__ -D [__NAV__]=__MKNAV__
+__MKDOC__/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ __MKNAV__/__DOMAIN__/NAVIGATION.m4 __MKNAV__/NAVIGATION-LANDING.m4 ; [$(do-generate-deferred-mk)]
+clean-makefile :: ; -rm -f __MKDOC__/__PATH_STEM__.mk
+[#] -include __MKDOC__/__PATH_STEM__.mk
+cp-deferred-asset :: | __MKDOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __MKDOC__/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
+clean-asset gzip-asset :: | __MKDOC__/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f __MKDOC__/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
 dnl
 [#] ZIP
-.SECONDARY : __ZIP__/__PATH_STEM__.html
-__ZIP__/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:= 
-__ZIP__/__PATH_STEM__.html : __DOC__/__PATH_STEM__.html | $$(@D)/ __DOC__/__PATH_STEM__.mk ;  [$(do-gzip)]
-clean-gzip :: ; -rm -f __ZIP__/__PATH_STEM__.html
+.SECONDARY : __MKZIP__/__PATH_STEM__.html
+__MKZIP__/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:=
+__MKZIP__/__PATH_STEM__.html : __MKDOC__/__PATH_STEM__.html | $$(@D)/ __MKDOC__/__PATH_STEM__.mk ;  [$(do-gzip)]
+clean-gzip :: ; -rm -f __MKZIP__/__PATH_STEM__.html
 dnl
 [#] PUBLISH
 .INTERMEDIATE : __PATH_STEM__.html
-__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __DOC__/__PATH_STEM__.html | tr -d '\n')"
+__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief __MKDOC__/__PATH_STEM__.html | tr -d '\n')"
 __PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-__PATH_STEM__.html : __ZIP__/__PATH_STEM__.html ; [$(do-publish)]
+__PATH_STEM__.html : __MKZIP__/__PATH_STEM__.html ; [$(do-publish)]
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : build-__DOMAIN__
-build-__DOMAIN__ : __DOC__/__PATH_STEM__.html cp-deferred-asset | __DOC__/__PATH_STEM__.mk
+build-__DOMAIN__ : __MKDOC__/__PATH_STEM__.html cp-deferred-asset | __MKDOC__/__PATH_STEM__.mk
 .PHONY : __DOMAIN__
 __DOMAIN__ : __PATH_STEM__.html
 publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl
-build : __DOC__/__PATH_STEM__.html
+build : __MKDOC__/__PATH_STEM__.html
 clean-makefile :: ; [$(RM)] -f __TARGET__
 m4_text_box(__STEM__ MAKEFILE ENDS  (__LANG__) ,[-])
 m4_divert_pop([MAKEFILE])

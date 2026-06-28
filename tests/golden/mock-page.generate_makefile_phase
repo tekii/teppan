@@ -3,55 +3,55 @@
 ## page-a MAKEFILE BEGINS (es) ##
 ## +++++++++++++++++++++++++++ ##
 # NAVIGATION
-@SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4 : @SRC@/generator.m4
-@SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__ 
-@SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4
-.SECONDARY: @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4
-@SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4 : @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.m4
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4
+$(__NAV__)/mock-a.test/page-a.m4 : @SRC@/generator.m4
+$(__NAV__)/mock-a.test/page-a.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__
+$(__NAV__)/mock-a.test/page-a.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
+clean-navigation :: ; -rm -f $(__NAV__)/mock-a.test/page-a.m4
+.SECONDARY: $(__NAV__)/mock-a.test/page-a.m4
+$(__NAV__)/mock-a.test/NAVIGATION.m4 : $(__NAV__)/mock-a.test/page-a.m4
+clean-navigation :: ; -rm -f $(__NAV__)/mock-a.test/NAVIGATION.m4
 # LANDING -- separate fragment/phase from NAVIGATION above: the NAVIGATION
 # fragment carries this domain's whole NAVIGATION diversion (nav-menu
 # items, every page's URL macro on this domain); reusing it for the
 # cross-domain NAVIGATION-LANDING.m4 aggregate would leak all of that into
 # every other domain that includes NAVIGATION-LANDING.m4.
-@SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.landing.m4 : @SRC@/generator.m4
-@SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.landing.m4 : EXTRA_LANDING_FLAGS+= -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__
-@SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.landing.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-landing)
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.landing.m4
-@SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4 : @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/page-a.landing.m4
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4
-# HTML 
-# @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html : @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4
-@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html : @SRC@/tests/fixtures/mock-layout.html
-@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html : @SRC@/generator.m4
-@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-a.test -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__ -D __ROOT__=@SRC@/TEKII_BUILD/DOC/mock-a.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=@SRC@/tests/fixtures/MOCK_NAV   
-@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4 @SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
-clean-build :: ; -rm -f @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html
+$(__NAV__)/mock-a.test/page-a.landing.m4 : @SRC@/generator.m4
+$(__NAV__)/mock-a.test/page-a.landing.m4 : EXTRA_LANDING_FLAGS+= -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__
+$(__NAV__)/mock-a.test/page-a.landing.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-landing)
+clean-navigation :: ; -rm -f $(__NAV__)/mock-a.test/page-a.landing.m4
+$(__NAV__)/NAVIGATION-LANDING.m4 : $(__NAV__)/mock-a.test/page-a.landing.m4
+clean-navigation :: ; -rm -f $(__NAV__)/NAVIGATION-LANDING.m4
+# HTML
+# $(__DOC__)/mock-a.test/page-a.html : $(__NAV__)/mock-a.test/NAVIGATION.m4
+$(__DOC__)/mock-a.test/page-a.html : @SRC@/tests/fixtures/mock-layout.html
+$(__DOC__)/mock-a.test/page-a.html : @SRC@/generator.m4
+$(__DOC__)/mock-a.test/page-a.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-a.test -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__ -D __ROOT__=$(__DOC__)/mock-a.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=$(__NAV__)
+$(__DOC__)/mock-a.test/page-a.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__NAV__)/mock-a.test/NAVIGATION.m4 $(__NAV__)/NAVIGATION-LANDING.m4 ; $(do-generate-html)
+clean-build :: ; -rm -f $(__DOC__)/mock-a.test/page-a.html
 # DEFERRED MAKEFILE
-@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk : @SRC@/generator.m4
-@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-a.test -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__ -D __ROOT__=@SRC@/TEKII_BUILD/DOC/mock-a.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=@SRC@/tests/fixtures/MOCK_NAV   
-@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-a.test/NAVIGATION.m4 @SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
-clean-makefile :: ; -rm -f @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk
-# -include @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk
-cp-deferred-asset :: | @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk __SRC__=@SRC@ $@
-clean-asset gzip-asset :: | @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk __SRC__=@SRC@ $@
+$(__DOC__)/mock-a.test/page-a.mk : @SRC@/generator.m4
+$(__DOC__)/mock-a.test/page-a.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-a.test -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__ -D __ROOT__=$(__DOC__)/mock-a.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=$(__NAV__)
+$(__DOC__)/mock-a.test/page-a.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__NAV__)/mock-a.test/NAVIGATION.m4 $(__NAV__)/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
+clean-makefile :: ; -rm -f $(__DOC__)/mock-a.test/page-a.mk
+# -include $(__DOC__)/mock-a.test/page-a.mk
+cp-deferred-asset :: | $(__DOC__)/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__DOC__)/mock-a.test/page-a.mk __SRC__=@SRC@ $@
+clean-asset gzip-asset :: | $(__DOC__)/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__DOC__)/mock-a.test/page-a.mk __SRC__=@SRC@ $@
 # ZIP
-.SECONDARY : @SRC@/tests/fixtures/MOCK_ZIP/mock-a.test/page-a.html
-@SRC@/tests/fixtures/MOCK_ZIP/mock-a.test/page-a.html : GZIP_EXTRA_FLAGS:= 
-@SRC@/tests/fixtures/MOCK_ZIP/mock-a.test/page-a.html : @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html | $$(@D)/ @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk ;  $(do-gzip)
-clean-gzip :: ; -rm -f @SRC@/tests/fixtures/MOCK_ZIP/mock-a.test/page-a.html
+.SECONDARY : $(__ZIP__)/mock-a.test/page-a.html
+$(__ZIP__)/mock-a.test/page-a.html : GZIP_EXTRA_FLAGS:=
+$(__ZIP__)/mock-a.test/page-a.html : $(__DOC__)/mock-a.test/page-a.html | $$(@D)/ $(__DOC__)/mock-a.test/page-a.mk ;  $(do-gzip)
+clean-gzip :: ; -rm -f $(__ZIP__)/mock-a.test/page-a.html
 # PUBLISH
 .INTERMEDIATE : mock-a.test/page-a.html
-mock-a.test/page-a.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html | tr -d '\n')"
+mock-a.test/page-a.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(__DOC__)/mock-a.test/page-a.html | tr -d '\n')"
 mock-a.test/page-a.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-mock-a.test/page-a.html : @SRC@/tests/fixtures/MOCK_ZIP/mock-a.test/page-a.html ; $(do-publish)
+mock-a.test/page-a.html : $(__ZIP__)/mock-a.test/page-a.html ; $(do-publish)
 .PHONY : build-mock-a-test
-build-mock-a-test : @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html cp-deferred-asset | @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.mk
+build-mock-a-test : $(__DOC__)/mock-a.test/page-a.html cp-deferred-asset | $(__DOC__)/mock-a.test/page-a.mk
 .PHONY : mock-a-test
 mock-a-test : mock-a.test/page-a.html
 publish : mock-a-test
-build : @SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html
+build : $(__DOC__)/mock-a.test/page-a.html
 clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
 ## --------------------------- ##
 ## page-a MAKEFILE ENDS  (es)  ##
@@ -61,44 +61,44 @@ clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
 ## page-b MAKEFILE BEGINS (en) ##
 ## +++++++++++++++++++++++++++ ##
 # NAVIGATION
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4 : @SRC@/generator.m4
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__ 
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4
-.SECONDARY: @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 : @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/en/page-b.m4
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4
-# HTML 
-# @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html : @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4
-@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html : @SRC@/tests/fixtures/mock-layout.html
-@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html : @SRC@/generator.m4
-@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__ -D __ROOT__=@SRC@/TEKII_BUILD/DOC/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=@SRC@/tests/fixtures/MOCK_NAV   
-@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 @SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
-clean-build :: ; -rm -f @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html
+$(__NAV__)/mock-b.test/en/page-b.m4 : @SRC@/generator.m4
+$(__NAV__)/mock-b.test/en/page-b.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__
+$(__NAV__)/mock-b.test/en/page-b.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
+clean-navigation :: ; -rm -f $(__NAV__)/mock-b.test/en/page-b.m4
+.SECONDARY: $(__NAV__)/mock-b.test/en/page-b.m4
+$(__NAV__)/mock-b.test/NAVIGATION.m4 : $(__NAV__)/mock-b.test/en/page-b.m4
+clean-navigation :: ; -rm -f $(__NAV__)/mock-b.test/NAVIGATION.m4
+# HTML
+# $(__DOC__)/mock-b.test/en/page-b.html : $(__NAV__)/mock-b.test/NAVIGATION.m4
+$(__DOC__)/mock-b.test/en/page-b.html : @SRC@/tests/fixtures/mock-layout.html
+$(__DOC__)/mock-b.test/en/page-b.html : @SRC@/generator.m4
+$(__DOC__)/mock-b.test/en/page-b.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__ -D __ROOT__=$(__DOC__)/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=$(__NAV__)
+$(__DOC__)/mock-b.test/en/page-b.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__NAV__)/mock-b.test/NAVIGATION.m4 $(__NAV__)/NAVIGATION-LANDING.m4 ; $(do-generate-html)
+clean-build :: ; -rm -f $(__DOC__)/mock-b.test/en/page-b.html
 # DEFERRED MAKEFILE
-@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk : @SRC@/generator.m4
-@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__ -D __ROOT__=@SRC@/TEKII_BUILD/DOC/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=@SRC@/tests/fixtures/MOCK_NAV   
-@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 @SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
-clean-makefile :: ; -rm -f @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk
-# -include @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk
-cp-deferred-asset :: | @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
-clean-asset gzip-asset :: | @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
+$(__DOC__)/mock-b.test/en/page-b.mk : @SRC@/generator.m4
+$(__DOC__)/mock-b.test/en/page-b.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__ -D __ROOT__=$(__DOC__)/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=$(__NAV__)
+$(__DOC__)/mock-b.test/en/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__NAV__)/mock-b.test/NAVIGATION.m4 $(__NAV__)/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
+clean-makefile :: ; -rm -f $(__DOC__)/mock-b.test/en/page-b.mk
+# -include $(__DOC__)/mock-b.test/en/page-b.mk
+cp-deferred-asset :: | $(__DOC__)/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__DOC__)/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
+clean-asset gzip-asset :: | $(__DOC__)/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__DOC__)/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
 # ZIP
-.SECONDARY : @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/en/page-b.html
-@SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/en/page-b.html : GZIP_EXTRA_FLAGS:= 
-@SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/en/page-b.html : @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html | $$(@D)/ @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk ;  $(do-gzip)
-clean-gzip :: ; -rm -f @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/en/page-b.html
+.SECONDARY : $(__ZIP__)/mock-b.test/en/page-b.html
+$(__ZIP__)/mock-b.test/en/page-b.html : GZIP_EXTRA_FLAGS:=
+$(__ZIP__)/mock-b.test/en/page-b.html : $(__DOC__)/mock-b.test/en/page-b.html | $$(@D)/ $(__DOC__)/mock-b.test/en/page-b.mk ;  $(do-gzip)
+clean-gzip :: ; -rm -f $(__ZIP__)/mock-b.test/en/page-b.html
 # PUBLISH
 .INTERMEDIATE : mock-b.test/en/page-b.html
-mock-b.test/en/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html | tr -d '\n')"
+mock-b.test/en/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(__DOC__)/mock-b.test/en/page-b.html | tr -d '\n')"
 mock-b.test/en/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-mock-b.test/en/page-b.html : @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/en/page-b.html ; $(do-publish)
+mock-b.test/en/page-b.html : $(__ZIP__)/mock-b.test/en/page-b.html ; $(do-publish)
 .PHONY : build-mock-b-test
-build-mock-b-test : @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html cp-deferred-asset | @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.mk
+build-mock-b-test : $(__DOC__)/mock-b.test/en/page-b.html cp-deferred-asset | $(__DOC__)/mock-b.test/en/page-b.mk
 .PHONY : mock-b-test
 mock-b-test : mock-b.test/en/page-b.html
 publish : mock-b-test
-build : @SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html
+build : $(__DOC__)/mock-b.test/en/page-b.html
 clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
 ## --------------------------- ##
 ## page-b MAKEFILE ENDS  (en)  ##
@@ -108,44 +108,44 @@ clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
 ## page-b MAKEFILE BEGINS (br) ##
 ## +++++++++++++++++++++++++++ ##
 # NAVIGATION
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4 : @SRC@/generator.m4
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__ 
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4
-.SECONDARY: @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4
-@SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 : @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/br/page-b.m4
-clean-navigation :: ; -rm -f @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4
-# HTML 
-# @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html : @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4
-@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html : @SRC@/tests/fixtures/mock-layout.html
-@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html : @SRC@/generator.m4
-@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__ -D __ROOT__=@SRC@/TEKII_BUILD/DOC/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=@SRC@/tests/fixtures/MOCK_NAV   
-@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 @SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
-clean-build :: ; -rm -f @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html
+$(__NAV__)/mock-b.test/br/page-b.m4 : @SRC@/generator.m4
+$(__NAV__)/mock-b.test/br/page-b.m4 : EXTRA_NAV_FLAGS+= -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__
+$(__NAV__)/mock-b.test/br/page-b.m4 : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ ; $(do-generate-navigation)
+clean-navigation :: ; -rm -f $(__NAV__)/mock-b.test/br/page-b.m4
+.SECONDARY: $(__NAV__)/mock-b.test/br/page-b.m4
+$(__NAV__)/mock-b.test/NAVIGATION.m4 : $(__NAV__)/mock-b.test/br/page-b.m4
+clean-navigation :: ; -rm -f $(__NAV__)/mock-b.test/NAVIGATION.m4
+# HTML
+# $(__DOC__)/mock-b.test/br/page-b.html : $(__NAV__)/mock-b.test/NAVIGATION.m4
+$(__DOC__)/mock-b.test/br/page-b.html : @SRC@/tests/fixtures/mock-layout.html
+$(__DOC__)/mock-b.test/br/page-b.html : @SRC@/generator.m4
+$(__DOC__)/mock-b.test/br/page-b.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__ -D __ROOT__=$(__DOC__)/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=$(__NAV__)
+$(__DOC__)/mock-b.test/br/page-b.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__NAV__)/mock-b.test/NAVIGATION.m4 $(__NAV__)/NAVIGATION-LANDING.m4 ; $(do-generate-html)
+clean-build :: ; -rm -f $(__DOC__)/mock-b.test/br/page-b.html
 # DEFERRED MAKEFILE
-@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk : @SRC@/generator.m4
-@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__ -D __ROOT__=@SRC@/TEKII_BUILD/DOC/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=@SRC@/tests/fixtures/MOCK_NAV   
-@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ @SRC@/tests/fixtures/MOCK_NAV/mock-b.test/NAVIGATION.m4 @SRC@/tests/fixtures/MOCK_NAV/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
-clean-makefile :: ; -rm -f @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk
-# -include @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk
-cp-deferred-asset :: | @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
-clean-asset gzip-asset :: | @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
+$(__DOC__)/mock-b.test/br/page-b.mk : @SRC@/generator.m4
+$(__DOC__)/mock-b.test/br/page-b.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__ -D __ROOT__=$(__DOC__)/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR -D __NAV__=$(__NAV__)
+$(__DOC__)/mock-b.test/br/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__NAV__)/mock-b.test/NAVIGATION.m4 $(__NAV__)/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
+clean-makefile :: ; -rm -f $(__DOC__)/mock-b.test/br/page-b.mk
+# -include $(__DOC__)/mock-b.test/br/page-b.mk
+cp-deferred-asset :: | $(__DOC__)/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__DOC__)/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
+clean-asset gzip-asset :: | $(__DOC__)/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__DOC__)/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
 # ZIP
-.SECONDARY : @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/br/page-b.html
-@SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/br/page-b.html : GZIP_EXTRA_FLAGS:= 
-@SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/br/page-b.html : @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html | $$(@D)/ @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk ;  $(do-gzip)
-clean-gzip :: ; -rm -f @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/br/page-b.html
+.SECONDARY : $(__ZIP__)/mock-b.test/br/page-b.html
+$(__ZIP__)/mock-b.test/br/page-b.html : GZIP_EXTRA_FLAGS:=
+$(__ZIP__)/mock-b.test/br/page-b.html : $(__DOC__)/mock-b.test/br/page-b.html | $$(@D)/ $(__DOC__)/mock-b.test/br/page-b.mk ;  $(do-gzip)
+clean-gzip :: ; -rm -f $(__ZIP__)/mock-b.test/br/page-b.html
 # PUBLISH
 .INTERMEDIATE : mock-b.test/br/page-b.html
-mock-b.test/br/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html | tr -d '\n')"
+mock-b.test/br/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(__DOC__)/mock-b.test/br/page-b.html | tr -d '\n')"
 mock-b.test/br/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-mock-b.test/br/page-b.html : @SRC@/tests/fixtures/MOCK_ZIP/mock-b.test/br/page-b.html ; $(do-publish)
+mock-b.test/br/page-b.html : $(__ZIP__)/mock-b.test/br/page-b.html ; $(do-publish)
 .PHONY : build-mock-b-test
-build-mock-b-test : @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html cp-deferred-asset | @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.mk
+build-mock-b-test : $(__DOC__)/mock-b.test/br/page-b.html cp-deferred-asset | $(__DOC__)/mock-b.test/br/page-b.mk
 .PHONY : mock-b-test
 mock-b-test : mock-b.test/br/page-b.html
 publish : mock-b-test
-build : @SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html
+build : $(__DOC__)/mock-b.test/br/page-b.html
 clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
 ## --------------------------- ##
 ## page-b MAKEFILE ENDS  (br)  ##
