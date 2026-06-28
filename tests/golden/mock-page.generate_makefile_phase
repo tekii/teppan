@@ -52,7 +52,7 @@ build-mock-a-test : $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.html cp-deferred-as
 mock-a-test : mock-a.test/page-a.html
 publish : mock-a-test
 build : $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.html
-clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
+clean-makefile :: ; @test -f MOCK_TARGET.mk && rm MOCK_TARGET.mk || true
 ## --------------------------- ##
 ## page-a MAKEFILE ENDS  (es)  ##
 ## --------------------------- ##
@@ -99,7 +99,7 @@ build-mock-b-test : $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.html cp-deferred
 mock-b-test : mock-b.test/en/page-b.html
 publish : mock-b-test
 build : $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.html
-clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
+clean-makefile :: ; @test -f MOCK_TARGET.mk && rm MOCK_TARGET.mk || true
 ## --------------------------- ##
 ## page-b MAKEFILE ENDS  (en)  ##
 ## --------------------------- ##
@@ -146,7 +146,7 @@ build-mock-b-test : $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.html cp-deferred
 mock-b-test : mock-b.test/br/page-b.html
 publish : mock-b-test
 build : $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.html
-clean-makefile :: ; $(RM) -f MOCK_TARGET.mk
+clean-makefile :: ; @test -f MOCK_TARGET.mk && rm MOCK_TARGET.mk || true
 ## --------------------------- ##
 ## page-b MAKEFILE ENDS  (br)  ##
 ## --------------------------- ##

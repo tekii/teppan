@@ -32,7 +32,7 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
   recipe whenever `target` is considered out of date. If the same `target ::
   recipe` pattern is emitted multiple times (e.g. once per `__ASSET`
   invocation for the same file), the recipe executes once per emission —
-  only safe if the recipe is idempotent (e.g. `rm -f`, not plain `rm`). Flag
+  only safe if the recipe is idempotent (e.g. `@test -f path && rm path || true`, not plain `rm`). Flag
   non-idempotent recipes attached via `::`. See
   [`__ASSET` rule duplication](../notes/asset-rule-duplication.md) for a
   concrete example.
@@ -78,6 +78,10 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
   couple of pipeline stages, prefer a small `define ... endef` recipe
   variable (as `do-generate-html`, `do-gzip`, etc. already do) over inlining
   long pipelines into a target body.
+- **Prefix `rm` recipe lines with `@`** to suppress Make's echoing of the
+  command: write `@rm -rf TEKII_BUILD` or `@test -f path && rm path || true`,
+  not the bare `rm ...` form. The project does not define `$(RM)` or
+  `$(RMDIR)` helper variables — use bare `@rm` and `@rmdir` directly.
 - Comment non-obvious dependency edges (e.g. *why* a target depends on
   something that looks unrelated — circularity workarounds, ordering
   hacks) — the existing `# we compare checksum to see if actually change and
@@ -88,11 +92,20 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
 - **`rm -rf $(VARIABLE)` is forbidden in build recipes**: if the variable
   expands to an empty string, an unexpected path, or `/`, the command silently
   deletes an arbitrary directory tree outside the project. Flag any recipe that
-  uses `rm -rf` on a Make variable. The safe alternatives are `rmdir` (only
-  removes empty directories — refuses and fails if the target has contents) for
-  directory cleanup, and `rm -f $@` or `rm -f <explicit-path>` for targeted
-  single-file removal. This project defines `RM:= @-rm` and `RMDIR:= @-rmdir`
-  as the sanctioned idioms; new recipes must use those, not raw `rm -rf`.
+  uses `rm -rf` on a Make variable — even a path constant like
+  `$(__BUILD_ROOT__)`. The only safe use of `rm -rf` is on a string literal
+  that names a well-known top-level directory (e.g. `@rm -rf TEKII_BUILD` in
+  `realclean`). For single-file removal under a variable path, use the
+  `test -f` guard instead (see below).
+- **Single-file removal under a Make variable path must use the `test -f`
+  guard**: any recipe that removes one file whose path contains a Make variable
+  (e.g. `$(__BUILD_ROOT__)/DOC/…`) must use the form
+  `@test -f PATH && rm PATH || true` — never `@rm -f PATH` or `-rm -f PATH`.
+  The `test -f` pre-check ensures `rm` is never called when the variable is
+  empty or expands to an unexpected value; `|| true` keeps the recipe exit
+  status clean. This is the idiom used throughout `generator.m4`'s `MAKEFILE`
+  diversion for every `clean-*` recipe line; any new `clean-*` rule in
+  generated `.mk` output must follow the same pattern.
 - Missing `.PHONY` on non-file targets (stale-file false negatives).
 - `rm`/`mv`/`cp` in a `::` recipe that isn't safe to run more than once
   (missing `-f`, `-p`, etc.).

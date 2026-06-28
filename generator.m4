@@ -271,7 +271,7 @@ publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl
 build : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html
-clean-makefile :: ; [$(RM)] -f __TARGET__
+clean-makefile :: ; @test -f __TARGET__ && rm __TARGET__ || true
 m4_text_box(__STEM__ MAKEFILE ENDS  (__LANG__) ,[-])
 m4_divert_pop([MAKEFILE])
 dnl

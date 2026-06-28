@@ -11,9 +11,6 @@ ifdef PREVIEW
 __BUILD_ROOT__:=$(PWD)/TEKII_PREVIEW
 endif
 
-RM:= @-rm
-RMDIR:= @-rmdir
-
 #
 # M4
 #
@@ -204,8 +201,8 @@ clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
 
 .PHONY: realclean
 realclean:: clean
-	$(RM) -rf TEKII_BUILD
-	$(RM) -rf TEKII_PREVIEW
+	@rm -rf TEKII_BUILD
+	@rm -rf TEKII_PREVIEW
 	@echo [[[ DONE $@ ]]]
 
 #gsutil -m rsync -ndr ../bucket/ gs://www.teky.io
