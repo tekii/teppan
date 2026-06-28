@@ -191,6 +191,13 @@ all: build
 ## mmm... this rule will attemp to build everything first in order to
 ## make the dep list then delete all
 ##
+.PHONY: clean-build clean-asset clean-gzip clean-makefile clean-navigation
+clean-build ::
+clean-asset ::
+clean-gzip ::
+clean-makefile ::
+clean-navigation ::
+
 .PHONY: clean
 clean : clean-build clean-asset clean-gzip clean-makefile clean-navigation
 	@echo [[[ DONE $@ ]]]
@@ -252,14 +259,17 @@ test: generator_test.m4
 # __BUILD_ROOT__ is intentionally absent: GENERATE_MAKEFILE_PHASE emits [$(__BUILD_ROOT__)]/...
 # so generated .mk files carry Make variable references, not literal paths.
 #
+ifeq ($(filter clean% realclean,$(MAKECMDGOALS)),)
 $(__BUILD_ROOT__)/DEP/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
 	$(M4) -D __PHASE__=GENERATE_MAKEFILE_PHASE $(M4_FLAGS) \
 		-D __STEM__=$* \
 		-D __VENDOR__=$(__VENDOR__) \
 		-D __TARGET__=$@ -D __FIRST__=$< \
 		generator.m4 >$@ || rm $@
+endif
 
 # TODO: check what abaut this .PRECIOUS
 #.PRECIOUS: $(__BUILD_ROOT__)/DEP/%.d
 # THIS INCLUDE FIRES THE RULE ABOVE
 -include $(patsubst %.in.html,$(__BUILD_ROOT__)/DEP/%.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))
+
