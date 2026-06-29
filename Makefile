@@ -2,19 +2,19 @@
 
 .SUFFIXES:
 
-__SRC__	:=$(PWD)
-__TMP__:=/tmp
-__BUILD_ROOT__:=$(PWD)/TEKII_BUILD
-__VENDOR__:=$(PWD)/VENDOR
+SRC	:=$(PWD)
+TMP:=/tmp
+BUILD_ROOT:=$(PWD)/TEKII_BUILD
+VENDOR:=$(PWD)/VENDOR
 ifdef PREVIEW
-__BUILD_ROOT__:=$(PWD)/TEKII_PREVIEW
+BUILD_ROOT:=$(PWD)/TEKII_PREVIEW
 endif
 
 #
 # M4
 #
 M4:=$(shell which m4)
-M4_FLAGS:= -I $(__SRC__)
+M4_FLAGS:= -I $(SRC)
 ifeq ($(shell uname -s),Linux)
 M4_FLAGS+= \
 	-I /usr/share/autoconf \
@@ -27,7 +27,7 @@ M4_FLAGS+= \
 	-D __REALPATH__=$(shell which grealpath)
 endif
 M4_FLAGS+= \
-	-D __SRC__=$(__SRC__)
+	-D __SRC__=$(SRC)
 ifdef PREVIEW
 M4_FLAGS+= -D __PREVIEW__=1
 endif
@@ -44,8 +44,8 @@ endif
 $(PWD)/%/:
 	mkdir -p $@
 
-.PRECIOUS: $(__TMP__)/%/
-$(__TMP__)/%/:
+.PRECIOUS: $(TMP)/%/
+$(TMP)/%/:
 	mkdir -p $@
 
 #
@@ -59,7 +59,7 @@ vendor:
 #
 define do-generate-navigation
 	$(M4) -D __PHASE__=GENERATE_NAVIGATION_PHASE $(M4_FLAGS) \
-	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
+	-D __BUILD_ROOT__=$(BUILD_ROOT) \
 	$(EXTRA_NAV_FLAGS) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 > $@
@@ -67,24 +67,24 @@ endef
 
 define do-generate-landing
 	$(M4) -D __PHASE__=GENERATE_LANDING_PHASE $(M4_FLAGS) \
-	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
+	-D __BUILD_ROOT__=$(BUILD_ROOT) \
 	$(EXTRA_LANDING_FLAGS) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
 	generator.m4 > $@
 endef
 
-$(__BUILD_ROOT__)/NAV/%/NAVIGATION.m4 : | $$(@D)/
+$(BUILD_ROOT)/NAV/%/NAVIGATION.m4 : | $$(@D)/
 	sort -u $^ | grep -v '^$$' > $@
 
 # DOC-level aggregate of just the domains' landing pages (one stem-fragment
 # per domain that opted in via __MAKE_PAGE([LinkType],[landing])), so any
 # page can cross-link to another domain's landing page.
-$(__BUILD_ROOT__)/NAV/NAVIGATION-LANDING.m4 : | $$(@D)/
+$(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 : | $$(@D)/
 	cat $^ > $@
 
 define do-generate-html
 $(M4) -D __PHASE__=GENERATE_HTML_PHASE $(M4_FLAGS) \
-	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
+	-D __BUILD_ROOT__=$(BUILD_ROOT) \
 	$(EXTRA_HTML_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
@@ -93,7 +93,7 @@ endef
 
 define do-generate-deferred-mk
 $(M4) -D __PHASE__=GENERATE_DEFERRED_MK_PHASE $(M4_FLAGS) \
-	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
+	-D __BUILD_ROOT__=$(BUILD_ROOT) \
 	$(EXTRA_DEFERRED_MK_FLAGS) \
 	-D __TDIR__=$(@D) -D __TNAME__=$(@F) \
 	-D __TARGET__=$@ -D __FIRST__=$< \
@@ -161,13 +161,13 @@ test-with-xxx-macros:
 		ext=$$(echo $$phase | tr A-Z a-z) ; \
 		$(M4) -D __PHASE__=$$phase $(M4_FLAGS) \
 			-D __STEM__=mock-page \
-			-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
-			-D __VENDOR__=$(__SRC__)/tests/fixtures/MOCK_VENDOR \
+			-D __BUILD_ROOT__=$(BUILD_ROOT) \
+			-D __VENDOR__=$(SRC)/tests/fixtures/MOCK_VENDOR \
 			-D __TARGET__=MOCK_TARGET.mk \
-			-D __FIRST__=$(__SRC__)/tests/fixtures/mock-page.in.html \
+			-D __FIRST__=$(SRC)/tests/fixtures/mock-page.in.html \
 			generator.m4 \
-			| sed 's,$(__SRC__),@SRC@,g' > $(__TMP__)/mock-page.$$ext ; \
-		diff -u $(__SRC__)/tests/golden/mock-page.$$ext $(__TMP__)/mock-page.$$ext || exit 1 ; \
+			| sed 's,$(SRC),@SRC@,g' > $(TMP)/mock-page.$$ext ; \
+		diff -u $(SRC)/tests/golden/mock-page.$$ext $(TMP)/mock-page.$$ext || exit 1 ; \
 	done
 	@echo "test-with-xxx-macros: PASS"
 
@@ -176,35 +176,35 @@ test-with-xxx-macros:
 #
 .PHONY: test
 test: test-with-xxx-macros
-test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(__SRC__)/empty.txt
+test: EXTRA_BUILD_FLAGS= -D __DOMAIN__:=http://tests.com -D __LAYOUT__=$(SRC)/empty.txt
 test: generator_test.m4
 	$(M4) $(M4_FLAGS) $(EXTRA_BUILD_FLAGS) \
-	-D __BUILD_ROOT__=$(__BUILD_ROOT__) \
+	-D __BUILD_ROOT__=$(BUILD_ROOT) \
 	--debug= \
 	-D __PHASE__=TEST_PHASE \
-	-D __TDIR__="$(__TMP__)/test" \
-	-D __TARGET__=$(__TMP__)/test/dummy -D __FIRST__=$(__SRC__)/empty.txt \
-	generator_test.m4 > $(__TMP__)/generator_test.out
-	@cat $(__TMP__)/generator_test.out
-	@! grep -q '^FAIL' $(__TMP__)/generator_test.out
+	-D __TDIR__="$(TMP)/test" \
+	-D __TARGET__=$(TMP)/test/dummy -D __FIRST__=$(SRC)/empty.txt \
+	generator_test.m4 > $(TMP)/generator_test.out
+	@cat $(TMP)/generator_test.out
+	@! grep -q '^FAIL' $(TMP)/generator_test.out
 
 # suppress errors: files may already be absent, which is expected during clean.
 .IGNORE: clean compressed-files-clean realclean
 .DEFAULT_GOAL := build
 
 #
-# __BUILD_ROOT__ is intentionally absent: GENERATE_MAKEFILE_PHASE emits [$(__BUILD_ROOT__)]/...
+# __BUILD_ROOT__ is intentionally absent: GENERATE_MAKEFILE_PHASE emits [$(BUILD_ROOT)]/...
 # so generated .mk files carry Make variable references, not literal paths.
 #
 ifeq ($(filter clean% realclean,$(MAKECMDGOALS)),)
-$(__BUILD_ROOT__)/DEP/%.mk: $(__SRC__)/%.in.html $(__SRC__)/generator.m4 Makefile | $$(@D)/
+$(BUILD_ROOT)/DEP/%.mk: $(SRC)/%.in.html $(SRC)/generator.m4 Makefile | $$(@D)/
 	$(M4) -D __PHASE__=GENERATE_MAKEFILE_PHASE $(M4_FLAGS) \
 		-D __STEM__=$* \
-		-D __VENDOR__=$(__VENDOR__) \
+		-D __VENDOR__=$(VENDOR) \
 		-D __TARGET__=$@ -D __FIRST__=$< \
 		generator.m4 >$@ || rm $@
 endif
 
 # triggers the DEP pattern rule above for any stem missing its .mk
--include $(patsubst %.in.html,$(__BUILD_ROOT__)/DEP/%.mk,$(notdir $(wildcard $(__SRC__)/*.in.html)))
+-include $(patsubst %.in.html,$(BUILD_ROOT)/DEP/%.mk,$(notdir $(wildcard $(SRC)/*.in.html)))
 

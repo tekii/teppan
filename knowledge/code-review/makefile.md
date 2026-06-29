@@ -66,6 +66,13 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
 
 - Group related variables (paths, flags, tool locations) at the top of the
   file, not scattered inline in recipes.
+- **Make variables use plain names (no `__affix__`)**: a Make variable gets a
+  bare name (`BUILD_ROOT`, `SRC`, `VENDOR`) — the `__name__` form is reserved
+  for the m4 macro facet of the same path constant. Flag a Make variable
+  declared or referenced as `$(__X__)`; it should be `$(X)`, with `__X__`
+  kept only where the token is an m4 macro (e.g. the flag *name* in
+  `-D __X__=$(X)`). See
+  [Make vs m4 variable naming](../conventions/make-m4-variable-naming.md).
 - Prefer automatic variables (`$@`, `$<`, `$^`, `$*`, `$(@D)`, `$(@F)`) over
   re-deriving the same paths with `$(patsubst ...)`/`$(dir ...)` inside a
   recipe.

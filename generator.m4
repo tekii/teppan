@@ -199,66 +199,66 @@ dnl
 m4_divert_push([MAKEFILE])
 m4_text_box(__STEM__ MAKEFILE BEGINS (__LANG__),[+])
 [#] NAVIGATION
-[$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.m4 : __SRC__/generator.m4
-[$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.m4 : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
-[$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-navigation)]
-navigation-files-clean :: ; @test -f [$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.m4 && rm [$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.m4 || true
-.SECONDARY: [$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.m4
-[$(__BUILD_ROOT__)]/NAV/__DOMAIN__/NAVIGATION.m4 : [$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.m4
-navigation-files-clean :: ; @test -f [$(__BUILD_ROOT__)]/NAV/__DOMAIN__/NAVIGATION.m4 && rm [$(__BUILD_ROOT__)]/NAV/__DOMAIN__/NAVIGATION.m4 || true
+$(BUILD_ROOT)/NAV/__PATH_STEM__.m4 : __SRC__/generator.m4
+$(BUILD_ROOT)/NAV/__PATH_STEM__.m4 : EXTRA_NAV_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
+$(BUILD_ROOT)/NAV/__PATH_STEM__.m4 : __FIRST__ | $$(@D)/ ; $(do-generate-navigation)
+navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/__PATH_STEM__.m4 && rm $(BUILD_ROOT)/NAV/__PATH_STEM__.m4 || true
+.SECONDARY: $(BUILD_ROOT)/NAV/__PATH_STEM__.m4
+$(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4 : $(BUILD_ROOT)/NAV/__PATH_STEM__.m4
+navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4 && rm $(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4 || true
 m4_ifdef([__LANDING_CONTEXT__],[dnl
 [#] LANDING -- separate fragment/phase from NAVIGATION above: the NAVIGATION
 [#] fragment carries this domain's whole NAVIGATION diversion (nav-menu
 [#] items, every page's URL macro on this domain); reusing it for the
 [#] cross-domain NAVIGATION-LANDING.m4 aggregate would leak all of that into
 [#] every other domain that includes NAVIGATION-LANDING.m4.
-[$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.landing.m4 : __SRC__/generator.m4
-[$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.landing.m4 : EXTRA_LANDING_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
-[$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.landing.m4 : __FIRST__ | $$(@D)/ ; [$(do-generate-landing)]
-navigation-files-clean :: ; @test -f [$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.landing.m4 && rm [$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.landing.m4 || true
-[$(__BUILD_ROOT__)]/NAV/NAVIGATION-LANDING.m4 : [$(__BUILD_ROOT__)]/NAV/__PATH_STEM__.landing.m4
-navigation-files-clean :: ; @test -f [$(__BUILD_ROOT__)]/NAV/NAVIGATION-LANDING.m4 && rm [$(__BUILD_ROOT__)]/NAV/NAVIGATION-LANDING.m4 || true
+$(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 : __SRC__/generator.m4
+$(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 : EXTRA_LANDING_FLAGS+= -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
+$(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 : __FIRST__ | $$(@D)/ ; $(do-generate-landing)
+navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 && rm $(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 || true
+$(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 : $(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4
+navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 && rm $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 || true
 ],[])dnl
 dnl
 [#] HTML
 dnl TODO: is VENDOR really needed in this PHASE?
-[#] [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html : [$(__BUILD_ROOT__)]/NAV/__DOMAIN__/NAVIGATION.m4
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html : __LAYOUT__
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html : __SRC__/generator.m4
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html : EXTRA_HTML_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=[$(__BUILD_ROOT__)]/DOC/__DOMAIN__ -D [__VENDOR__]=__VENDOR__
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html : __FIRST__ | $$(@D)/ [$(__BUILD_ROOT__)]/NAV/__DOMAIN__/NAVIGATION.m4 [$(__BUILD_ROOT__)]/NAV/NAVIGATION-LANDING.m4 ; [$(do-generate-html)]
-build-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html && rm [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html || true
+[#] $(BUILD_ROOT)/DOC/__PATH_STEM__.html : $(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4
+$(BUILD_ROOT)/DOC/__PATH_STEM__.html : __LAYOUT__
+$(BUILD_ROOT)/DOC/__PATH_STEM__.html : __SRC__/generator.m4
+$(BUILD_ROOT)/DOC/__PATH_STEM__.html : EXTRA_HTML_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=$(BUILD_ROOT)/DOC/__DOMAIN__ -D [__VENDOR__]=__VENDOR__
+$(BUILD_ROOT)/DOC/__PATH_STEM__.html : __FIRST__ | $$(@D)/ $(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
+build-clean :: ; @test -f $(BUILD_ROOT)/DOC/__PATH_STEM__.html && rm $(BUILD_ROOT)/DOC/__PATH_STEM__.html || true
 dnl
 [#] DEFERRED MAKEFILE
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk : __SRC__/generator.m4
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=[$(__BUILD_ROOT__)]/DOC/__DOMAIN__ -D [__VENDOR__]=__VENDOR__
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ [$(__BUILD_ROOT__)]/NAV/__DOMAIN__/NAVIGATION.m4 [$(__BUILD_ROOT__)]/NAV/NAVIGATION-LANDING.m4 ; [$(do-generate-deferred-mk)]
-makefiles-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk && rm [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk || true
-[#] -include [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk
+$(BUILD_ROOT)/DOC/__PATH_STEM__.mk : __SRC__/generator.m4
+$(BUILD_ROOT)/DOC/__PATH_STEM__.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=$(BUILD_ROOT)/DOC/__DOMAIN__ -D [__VENDOR__]=__VENDOR__
+$(BUILD_ROOT)/DOC/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ $(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
+makefiles-clean :: ; @test -f $(BUILD_ROOT)/DOC/__PATH_STEM__.mk && rm $(BUILD_ROOT)/DOC/__PATH_STEM__.mk || true
+[#] -include $(BUILD_ROOT)/DOC/__PATH_STEM__.mk
 dnl assets-copy is emitted per-domain as __DOMAIN__-assets-copy (below, in the
 dnl dashed-domain block) so a single domain's assets can be (re)built in
 dnl isolation; assets-clean/assets-compress stay global for now.
-assets-clean assets-compress :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ [__BUILD_ROOT__]=[$(__BUILD_ROOT__)] [$]@
+assets-clean assets-compress :: | $(BUILD_ROOT)/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(BUILD_ROOT)/DOC/__PATH_STEM__.mk SRC=__SRC__ BUILD_ROOT=$(BUILD_ROOT) [$]@
 dnl
 [#] ZIP
-.SECONDARY : [$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html
-[$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:=
-[$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html | $$(@D)/ [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ;  [$(do-compress)]
-compressed-files-clean :: ; @test -f [$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html && rm [$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html || true
+.SECONDARY : $(BUILD_ROOT)/ZIP/__PATH_STEM__.html
+$(BUILD_ROOT)/ZIP/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:=
+$(BUILD_ROOT)/ZIP/__PATH_STEM__.html : $(BUILD_ROOT)/DOC/__PATH_STEM__.html | $$(@D)/ $(BUILD_ROOT)/DOC/__PATH_STEM__.mk ;  $(do-compress)
+compressed-files-clean :: ; @test -f $(BUILD_ROOT)/ZIP/__PATH_STEM__.html && rm $(BUILD_ROOT)/ZIP/__PATH_STEM__.html || true
 dnl
 [#] PUBLISH
 .INTERMEDIATE : __PATH_STEM__.html
-__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html | tr -d '\n')"
+__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(BUILD_ROOT)/DOC/__PATH_STEM__.html | tr -d '\n')"
 __PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-__PATH_STEM__.html : [$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html ; [$(do-publish)]
+__PATH_STEM__.html : $(BUILD_ROOT)/ZIP/__PATH_STEM__.html ; $(do-publish)
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : __DOMAIN__-build __DOMAIN__-assets-copy
 dnl per-domain asset copy: recurse into this stem's deferred .mk to run its
 dnl inner (Rules.mk) assets-copy target. Domain-scoped so __DOMAIN__-build
 dnl copies only this domain's assets, not every domain's.
-__DOMAIN__-assets-copy :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ [__BUILD_ROOT__]=[$(__BUILD_ROOT__)] assets-copy
-__DOMAIN__-build : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html __DOMAIN__-assets-copy | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk
+__DOMAIN__-assets-copy :: | $(BUILD_ROOT)/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(BUILD_ROOT)/DOC/__PATH_STEM__.mk SRC=__SRC__ BUILD_ROOT=$(BUILD_ROOT) assets-copy
+__DOMAIN__-build : $(BUILD_ROOT)/DOC/__PATH_STEM__.html __DOMAIN__-assets-copy | $(BUILD_ROOT)/DOC/__PATH_STEM__.mk
 dnl build aggregates the per-domain targets so a full build also copies deferred
 dnl assets (via assets-copy), and a single domain can be rebuilt on its own.
 build : __DOMAIN__-build
@@ -305,13 +305,13 @@ __HREF([__ROOT__/$1])[]dnl
 m4_divert_push([DEFERRED_MK])
 m4_text_box($1 DASSET BEGINS,[+])
 dnl The __HREF above uses the expanded __ROOT__ (realpath needs a real path),
-dnl but the emitted rules use the [$(__BUILD_ROOT__)] make variable -- like the
+dnl but the emitted rules use the $(BUILD_ROOT) make variable -- like the
 dnl MAKEFILE diversion -- so the deferred .mk carries a variable reference, not
-dnl an absolute path. The recursive sub-make is passed __BUILD_ROOT__ (see the
+dnl an absolute path. The recursive sub-make is passed BUILD_ROOT (see the
 dnl assets-copy/assets-clean recipes) so the variable resolves there.
-[$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
-assets-copy : [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1
-assets-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 && rm [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 || true
+$(BUILD_ROOT)/DOC/__DOMAIN__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
+assets-copy : $(BUILD_ROOT)/DOC/__DOMAIN__/$1
+assets-clean :: ; @test -f $(BUILD_ROOT)/DOC/__DOMAIN__/$1 && rm $(BUILD_ROOT)/DOC/__DOMAIN__/$1 || true
 m4_text_box($1 DASSET ENDS  ,[-])
 m4_divert_pop([DEFERRED_MK])dnl
 ])
@@ -323,7 +323,7 @@ m4_define([__INCL],[dnl
 m4_divert_text([MAKEFILE],[
 m4_text_box($1 INCLUDE BEGINS,[+])
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
-[$(__BUILD_ROOT__)]/DOC/m4_unquote(m4_cdr(__I__)) : $1
+$(BUILD_ROOT)/DOC/m4_unquote(m4_cdr(__I__)) : $1
 ])dnl
 m4_text_box($1 INCLUDE ENDS  ,[-])
 ])[]m4_include([$1])])

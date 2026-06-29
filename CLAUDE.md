@@ -34,3 +34,4 @@ browsable, OKF-formatted source.)*
 @knowledge/conventions/git-commit-attribution.md
 @knowledge/conventions/m4-conditional-formatting.md
 @knowledge/conventions/m4-comment-style.md
+@knowledge/conventions/make-m4-variable-naming.md

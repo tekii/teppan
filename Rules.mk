@@ -4,8 +4,8 @@
 # run assets-copy, assets-compress, and assets-clean for that stem's assets.
 # It is not included by the top-level Makefile.
 .SECONDEXPANSION:
-.PRECIOUS: $(__SRC__)/%/
-$(__SRC__)/%/:
+.PRECIOUS: $(SRC)/%/
+$(SRC)/%/:
 	mkdir -p $@
 
 .PHONY: assets-copy assets-compress assets-clean
