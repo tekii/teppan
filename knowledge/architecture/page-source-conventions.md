@@ -1,7 +1,7 @@
 ---
 type: Architecture Concept
 title: Page source conventions
-description: Conventions a *.in.html page source follows — HEAD/MAIN diversions, __NAV_ITEM, fragment includes, __ENES/__ESEN, asset macros.
+description: Conventions a *.in.html page source follows — HEAD/MAIN diversions, __NAV_ITEM, fragment includes, __ENES/__ESEN, and the __DASSET asset macro.
 tags: [architecture, m4, conventions]
 timestamp: 2026-06-17
 ---
@@ -18,8 +18,11 @@ A `*.in.html` source typically:
   `fragment-home.html`, `fragment-services.html`, `fragment-customers.html`).
 - Uses `__ENES([English text],[Spanish text])` / `__ESEN([Spanish],[English])`
   for inline per-language strings, rather than separate files per locale.
-- Asset references go through `__ASSET`, `__CP_ASSET`, `__DEFERRED_ASSET` to
-  get copied/hashed into the build output.
+- Asset references go through `__DASSET([file])`, which copies the file into
+  the page's own local build output (`DOC/<domain>/…`) and returns its href.
+  (The older `__ASSET`/`__CP_ASSET`/`__ASSET3` macros were removed once
+  everything converged on the deferred path — see the
+  [asset-copy mechanisms note](../notes/asset-copy-mechanisms.md).)
 
 See also: [Diversion/phase model](diversion-phase-model.md),
 [HTML code review guidelines](../code-review/html.md),
