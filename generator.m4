@@ -292,14 +292,16 @@ m4_popdef([__LANDING_URL_ID__])
 m4_popdef([__LOCAL_URL_ID__])
 ])
 
-# DASSET(ASSET,ROOT)
+#
+# DASSET(ASSET) MACRO
+# Declares ASSET to be copied into this page's own local root and returns its
+# href. The asset is always page-local: there is deliberately no ROOT-override
+# argument -- a cross-domain destination was the original asset-misplacement
+# bug. __ROOT__ (the page's DOC/<domain> root) is supplied via -D in the HTML
+# and DEFERRED_MK phases, the only phases whose output is kept; it is undefined
+# in the NAVIGATION/LANDING phases, but there __HREF's result is discarded.
+#
 m4_define([__DASSET],[dnl
-dnl Default the copy destination to the local page root (__ROOT__) when no
-dnl explicit ROOT ($2) is given, so language-picker flags are copied locally
-dnl rather than into the alternate's domain. m4_ifdef guards the phases
-dnl (NAVIGATION/LANDING) where __ROOT__ is undefined: without it, the literal
-dnl __ROOT__ fallback would pushdef a self-referential macro and hang.
-m4_pushdef([__ROOT__],m4_default([$2],m4_ifdef([__ROOT__],[__ROOT__])))[]dnl
 __HREF([__ROOT__/$1])[]dnl
 m4_divert_push([DEFERRED_MK])
 m4_text_box($1 DASSET BEGINS,[+])
@@ -313,7 +315,6 @@ assets-copy : [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1
 assets-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 && rm [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 || true
 m4_text_box($1 DASSET ENDS  ,[-])
 m4_divert_pop([DEFERRED_MK])dnl
-m4_popdef([__ROOT__])dnl
 ])
 
 
