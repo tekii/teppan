@@ -150,7 +150,6 @@ m4_popdef([__LANG__])
 m4_define([__WITH_DOMAIN],[
 m4_foreach([__D__], [$1],[
 m4_pushdef([__DOMAIN__],__D__)
-m4_set_add([__ROOTS__],__DOMAIN__)dnl
 $2dnl
 m4_popdef([__DOMAIN__])
 ])dnl foreach
