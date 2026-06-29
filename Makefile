@@ -15,17 +15,10 @@ endif
 #
 M4:=$(shell which m4)
 M4_FLAGS:= -I $(SRC)
-ifeq ($(shell uname -s),Linux)
 M4_FLAGS+= \
 	-I /usr/share/autoconf \
 	-R /usr/share/autoconf/m4sugar/m4sugar.m4f \
 	-D __REALPATH__=$(shell which realpath)
-else
-M4_FLAGS+= \
-	-I /usr/local/Cellar/autoconf/2.69/share/autoconf \
-	-R /usr/local/Cellar/autoconf/2.69/share/autoconf/m4sugar/m4sugar.m4f \
-	-D __REALPATH__=$(shell which grealpath)
-endif
 M4_FLAGS+= \
 	-D __SRC__=$(SRC)
 ifdef PREVIEW
