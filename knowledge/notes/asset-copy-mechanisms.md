@@ -59,7 +59,7 @@ Make dependency graph with normal incremental rebuilds. For genuinely
   has popped `__DOMAIN__`). That is why `__CP_ASSET`/`__ASSET3` were written
   but never adopted — they only work for page-source calls, not layout calls.
 
-### Deferred — `__DEFERRED_ASSET2`
+### Deferred — `__DASSET` (originally `__DEFERRED_ASSET2`)
 
 Emits a **self-contained** copy rule (its own `cp` recipe) into the
 `DEFERRED_MK` diversion, which becomes a per-stem `DOC/<stem>.mk` generated
@@ -84,7 +84,7 @@ broken links, true per-domain isolation). **Cost:** more process — an extra
 generation phase plus a recursive sub-make per stem (the "resolves later,
 with more machinery" trade-off).
 
-## The decision (this commit)
+## The decision
 
 We **temporarily** converge all *live* asset declarations onto the deferred
 mechanism — **not** because deferred is unconditionally superior (the
@@ -95,18 +95,17 @@ the layout-context limitation above). Fixing the non-deferred path correctly
 is a larger task; converging on the one that already works unblocks correct
 asset links now.
 
-## What happens next
+## Follow-up (done in subsequent commits)
 
-- **Next commit — deletion.** `__ASSET`, `__CP_ASSET`, `__ASSET3`, and the
-  generic `%.ext` pattern rules in `Makefile` (their only consumers) will be
-  removed. This note is the surviving
-  **trace of that code's existence and rationale**, so a future effort can
-  resurrect a *fixed* non-deferred path for static assets if the extra
-  deferred machinery proves not worth it.
-- **Next commit — rename.** `__DEFERRED_ASSET2` (the orphaned `2`, with
-  internal `text_box` labels that wrongly say `DEFERRED_ASSET3` and a phantom
-  `TARGET` parameter in its header comment) will be renamed to
-  `__DASSET` and its labels/comment corrected.
+- **Deletion.** `__ASSET`, `__CP_ASSET`, `__ASSET3`, and the generic `%.ext`
+  pattern rules in `Makefile` (their only consumers) were removed. This note
+  is the surviving **trace of that code's existence and rationale**, so a
+  future effort can resurrect a *fixed* non-deferred path for static assets if
+  the extra deferred machinery proves not worth it.
+- **Rename.** The deferred macro — previously `__DEFERRED_ASSET2` (an orphaned
+  `2`, with internal `text_box` labels that wrongly said `DEFERRED_ASSET3` and
+  a phantom `TARGET` parameter in its header comment) — was renamed to
+  `__DASSET`, with its labels and comment corrected.
 
 See also: [`Rules.mk` recursive sub-make rationale](rules-mk-rationale.md),
 [`__ASSET` rule duplication](asset-rule-duplication.md),

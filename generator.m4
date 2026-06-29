@@ -292,8 +292,8 @@ m4_popdef([__LANDING_URL_ID__])
 m4_popdef([__LOCAL_URL_ID__])
 ])
 
-# DEFERRED_ASSET2(ASSET,ROOT,TARGET)
-m4_define([__DEFERRED_ASSET2],[dnl
+# DASSET(ASSET,ROOT)
+m4_define([__DASSET],[dnl
 dnl Default the copy destination to the local page root (__ROOT__) when no
 dnl explicit ROOT ($2) is given, so language-picker flags are copied locally
 dnl rather than into the alternate's domain. m4_ifdef guards the phases
@@ -302,11 +302,11 @@ dnl __ROOT__ fallback would pushdef a self-referential macro and hang.
 m4_pushdef([__ROOT__],m4_default([$2],m4_ifdef([__ROOT__],[__ROOT__])))[]dnl
 __HREF([__ROOT__/$1])[]dnl
 m4_divert_push([DEFERRED_MK])
-m4_text_box($1 DEFERRED_ASSET3 BEGINS,[+])
+m4_text_box($1 DASSET BEGINS,[+])
 __ROOT__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
 assets-copy : __ROOT__/$1 
 assets-clean :: ; @test -f __ROOT__/$1 && rm __ROOT__/$1 || true
-m4_text_box($1 DEFERRED_ASSET3 ENDS  ,[-])
+m4_text_box($1 DASSET ENDS  ,[-])
 m4_divert_pop([DEFERRED_MK])dnl
 m4_popdef([__ROOT__])dnl
 ])

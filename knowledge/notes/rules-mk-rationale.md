@@ -8,7 +8,7 @@ timestamp: 2026-06-28
 
 # `Rules.mk` recursive sub-make rationale
 
-In this project, custom page assets are deferred using the `__DEFERRED_ASSET2` macro in `generator.m4`. This macro populates page-specific deferred rules into makefiles located at `TEKII_BUILD/DOC/<domain>/<page>.mk`.
+In this project, custom page assets are deferred using the `__DASSET` macro in `generator.m4`. This macro populates page-specific deferred rules into makefiles located at `TEKII_BUILD/DOC/<domain>/<page>.mk`.
 
 To compile or clean these assets, the main `Makefile` invokes a recursive sub-make command targeting the specific page's `.mk` file:
 ```makefile
@@ -16,7 +16,7 @@ $(MAKE) -f Rules.mk -f $(__BUILD_ROOT__)/DOC/<page>.mk assets-copy
 ```
 
 Here `assets-copy` is the phony target the deferred-make mechanism actually
-drives. When a page registers deferred assets (via `__DEFERRED_ASSET2` in
+drives. When a page registers deferred assets (via `__DASSET` in
 `generator.m4`), the generated `<page>.mk` appends real file prerequisites to
 `assets-copy` (alongside its siblings `assets-compress` and `assets-clean`);
 the recursive sub-make above is what realizes those copies. Pages with no
