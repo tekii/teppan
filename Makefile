@@ -102,36 +102,6 @@ endef
 
 
 #
-# COPY ASSETS
-#
-$(__BUILD_ROOT__)/DOC/%.ico : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.png : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.gif : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.svg : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.jpg : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.ttf : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.eot : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.woff : | $$(@D)/
-	cp $< $@
-
-$(__BUILD_ROOT__)/DOC/%.woff2 : | $$(@D)/
-	cp $< $@
-
-#
 # GZIPED TARGETS
 #
 # reset to empty; per-target rules set this to add -h "Cache-Control:..." etc.

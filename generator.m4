@@ -163,17 +163,6 @@ $2dnl
 m4_popdef([__STEM__])       
 ])
 
-# CP_ASSET(FILE) MACRO
-m4_define([__CP_ASSET],[
-m4_divert_push([MAKEFILE])
-m4_text_box($1 CP ASSET BEGINS,[+])
-[$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 : __SRC__/$1
-assets-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 && rm [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 || true
-[$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html : [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1
-m4_text_box($1 CP ASSET ENDS  ,[-])
-m4_divert_pop([MAKEFILE])dnl
-])
-
 m4_define([__UP],[m4_translit($1,[abcdefghijklmnopqrstuvwxyz./],[ABCDEFGHIJKLMNOPQRSTUVWXYZ__])])
 
 #
@@ -301,41 +290,6 @@ dnl
 m4_popdef([__PATH_STEM__])
 m4_popdef([__LANDING_URL_ID__])
 m4_popdef([__LOCAL_URL_ID__])
-])
-
-# ASSET MACRO
-# $1 source relative asset URI
-m4_define([__ASSET],[__HREF([__BUILD_ROOT__/DOC/$1])[]dnl
-m4_divert_push([MAKEFILE])
-m4_text_box($1 ASSET BEGINS,[+])
-dnl TODO next loop copies the asset files in all domains not in the ones that
-dnl actually has a dependency whit it, this is an error.
-m4_set_foreach([__ROOTS__],[__R__],[dnl
-[$(__BUILD_ROOT__)]/DOC/__R__/$1 : __SRC__/$1
-assets-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__R__/$1 && rm [$(__BUILD_ROOT__)]/DOC/__R__/$1 || true
-])dnl
-m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
-[$(__BUILD_ROOT__)]/DOC/m4_unquote(m4_cdr(__I__)) : [$(__BUILD_ROOT__)]/DOC/m4_car(__I__)/$1
-])dnl
-m4_text_box($1 ASSET ENDS  ,[-])
-m4_divert_pop([MAKEFILE])dnl
-])
-
-# ASSET3(ASSET,ROOT,TARGET)
-m4_define([__ASSET3],[dnl
-m4_pushdef([__ROOT__],m4_default([$2],__ROOT__))[]dnl
-__HREF([__ROOT__/$1])[]dnl
-m4_divert_push([MAKEFILE])
-m4_text_box($1 ASSET3 BEGINS,[+])
-dnl TODO next loop copies the asset files in all domains not in the ones that
-dnl actually has a dependency whit it, this is an error.
-__ROOT__/$1 : __SRC__/$1
-assets-clean :: ; @test -f __ROOT__/$1 && rm __ROOT__/$1 || true
-dnl
-$3 : __ROOT__/$1 
-m4_text_box($1 ASSET3 ENDS  ,[-])
-m4_divert_pop([MAKEFILE])dnl
-m4_popdef([__ROOT__])dnl
 ])
 
 # DEFERRED_ASSET2(ASSET,ROOT,TARGET)
