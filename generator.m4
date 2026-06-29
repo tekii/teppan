@@ -239,7 +239,7 @@ makefiles-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk && rm [$(
 dnl assets-copy is emitted per-domain as __DOMAIN__-assets-copy (below, in the
 dnl dashed-domain block) so a single domain's assets can be (re)built in
 dnl isolation; assets-clean/assets-compress stay global for now.
-assets-clean assets-compress :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
+assets-clean assets-compress :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ [__BUILD_ROOT__]=[$(__BUILD_ROOT__)] [$]@
 dnl
 [#] ZIP
 .SECONDARY : [$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html
@@ -258,7 +258,7 @@ m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 dnl per-domain asset copy: recurse into this stem's deferred .mk to run its
 dnl inner (Rules.mk) assets-copy target. Domain-scoped so __DOMAIN__-build
 dnl copies only this domain's assets, not every domain's.
-__DOMAIN__-assets-copy :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ assets-copy
+__DOMAIN__-assets-copy :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ [__BUILD_ROOT__]=[$(__BUILD_ROOT__)] assets-copy
 __DOMAIN__-build : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html __DOMAIN__-assets-copy | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk
 dnl build aggregates the per-domain targets so a full build also copies deferred
 dnl assets (via assets-copy), and a single domain can be rebuilt on its own.
@@ -303,9 +303,14 @@ m4_pushdef([__ROOT__],m4_default([$2],m4_ifdef([__ROOT__],[__ROOT__])))[]dnl
 __HREF([__ROOT__/$1])[]dnl
 m4_divert_push([DEFERRED_MK])
 m4_text_box($1 DASSET BEGINS,[+])
-__ROOT__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
-assets-copy : __ROOT__/$1 
-assets-clean :: ; @test -f __ROOT__/$1 && rm __ROOT__/$1 || true
+dnl The __HREF above uses the expanded __ROOT__ (realpath needs a real path),
+dnl but the emitted rules use the [$(__BUILD_ROOT__)] make variable -- like the
+dnl MAKEFILE diversion -- so the deferred .mk carries a variable reference, not
+dnl an absolute path. The recursive sub-make is passed __BUILD_ROOT__ (see the
+dnl assets-copy/assets-clean recipes) so the variable resolves there.
+[$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
+assets-copy : [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1
+assets-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 && rm [$(__BUILD_ROOT__)]/DOC/__DOMAIN__/$1 || true
 m4_text_box($1 DASSET ENDS  ,[-])
 m4_divert_pop([DEFERRED_MK])dnl
 m4_popdef([__ROOT__])dnl
