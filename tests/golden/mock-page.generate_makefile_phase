@@ -34,7 +34,6 @@ $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D __LA
 $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__BUILD_ROOT__)/NAV/mock-a.test/NAVIGATION.m4 $(__BUILD_ROOT__)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
 makefiles-clean :: ; @test -f $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk && rm $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk || true
 # -include $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk
-assets-copy :: | $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk __SRC__=@SRC@ $@
 assets-clean assets-compress :: | $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk __SRC__=@SRC@ $@
 # ZIP
 .SECONDARY : $(__BUILD_ROOT__)/ZIP/mock-a.test/page-a.html
@@ -46,8 +45,9 @@ compressed-files-clean :: ; @test -f $(__BUILD_ROOT__)/ZIP/mock-a.test/page-a.ht
 mock-a.test/page-a.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.html | tr -d '\n')"
 mock-a.test/page-a.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
 mock-a.test/page-a.html : $(__BUILD_ROOT__)/ZIP/mock-a.test/page-a.html ; $(do-publish)
-.PHONY : mock-a-test-build
-mock-a-test-build : $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.html assets-copy | $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk
+.PHONY : mock-a-test-build mock-a-test-assets-copy
+mock-a-test-assets-copy :: | $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk __SRC__=@SRC@ assets-copy
+mock-a-test-build : $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.html mock-a-test-assets-copy | $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk
 build : mock-a-test-build
 .PHONY : mock-a-test
 mock-a-test : mock-a.test/page-a.html
@@ -81,7 +81,6 @@ $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D _
 $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__BUILD_ROOT__)/NAV/mock-b.test/NAVIGATION.m4 $(__BUILD_ROOT__)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
 makefiles-clean :: ; @test -f $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk && rm $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk || true
 # -include $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk
-assets-copy :: | $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
 assets-clean assets-compress :: | $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk __SRC__=@SRC@ $@
 # ZIP
 .SECONDARY : $(__BUILD_ROOT__)/ZIP/mock-b.test/en/page-b.html
@@ -93,8 +92,9 @@ compressed-files-clean :: ; @test -f $(__BUILD_ROOT__)/ZIP/mock-b.test/en/page-b
 mock-b.test/en/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.html | tr -d '\n')"
 mock-b.test/en/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
 mock-b.test/en/page-b.html : $(__BUILD_ROOT__)/ZIP/mock-b.test/en/page-b.html ; $(do-publish)
-.PHONY : mock-b-test-build
-mock-b-test-build : $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.html assets-copy | $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk
+.PHONY : mock-b-test-build mock-b-test-assets-copy
+mock-b-test-assets-copy :: | $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk __SRC__=@SRC@ assets-copy
+mock-b-test-build : $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.html mock-b-test-assets-copy | $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk
 build : mock-b-test-build
 .PHONY : mock-b-test
 mock-b-test : mock-b.test/en/page-b.html
@@ -128,7 +128,6 @@ $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk : EXTRA_DEFERRED_MK_FLAGS+=  -D _
 $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(__BUILD_ROOT__)/NAV/mock-b.test/NAVIGATION.m4 $(__BUILD_ROOT__)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-deferred-mk)
 makefiles-clean :: ; @test -f $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk && rm $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk || true
 # -include $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk
-assets-copy :: | $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
 assets-clean assets-compress :: | $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk __SRC__=@SRC@ $@
 # ZIP
 .SECONDARY : $(__BUILD_ROOT__)/ZIP/mock-b.test/br/page-b.html
@@ -140,8 +139,9 @@ compressed-files-clean :: ; @test -f $(__BUILD_ROOT__)/ZIP/mock-b.test/br/page-b
 mock-b.test/br/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.html | tr -d '\n')"
 mock-b.test/br/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
 mock-b.test/br/page-b.html : $(__BUILD_ROOT__)/ZIP/mock-b.test/br/page-b.html ; $(do-publish)
-.PHONY : mock-b-test-build
-mock-b-test-build : $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.html assets-copy | $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk
+.PHONY : mock-b-test-build mock-b-test-assets-copy
+mock-b-test-assets-copy :: | $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk __SRC__=@SRC@ assets-copy
+mock-b-test-build : $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.html mock-b-test-assets-copy | $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk
 build : mock-b-test-build
 .PHONY : mock-b-test
 mock-b-test : mock-b.test/br/page-b.html

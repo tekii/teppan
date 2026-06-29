@@ -247,7 +247,9 @@ dnl
 [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk : __FIRST__ | $$(@D)/ [$(__BUILD_ROOT__)]/NAV/__DOMAIN__/NAVIGATION.m4 [$(__BUILD_ROOT__)]/NAV/NAVIGATION-LANDING.m4 ; [$(do-generate-deferred-mk)]
 makefiles-clean :: ; @test -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk && rm [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk || true
 [#] -include [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk
-assets-copy :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
+dnl assets-copy is emitted per-domain as __DOMAIN__-assets-copy (below, in the
+dnl dashed-domain block) so a single domain's assets can be (re)built in
+dnl isolation; assets-clean/assets-compress stay global for now.
 assets-clean assets-compress :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ [$]@
 dnl
 [#] ZIP
@@ -263,8 +265,12 @@ __PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400
 __PATH_STEM__.html : [$(__BUILD_ROOT__)]/ZIP/__PATH_STEM__.html ; [$(do-publish)]
 dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
-.PHONY : __DOMAIN__-build
-__DOMAIN__-build : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html assets-copy | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk
+.PHONY : __DOMAIN__-build __DOMAIN__-assets-copy
+dnl per-domain asset copy: recurse into this stem's deferred .mk to run its
+dnl inner (Rules.mk) assets-copy target. Domain-scoped so __DOMAIN__-build
+dnl copies only this domain's assets, not every domain's.
+__DOMAIN__-assets-copy :: | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk [__SRC__]=__SRC__ assets-copy
+__DOMAIN__-build : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html __DOMAIN__-assets-copy | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk
 dnl build aggregates the per-domain targets so a full build also copies deferred
 dnl assets (via assets-copy), and a single domain can be rebuilt on its own.
 build : __DOMAIN__-build
@@ -334,7 +340,12 @@ m4_popdef([__ROOT__])dnl
 
 # DEFERRED_ASSET2(ASSET,ROOT,TARGET)
 m4_define([__DEFERRED_ASSET2],[dnl
-m4_pushdef([__ROOT__],m4_default([$2],__ROOT__))[]dnl
+dnl Default the copy destination to the local page root (__ROOT__) when no
+dnl explicit ROOT ($2) is given, so language-picker flags are copied locally
+dnl rather than into the alternate's domain. m4_ifdef guards the phases
+dnl (NAVIGATION/LANDING) where __ROOT__ is undefined: without it, the literal
+dnl __ROOT__ fallback would pushdef a self-referential macro and hang.
+m4_pushdef([__ROOT__],m4_default([$2],m4_ifdef([__ROOT__],[__ROOT__])))[]dnl
 __HREF([__ROOT__/$1])[]dnl
 m4_divert_push([DEFERRED_MK])
 m4_text_box($1 DEFERRED_ASSET3 BEGINS,[+])
