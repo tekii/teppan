@@ -48,10 +48,10 @@ mock-a.test/page-a.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=
 mock-a.test/page-a.html : $(__BUILD_ROOT__)/ZIP/mock-a.test/page-a.html ; $(do-publish)
 .PHONY : mock-a-test-build
 mock-a-test-build : $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.html assets-copy | $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.mk
+build : mock-a-test-build
 .PHONY : mock-a-test
 mock-a-test : mock-a.test/page-a.html
 publish : mock-a-test
-build : $(__BUILD_ROOT__)/DOC/mock-a.test/page-a.html
 makefiles-clean :: ; @test -f MOCK_TARGET.mk && rm MOCK_TARGET.mk || true
 ## --------------------------- ##
 ## page-a MAKEFILE ENDS  (es)  ##
@@ -95,10 +95,10 @@ mock-b.test/en/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-a
 mock-b.test/en/page-b.html : $(__BUILD_ROOT__)/ZIP/mock-b.test/en/page-b.html ; $(do-publish)
 .PHONY : mock-b-test-build
 mock-b-test-build : $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.html assets-copy | $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.mk
+build : mock-b-test-build
 .PHONY : mock-b-test
 mock-b-test : mock-b.test/en/page-b.html
 publish : mock-b-test
-build : $(__BUILD_ROOT__)/DOC/mock-b.test/en/page-b.html
 makefiles-clean :: ; @test -f MOCK_TARGET.mk && rm MOCK_TARGET.mk || true
 ## --------------------------- ##
 ## page-b MAKEFILE ENDS  (en)  ##
@@ -142,10 +142,10 @@ mock-b.test/br/page-b.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-a
 mock-b.test/br/page-b.html : $(__BUILD_ROOT__)/ZIP/mock-b.test/br/page-b.html ; $(do-publish)
 .PHONY : mock-b-test-build
 mock-b-test-build : $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.html assets-copy | $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.mk
+build : mock-b-test-build
 .PHONY : mock-b-test
 mock-b-test : mock-b.test/br/page-b.html
 publish : mock-b-test
-build : $(__BUILD_ROOT__)/DOC/mock-b.test/br/page-b.html
 makefiles-clean :: ; @test -f MOCK_TARGET.mk && rm MOCK_TARGET.mk || true
 ## --------------------------- ##
 ## page-b MAKEFILE ENDS  (br)  ##

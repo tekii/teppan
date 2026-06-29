@@ -265,12 +265,14 @@ dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : __DOMAIN__-build
 __DOMAIN__-build : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html assets-copy | [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.mk
+dnl build aggregates the per-domain targets so a full build also copies deferred
+dnl assets (via assets-copy), and a single domain can be rebuilt on its own.
+build : __DOMAIN__-build
 .PHONY : __DOMAIN__
 __DOMAIN__ : __PATH_STEM__.html
 publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl
-build : [$(__BUILD_ROOT__)]/DOC/__PATH_STEM__.html
 makefiles-clean :: ; @test -f __TARGET__ && rm __TARGET__ || true
 m4_text_box(__STEM__ MAKEFILE ENDS  (__LANG__) ,[-])
 m4_divert_pop([MAKEFILE])
