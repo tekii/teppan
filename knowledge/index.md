@@ -21,7 +21,8 @@ a directory of markdown files with YAML frontmatter.
 
 - [Architecture](architecture/index.md) — how the site is built: core
   files, the diversion/phase model, domains, and page-source conventions.
-- [Build & test commands](build/commands.md) — `make build`/`make test`/`make clean`.
+- [Build & test commands](build/commands.md) — `make build`/`preview`/`test`/`clean`,
+  per-domain/per-page scoping, and the build-mode stamp.
 - [Testing conventions](testing/conventions.md) — `generator_test.m4` and `__ASSERT_EQ`.
 - [Code review guidelines](code-review/index.md) — M4, GNU Makefile, HTML,
   and CSS review checklists.
