@@ -1,4 +1,10 @@
-# DIVERTS, when M4 load the script the active divert is KILL because the m4_init
+# DIVERTS, when M4 loads the script the active divert is KILL because of
+# m4_init -- KILL (-1) discards anything written to it, so text never pushed
+# into one of the named diversions below is silently lost. This is also why
+# top-level `#` comments are safe here (see m4-comment-style.md): at this
+# point KILL is still active, so even if `#`'s un-discarded text leaked, it
+# would land in KILL and vanish either way -- the same property that makes
+# `#` dangerous the moment a real m4_divert_push(...) is open instead.
 m4_define([_m4_divert(DEFAULT)], 0)
 m4_define([_m4_divert(MAKEFILE)], 1)
 dnl m4_define([_m4_divert(SITEMAP)], 2)
@@ -105,11 +111,21 @@ m4_define([__FNAME],
 m4_define([__RDATE],
 [m4_esyscmd_s(date --reference=$1 +%Y-%m-%d)])
 
+#
 # LOCALIZE_*(DOMAIN,LANG,STEM) MACROS
+# different strategies for constructing a page's localized URL, selected via
+# __MAKE_PAGE's LinkType argument (e.g. __MAKE_PAGE([__LOCALIZE_URL_NULL])).
+# __LOCALIZE_URL_NAME:      lang-stem        (e.g. en-about)
+# __LOCALIZE_URL_PATH:      domain/lang/stem (e.g. example.com/en/about)
+# __LOCALIZE_URL_NULL:      domain/stem      (e.g. example.com/about) -- no
+#                           lang segment, for a page's default/neutral language
+# __LOCALIZE_URL_SUBDOMAIN: lang.domain/stem (e.g. en.example.com/about) --
+#                           LANG prefixed as a subdomain label, not a path segment
+#
 m4_define([__LOCALIZE_URL_NAME],[$2-$3])
 m4_define([__LOCALIZE_URL_PATH],[$1/$2/$3])
 m4_define([__LOCALIZE_URL_NULL],[$1/$3])
-m4_define([__LOCALIZE_URL_DOMAIN],[$2.$1/$3])
+m4_define([__LOCALIZE_URL_SUBDOMAIN],[$2.$1/$3])
 
 #
 # WITH_LAYOUT(LAYOUT,BODY,[EXTRA...]) MACRO
@@ -325,9 +341,9 @@ m4_divert_pop([DEFERRED_MK])dnl
 ])
 
 
-# INCL() MACRO
+# INCLUDE() MACRO
 # source relative filename
-m4_define([__INCL],[dnl
+m4_define([__INCLUDE],[dnl
 m4_divert_text([MAKEFILE],[
 m4_text_box($1 INCLUDE BEGINS,[+])
 m4_set_foreach([__BUILD_TARGETS__],[__I__],[dnl
