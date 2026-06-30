@@ -30,7 +30,8 @@ a directory of markdown files with YAML frontmatter.
   [M4 conditional formatting](conventions/m4-conditional-formatting.md),
   [M4 comment style](conventions/m4-comment-style.md),
   [Make vs m4 variable naming](conventions/make-m4-variable-naming.md).
-- Design notes & known issues — [asset-copy mechanisms (non-deferred vs deferred)](notes/asset-copy-mechanisms.md),
+- Design notes & known issues — [`file://`-relative preview](notes/file-relative-preview.md),
+  [asset-copy mechanisms (non-deferred vs deferred)](notes/asset-copy-mechanisms.md),
   [`__ASSET` rule duplication](notes/asset-rule-duplication.md),
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
   [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),

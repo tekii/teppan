@@ -39,6 +39,11 @@ few narrower targets, so a full `make build` isn't the only option:
 
 ## Build mode (`build` vs `preview`) is stamped, not just a flag
 
+See [`file://`-relative preview](../notes/file-relative-preview.md) for why
+`preview` produces relative URLs in the first place (so the output is
+directly browsable off disk, no server) — this section covers how the build
+correctly detects and rebuilds across a `build`↔`preview` switch.
+
 `build` and `preview` share one `TEKII_BUILD` tree — there's no separate
 preview directory. The only difference is `__PREVIEW__`'s effect on
 generated HTML (relative vs absolute URLs, see `__ABSOLUTE` in
