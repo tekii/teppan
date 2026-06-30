@@ -50,35 +50,41 @@ $(TMP)/%/:
 # `make preview` touches no source file, so without this stamp the stale
 # absolute-URL HTML from the prior run would survive untouched.
 #
-# $(BUILD_ROOT)/.mode records the last mode a run actually used. The per-page
-# .html rule (generator.m4) lists it as a real prerequisite, so a bumped
-# stamp makes Make treat that one rule -- and only that rule, the one whose
-# output actually depends on __PREVIEW__ -- as stale and rebuild it.
+# $(BUILD_ROOT)/.mode-<domain> (one stamp per domain, e.g. .mode-tekii.ar)
+# records the last mode a run actually used for that domain. The per-page
+# .html rule (generator.m4) lists its own domain's stamp as a real
+# prerequisite, so a bumped stamp makes Make treat that domain's pages --
+# and only that domain's, the one whose output actually depends on
+# __PREVIEW__ -- as stale and rebuild them. Per-domain (not one global
+# stamp) so a scoped build/preview of a single domain (e.g. `make PREVIEW=1
+# tekii-ar-build`) doesn't force every *other* domain to rebuild on the next
+# `build`/`preview` just because the recorded mode no longer matches --
+# only the domain that actually changed mode pays that cost.
 #
-# This is a normal rule, not a parse-time $(shell ...) side effect: MODE_STAMP
-# depends on the always-out-of-date FORCE (.PHONY, no recipe), so Make always
-# reconsiders MODE_STAMP's own recipe -- which only rewrites the file when the
-# recorded mode differs from this run's MODE. The recipe must be MODE_STAMP's
-# own (not a same-effect write from a separate companion target): Make only
-# re-stats a file after running *that file's* recipe, so a write performed as
-# a side effect of some other target's recipe would leave Make comparing
-# against a stale cached mtime for the rest of this same run (confirmed via
-# `make -d`: a 1-rule-removed-from-its-own-recipe version stamped the file
-# correctly on disk but still judged that run's .html up to date -- it only
-# rebuilt on the *next* invocation, a one-run lag).
+# This is a normal rule, not a parse-time $(shell ...) side effect: each
+# stamp depends on the always-out-of-date FORCE (.PHONY, no recipe), so Make
+# always reconsiders the stamp's own recipe -- which only rewrites the file
+# when the recorded mode differs from this run's MODE. The recipe must be
+# the stamp's own (not a same-effect write from a separate companion
+# target): Make only re-stats a file after running *that file's* recipe, so
+# a write performed as a side effect of some other target's recipe would
+# leave Make comparing against a stale cached mtime for the rest of this
+# same run (confirmed via `make -d`: a 1-rule-removed-from-its-own-recipe
+# version stamped the file correctly on disk but still judged that run's
+# .html up to date -- it only rebuilt on the *next* invocation, a one-run
+# lag).
 # Make only walks into this rule when something reachable from the requested
-# goal lists MODE_STAMP as a prerequisite, which is true for `build` (via the
-# per-page .html rule) but not for `clean`, `realclean`, or the bare `preview`
-# trampoline (`preview: ; $(MAKE) PREVIEW=1`, below) -- none of those reach
-# the .html rule in their own prerequisite graph, so none of them spuriously
-# read or rewrite the stamp.
+# goal lists a stamp as a prerequisite, which is true for `build` (via the
+# per-page .html rule) but not for `clean`, `realclean`, or the bare
+# `preview` trampoline (`preview: ; $(MAKE) PREVIEW=1`, below) -- none of
+# those reach the .html rule in their own prerequisite graph, so none of
+# them spuriously read or rewrite any stamp.
 # Directory creation reuses the project's order-only "%/ on demand" pattern
 # above instead of an explicit mkdir.
 MODE:=$(if $(PREVIEW),preview,build)
-MODE_STAMP:=$(BUILD_ROOT)/.mode
 .PHONY: FORCE
 FORCE:
-$(MODE_STAMP) : FORCE | $(BUILD_ROOT)/
+$(BUILD_ROOT)/.mode-% : FORCE | $(BUILD_ROOT)/
 	@test "$$(cat $@ 2>/dev/null)" = "$(MODE)" || echo $(MODE) > $@
 
 #
