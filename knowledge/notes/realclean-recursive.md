@@ -1,18 +1,20 @@
 ---
 type: Design Note
 title: make realclean — recursive TEKII_BUILD deletion
-description: realclean uses rm -rf on the literal, project-namespaced TEKII_BUILD and TEKII_PREVIEW directory names to wipe both build trees, safely handling stale output from dropped domain/stem/lang registrations that clean cannot remove.
+description: realclean uses rm -rf on the literal, project-namespaced TEKII_BUILD directory name to wipe the build tree, safely handling stale output from dropped domain/stem/lang registrations that clean cannot remove.
 tags: [makefile, build]
-timestamp: 2026-06-28
+timestamp: 2026-06-30
 ---
 
 # `make realclean` — recursive `TEKII_BUILD` deletion
 
 `realclean` runs `clean` first (removing all files whose rules are still
 registered in the current source tree), then executes `@rm -rf TEKII_BUILD`
-and `@rm -rf TEKII_PREVIEW` to wipe both build trees entirely:
-`TEKII_BUILD/DOC`, `TEKII_BUILD/NAV`, `TEKII_BUILD/DEP`, `TEKII_BUILD/ZIP`,
-and the parallel `TEKII_PREVIEW` tree produced by `make PREVIEW=1`.
+to wipe the build tree entirely: `TEKII_BUILD/DOC`, `TEKII_BUILD/NAV`,
+`TEKII_BUILD/DEP`, `TEKII_BUILD/ZIP`, and `TEKII_BUILD/.mode` (the build-mode
+stamp — see the "BUILD MODE STAMP" block in `Makefile`). `build` and
+`make preview` (`make PREVIEW=1`) write into this single shared root; there
+is no longer a separate `TEKII_PREVIEW` tree.
 
 ## Why `rm -rf` and not `rmdir`
 

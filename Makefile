@@ -6,9 +6,6 @@ SRC	:=$(PWD)
 TMP:=/tmp
 BUILD_ROOT:=$(PWD)/TEKII_BUILD
 VENDOR:=$(PWD)/VENDOR
-ifdef PREVIEW
-BUILD_ROOT:=$(PWD)/TEKII_PREVIEW
-endif
 
 #
 # M4
@@ -18,18 +15,53 @@ M4_FLAGS:= -I $(SRC)
 M4_FLAGS+= \
 	-I /usr/share/autoconf \
 	-R /usr/share/autoconf/m4sugar/m4sugar.m4f \
-	-D __REALPATH__=$(shell which realpath)
-M4_FLAGS+= \
+	-D __REALPATH__=$(shell which realpath) \
 	-D __SRC__=$(SRC)
+
 ifdef PREVIEW
-M4_FLAGS+= -D __PREVIEW__=1
+M4_FLAGS+= -D __PREVIEW__
 endif
+
+#
+# BUILD MODE STAMP
+#
+# build and preview now share one BUILD_ROOT (TEKII_BUILD), differing only in
+# __PREVIEW__'s effect on generated HTML (relative vs absolute URLs -- see
+# __ABSOLUTE in generator.m4). Make's mtime-based staleness has no way to
+# notice that switch on its own: a `make build` immediately followed by
+# `make preview` touches no source file, so without this stamp the stale
+# absolute-URL HTML from the prior run would survive untouched.
+#
+# MODE_STAMP records the last mode a run actually used. Comparing it against
+# the mode this invocation wants runs at parse time, before any rule is
+# considered; if they differ, the stamp file's mtime is bumped to "now". The
+# per-page .html rule (generator.m4) lists MODE_STAMP as a real prerequisite,
+# so a bumped stamp makes Make treat that one rule -- and only that rule, the
+# one whose output actually depends on __PREVIEW__ -- as stale and rebuild it.
+# Skipped for clean/realclean: those don't read BUILD_ROOT's contents, and
+# realclean removes the stamp along with everything else under TEKII_BUILD.
+# Also skipped for the bare `preview` goal itself: it's only a recursive
+# trampoline (`preview: ; $(MAKE) PREVIEW=1`, below) with no PREVIEW of its
+# own, so its outer invocation would otherwise compute MODE=build and stamp
+# that, immediately before the inner PREVIEW=1 invocation stamps "preview"
+# back -- two spurious writes, every call, regardless of whether the mode
+# actually changed. Only the inner invocation (MAKECMDGOALS is empty there;
+# the recursive call passes no goal, just PREVIEW=1) should decide MODE.
+ifeq ($(filter clean% realclean preview,$(MAKECMDGOALS)),)
+MODE:=$(if $(PREVIEW),preview,build)
+MODE_STAMP:=$(BUILD_ROOT)/.mode
+ifneq ($(MODE),$(shell cat $(MODE_STAMP) 2>/dev/null))
+$(shell mkdir -p $(BUILD_ROOT) && echo $(MODE) > $(MODE_STAMP))
+endif
+endif
+
 #
 # RULES START HERE
 #
 # .SECONDEXPANSION enables $$(@D)/ in prerequisites — Make expands $$ a second
 # time after automatic variables are set, so $$(@D)/ resolves to the target's dir.
 .SECONDEXPANSION:
+
 #
 # CREATE DIR ON DEMAND
 #
@@ -141,7 +173,6 @@ clean : build-clean assets-clean compressed-files-clean makefiles-clean navigati
 .PHONY: realclean
 realclean:: clean
 	@rm -rf TEKII_BUILD
-	@rm -rf TEKII_PREVIEW
 	@echo [[[ DONE $@ ]]]
 
 

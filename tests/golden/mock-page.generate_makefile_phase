@@ -25,6 +25,7 @@ navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 && 
 # $(BUILD_ROOT)/DOC/mock-a.test/page-a.html : $(BUILD_ROOT)/NAV/mock-a.test/NAVIGATION.m4
 $(BUILD_ROOT)/DOC/mock-a.test/page-a.html : @SRC@/tests/fixtures/mock-layout.html
 $(BUILD_ROOT)/DOC/mock-a.test/page-a.html : @SRC@/generator.m4
+$(BUILD_ROOT)/DOC/mock-a.test/page-a.html : $(BUILD_ROOT)/.mode
 $(BUILD_ROOT)/DOC/mock-a.test/page-a.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-a.test -D __LANG__=es -D __STEM__=page-a -D __LOCAL_URL_ID__=__MOCK-A_TEST_PAGE-A_ES_URL__ -D __ROOT__=$(BUILD_ROOT)/DOC/mock-a.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR
 $(BUILD_ROOT)/DOC/mock-a.test/page-a.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(BUILD_ROOT)/NAV/mock-a.test/NAVIGATION.m4 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
 build-clean :: ; @test -f $(BUILD_ROOT)/DOC/mock-a.test/page-a.html && rm $(BUILD_ROOT)/DOC/mock-a.test/page-a.html || true
@@ -72,6 +73,7 @@ navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/mock-b.test/NAVIGATION.m4
 # $(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html : $(BUILD_ROOT)/NAV/mock-b.test/NAVIGATION.m4
 $(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html : @SRC@/tests/fixtures/mock-layout.html
 $(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html : @SRC@/generator.m4
+$(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html : $(BUILD_ROOT)/.mode
 $(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=en -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_EN_URL__ -D __ROOT__=$(BUILD_ROOT)/DOC/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR
 $(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(BUILD_ROOT)/NAV/mock-b.test/NAVIGATION.m4 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
 build-clean :: ; @test -f $(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html && rm $(BUILD_ROOT)/DOC/mock-b.test/en/page-b.html || true
@@ -119,6 +121,7 @@ navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/mock-b.test/NAVIGATION.m4
 # $(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html : $(BUILD_ROOT)/NAV/mock-b.test/NAVIGATION.m4
 $(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html : @SRC@/tests/fixtures/mock-layout.html
 $(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html : @SRC@/generator.m4
+$(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html : $(BUILD_ROOT)/.mode
 $(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html : EXTRA_HTML_FLAGS+= -D __LAYOUT__=@SRC@/tests/fixtures/mock-layout.html -D __DOMAIN__=mock-b.test -D __LANG__=br -D __STEM__=page-b -D __LOCAL_URL_ID__=__MOCK-B_TEST_PAGE-B_BR_URL__ -D __ROOT__=$(BUILD_ROOT)/DOC/mock-b.test -D __VENDOR__=@SRC@/tests/fixtures/MOCK_VENDOR
 $(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html : @SRC@/tests/fixtures/mock-page.in.html | $$(@D)/ $(BUILD_ROOT)/NAV/mock-b.test/NAVIGATION.m4 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
 build-clean :: ; @test -f $(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html && rm $(BUILD_ROOT)/DOC/mock-b.test/br/page-b.html || true

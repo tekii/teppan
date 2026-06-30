@@ -225,6 +225,12 @@ dnl TODO: is VENDOR really needed in this PHASE?
 [#] $(BUILD_ROOT)/DOC/__PATH_STEM__.html : $(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4
 $(BUILD_ROOT)/DOC/__PATH_STEM__.html : __LAYOUT__
 $(BUILD_ROOT)/DOC/__PATH_STEM__.html : __SRC__/generator.m4
+dnl real (non-order-only) prereq: __PREVIEW__ (build vs preview URL style,
+dnl see __ABSOLUTE) is the only thing in this .mk that depends on build mode
+dnl -- MODE_STAMP's mtime is bumped by the top-level Makefile only when the
+dnl requested mode differs from the last run's, forcing exactly this rule
+dnl stale on a mode switch. See "BUILD MODE STAMP" in Makefile.
+$(BUILD_ROOT)/DOC/__PATH_STEM__.html : $(BUILD_ROOT)/.mode
 $(BUILD_ROOT)/DOC/__PATH_STEM__.html : EXTRA_HTML_FLAGS+= -D [__LAYOUT__]=__LAYOUT__ -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__ -D [__ROOT__]=$(BUILD_ROOT)/DOC/__DOMAIN__ -D [__VENDOR__]=__VENDOR__
 $(BUILD_ROOT)/DOC/__PATH_STEM__.html : __FIRST__ | $$(@D)/ $(BUILD_ROOT)/NAV/__DOMAIN__/NAVIGATION.m4 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 ; $(do-generate-html)
 build-clean :: ; @test -f $(BUILD_ROOT)/DOC/__PATH_STEM__.html && rm $(BUILD_ROOT)/DOC/__PATH_STEM__.html || true

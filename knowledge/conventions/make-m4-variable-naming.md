@@ -16,9 +16,11 @@ in **two worlds**, and the build relies on the difference:
   the generator runs, to the path the run was invoked under (m4 needs a real
   path for `realpath`).
 - the **Make (run-time) facet** — e.g. `$(BUILD_ROOT)` emitted into the
-  generated `.mk` files — is resolved *later*, by Make, and is deliberately
-  root-agnostic so the same `.mk` works whether the global root is
-  `TEKII_BUILD` or `TEKII_PREVIEW`.
+  generated `.mk` files — is resolved *later*, by Make. `build` and
+  `preview` now share the single `TEKII_BUILD` root (see the "BUILD MODE
+  STAMP" block in `Makefile`); historically this facet's root-agnosticism
+  was also what let the same `.mk` work under either of two separate
+  `TEKII_BUILD`/`TEKII_PREVIEW` roots.
 
 ## The rule
 
