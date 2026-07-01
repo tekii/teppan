@@ -35,7 +35,7 @@ footer a:link, footer a:visited, footer a:hover {
 footer a:hover {
     text-decoration: underline;
 }
-#sidebar ul, #lang-sidebar ul {
+#sidebar ul, #lang-sidebar ul, #desktop-sidebar nav ul {
     font-family: 'IBM Plex Sans', sans-serif;
     list-style-type: none;
     padding-left: 0pt;
@@ -54,7 +54,10 @@ footer a:hover {
         width: 75px;
         height: 75px;
     }
-    #sidebar, #lang-sidebar {
+    #desktop-sidebar {
+        display: none;
+    }
+    #lang-sidebar {
         width: 300px;
     }
     body {
@@ -148,7 +151,7 @@ footer a:hover {
         flex-direction: row;
         max-height: 100vh;
     }
-    header, footer {
+    header, footer, #sidebar, #lang-sidebar {
         display: none;
     }
     div#desktop-sidebar {

@@ -64,32 +64,6 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
             </symbol>
         </svg>
         <!-- END LOGO DEF -- BEGIN LEFT SIDEBAR -->
-        <div id="sidebar" class="ajja" hidden>
-            <svg class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
-
-            <nav>
-
-            <ul>
-__RENDER_SET([__NAV__ITEMS__],[dnl
-m4_if($1,__LANG__,[dnl
-                <li class="nav-item">
-                    <a class="link" href="__HREF([$3])[#]$4">$2</a>
-                </li>
-])dnl
-])dnl
-__RENDER_SET([__ALTERNATES__],[dnl
-m4_if(__LANG__,$1,[],[dnl
-                <!-- $1 - $2 - $3 -->
-                <li class="nav-item">
-                    <a class="" href="__HREF([$3])">
-                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48"/>
-                    </a>
-                </li>
-])dnl
-])dnl
-            </ul>
-            </nav>
-        </div>
         <!-- END LEFT SIDEBAR -- BEGIN RIGHT SIDEBAR -->
         <div id="lang-sidebar" hidden>
             <svg class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
@@ -105,7 +79,6 @@ __RENDER_SET([__ALTERNATES__],[dnl
         </div>
         <!-- END RIGHT SIDEBAR -- BEGING HEADER -->
         <header>
-            <svg role="button" tabindex="0" class="ui-element"><use xlink:href="[#]hamburger"/></svg>
             <svg class="layout-logo"><use xlink:href="[#]bird2"/></svg>
 dnl         <svg ><use id="header-layout-logo" xlink:href="[#]tekii-logo"/></svg>
             <span class="text-isologo">TEKii</span>
@@ -119,9 +92,52 @@ __RENDER_SET([__ALTERNATES__],[dnl
                 </div>
             </div>
         </header>
-        <!-- END HEADER -- BEGIN DESKTOP-SIDEBAR -->
+        <!-- END HEADER -- BEGIN MOBILE NAV (fixed, always visible; no JS toggle for now) -->
+        <div id="sidebar">
+            <nav>
+            <ul>
+__RENDER_SET([__NAV__ITEMS__],[dnl
+m4_if($1,__LANG__,[dnl
+                <li class="nav-item">
+                    <a class="link" href="__HREF([$3])[#]$4">$2</a>
+                </li>
+])dnl
+])dnl
+__RENDER_SET([__ALTERNATES__],[dnl
+m4_if(__LANG__,$1,[],[dnl
+                <li class="nav-item">
+                    <a class="" href="__HREF([$3])">
+                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48"/>
+                    </a>
+                </li>
+])dnl
+])dnl
+            </ul>
+            </nav>
+        </div>
+        <!-- END MOBILE NAV -- BEGIN DESKTOP-SIDEBAR -->
         <div id="desktop-sidebar">
             <svg class="layout-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use id="header-layout-logo" xlink:href="#tekii-logo"/></svg>
+            <nav>
+            <ul>
+__RENDER_SET([__NAV__ITEMS__],[dnl
+m4_if($1,__LANG__,[dnl
+                <li class="nav-item">
+                    <a class="link" href="__HREF([$3])[#]$4">$2</a>
+                </li>
+])dnl
+])dnl
+__RENDER_SET([__ALTERNATES__],[dnl
+m4_if(__LANG__,$1,[],[dnl
+                <li class="nav-item">
+                    <a class="" href="__HREF([$3])">
+                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48"/>
+                    </a>
+                </li>
+])dnl
+])dnl
+            </ul>
+            </nav>
         </div>
         <!-- END DESKTOP-SIDEBAR -- BEGIN MAIN -->
 <main id="main-scroll">
