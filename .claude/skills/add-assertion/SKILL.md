@@ -14,8 +14,9 @@ Goal: add a regression test for a `generator.m4` macro using the
 
 Find the macro definition in `generator.m4` and pick a representative,
 deterministic invocation (fixed arguments — avoid anything that depends on
-`$(PWD)` or the checkout location; e.g. prefer paths built from `__DOC__`
-since that prefix cancels out in relative-path macros).
+`$(PWD)` or the checkout location; e.g. for path macros, build inputs from
+`__BUILD_ROOT__/DOC/...` the way the existing `__ABSOLUTE` assertions do,
+rather than a real filesystem path).
 
 ## 2. Derive EXPECTED independently — do not just run the macro
 
@@ -48,6 +49,15 @@ pair**, not bare at the top level. The top level of this file stays in
 `KILL`-diversion context; an `__ASSERT_EQ` call placed outside any `TESTS`
 push silently never appears in `make test`'s output (no error, just
 missing) — see [testing conventions](../../../knowledge/testing/conventions.md).
+
+Precede a new group with a `#` comment explaining what the macro does and
+why these particular assertions exercise it — every existing group has one
+(e.g. the `__FNAME`/`__ABSOLUTE` groups). This sits between the previous
+group's `m4_divert_pop` and the new `m4_divert_push`, i.e. in `KILL`
+context, so `#` is safe there (see
+[M4 comment style](../../../knowledge/conventions/m4-comment-style.md)).
+Box it with a bare `#` line above and below only if it's multi-line; a
+one-line description stays bare, no box.
 
 ## 4. Verify
 
