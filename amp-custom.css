@@ -12,7 +12,7 @@ h1:nth-of-type(1) {
 header, h1, h2 {
     font-family: 'IBM Plex Sans', sans-serif;
 }
-header, footer, amp-sidebar, section {
+header, footer, #sidebar, #lang-sidebar, section {
     padding: var(--big-air);
 }
 footer {
@@ -22,7 +22,7 @@ footer {
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 80%;
 }
-footer ul, amp-sidebar ul {
+footer ul, #sidebar ul, #lang-sidebar ul {
     list-style-type: none;
     /*text-align: left;
     margin-block-start: 0em;
@@ -35,7 +35,7 @@ footer a:link, footer a:visited, footer a:hover {
 footer a:hover {
     text-decoration: underline;
 }
-amp-sidebar ul {
+#sidebar ul, #lang-sidebar ul {
     font-family: 'IBM Plex Sans', sans-serif;
     list-style-type: none;
     padding-left: 0pt;
@@ -54,7 +54,7 @@ amp-sidebar ul {
         width: 75px;
         height: 75px;
     }
-    amp-sidebar {
+    #sidebar, #lang-sidebar {
         width: 300px;
     }
     body {
@@ -111,7 +111,7 @@ amp-sidebar ul {
         -moz-user-select: none;
         outline: none;
     }
-    header svg:focus, amp-sidebar svg:focus {
+    header svg:focus, #sidebar svg:focus, #lang-sidebar svg:focus {
         outline: none;
         /*background: none;
         border: none;
@@ -119,7 +119,7 @@ amp-sidebar ul {
         -webkit-user-select: none;*/
 
     }
-    header svg, amp-sidebar svg {
+    header svg, #sidebar svg, #lang-sidebar svg {
         /*-moz-user-select: none;
         -webkit-user-select: none;*/
         outline:none;
@@ -135,7 +135,7 @@ amp-sidebar ul {
         -webkit-user-select: none;*/
         margin-inline-end: 1rem;
     }
-    header svg.ui-element:hover, amp-sidebar svg.ui-element:hover {
+    header svg.ui-element:hover, #sidebar svg.ui-element:hover, #lang-sidebar svg.ui-element:hover {
         transform:scale(1.1);
     }
 }
@@ -165,14 +165,4 @@ amp-sidebar ul {
         overflow:auto;
     }
 
-}
-
-.amp-sidebar-toolbar-target-shown {
-    background-color:pink;
-    /*display: none;*/
-}
-
-.amp-sidebar-toolbar-target-hidden {
-    background-color:red;
-    /*display: block;*/
 }

@@ -1,7 +1,7 @@
 dnl m4_include(./configure-fontawesome.m4)dnl
 m4_divert_push([HTML])dnl
 <!DOCTYPE html>
-<html ⚡ lang="__LANG_TAG__">
+<html lang="__LANG_TAG__">
     <head>
         <meta charset="utf-8">
         <!-- m4_quote(__ALTERNATES__) -->
@@ -29,9 +29,6 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
 /*__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_UNDIVERT_CUSTOM_STYLES__*/
         </style>
         <!-- END custom styles -->
-        <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-        <script async src="https://cdn.ampproject.org/v0.js"></script>
-        <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
     </head>
     <body>
         <!-- BEGIN LOGO DEF -->
@@ -67,10 +64,10 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
             </symbol>
         </svg>
         <!-- END LOGO DEF -- BEGIN LEFT SIDEBAR -->
-        <amp-sidebar id="sidebar" class="ajja" layout="nodisplay" side="left">
-            <svg on="tap:sidebar.close" class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
+        <div id="sidebar" class="ajja" hidden>
+            <svg class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
 
-            <nav toolbar="(min-width: 768px)" toolbar-target="desktop-sidebar">
+            <nav>
 
             <ul>
 __RENDER_SET([__NAV__ITEMS__],[dnl
@@ -85,18 +82,18 @@ m4_if(__LANG__,$1,[],[dnl
                 <!-- $1 - $2 - $3 -->
                 <li class="nav-item">
                     <a class="" href="__HREF([$3])">
-                        <amp-img src="__DASSET(img/flag-$1.png)" alt="" height=48 width=48 layout="fixed"/>
+                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48"/>
                     </a>
                 </li>
 ])dnl
 ])dnl
             </ul>
             </nav>
-        </amp-sidebar>
+        </div>
         <!-- END LEFT SIDEBAR -- BEGIN RIGHT SIDEBAR -->
-        <amp-sidebar id="lang-sidebar" layout="nodisplay" side="right">
-            <svg on="tap:lang-sidebar.close" class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
-            <nav toolbar="(min-width: 768px)" toolbar-target="desktop-lang-sidebar">
+        <div id="lang-sidebar" hidden>
+            <svg class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
+            <nav>
             <ul>
 __RENDER_SET([__ALTERNATES__],[dnl
                 <li>
@@ -105,14 +102,14 @@ __RENDER_SET([__ALTERNATES__],[dnl
 ])dnl
             </ul>
             </nav>
-        </amp-sidebar>
+        </div>
         <!-- END RIGHT SIDEBAR -- BEGING HEADER -->
         <header>
-            <svg on="tap:sidebar.toggle" role="button" tabindex="0" class="ui-element"><use xlink:href="[#]hamburger"/></svg>
+            <svg role="button" tabindex="0" class="ui-element"><use xlink:href="[#]hamburger"/></svg>
             <svg class="layout-logo"><use xlink:href="[#]bird2"/></svg>
 dnl         <svg ><use id="header-layout-logo" xlink:href="[#]tekii-logo"/></svg>
             <span class="text-isologo">TEKii</span>
-            <svg on="tap:lang-sidebar.toggle" role="button" tabindex="2" class="ui-element"><use xlink:href="[#]language"/></svg>
+            <svg role="button" tabindex="2" class="ui-element"><use xlink:href="[#]language"/></svg>
             <div class="lang-dd" style="display: contents;" role="button" tabindex="1">
                 <svg class="ui-element"><use xlink:href="[#]language"/></svg>
                 <div>
@@ -159,7 +156,7 @@ m4_undivert([MAIN])[]dnl <!-- MAIN DIVERSION WILL BE INSERTED HERE -->
                 />
             </svg>
             <a href="http://qr.afip.gob.ar/?qr=sifPTfj7txtxzvCuOMriYA,," target="_F960AFIPInfo">
-                <amp-img src="__DASSET(img/DATAWEB.jpg)" alt="" height=327 width=239 layout="fixed"/>
+                <img src="__DASSET(img/DATAWEB.jpg)" alt="" height="327" width="239"/>
             </a>
 m4_divert_push(KILL)
             <div class="ico-wrapper">
