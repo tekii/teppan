@@ -188,6 +188,15 @@ m4_esyscmd([touch -d 2020-03-04 /tmp/__rdate_test_file])dnl
 __ASSERT_EQ([RDATE fixed mtime],__RDATE([/tmp/__rdate_test_file]),[2020-03-04])
 m4_divert_pop([TESTS])dnl
 
+#
+# __LOCALIZE_URL_SUBDOMAIN(DOMAIN,LANG,STEM) prepends LANG as a subdomain
+# label ahead of DOMAIN, rather than using it as a path segment the way
+# __LOCALIZE_URL_PATH does.
+#
+m4_divert_push([TESTS])dnl
+__ASSERT_EQ([LOCALIZE_URL_SUBDOMAIN prepends lang as subdomain],__LOCALIZE_URL_SUBDOMAIN([example.com],[en],[about]),[en.example.com/about])
+m4_divert_pop([TESTS])dnl
+
 
 #
 # LEGACY -- exploratory/scratch m4sugar experiments kept for historical
