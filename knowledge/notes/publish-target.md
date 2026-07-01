@@ -80,5 +80,18 @@ gsutil acl ch -r -u AllUsers:R gs://www.teky.io/
 - Decide per-asset Cache-Control policy and emit the target-specific
   `GSUTIL_EXTRA_FLAGS` overrides from the appropriate macro.
 
+## Post-publish verification (future)
+
+Once real uploads happen, a plain `curl` check (status code, headers like
+`Content-Encoding`/`Cache-Control`) only confirms the bucket served
+*something* — it can't catch a broken render, a missing asset that 404s
+only after the page tries to load it, or JS/console errors. The
+`chrome-devtools` MCP server (see the `build-preview` skill) can complement
+that: actually navigate to the live published URL and check real rendering
+(`take_screenshot`/`take_snapshot`) and network activity
+(`list_network_requests`/`list_console_messages`) against the deployed
+site, not just the local `file://` preview. `curl` stays the fast first
+check; the browser is for the deeper, slower pass once `curl` is clean.
+
 See also: [Build & test commands](../build/commands.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md).
