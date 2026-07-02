@@ -74,6 +74,45 @@ plan's guesses):
   bundled Chromium engine is selectable straight from the CLI — no config file
   needed. `--isolated` keeps the profile in memory (see next point).
 
+### Playwright MCP blocks `file://` by default — preview needs `--allow-unrestricted-file-access`
+Playwright MCP **refuses to navigate to `file://` URLs** out of the box
+(`Error: Access to "file:" protocol is blocked`), unlike the host's
+`chrome-devtools` MCP which allowed them. This directly collides with this
+project's `file://`-based `make preview` (see
+[`file://`-relative preview](file-relative-preview.md)): there is no HTTP
+server to point a browser at — the whole design is "open the generated file
+off disk." So to screenshot/inspect the preview in the container, the server
+must be registered with **`--allow-unrestricted-file-access`** (the *only*
+flag that lifts the block — `--allowed-origins`/`--allowed-hosts` do **not**;
+confirmed via `playwright-mcp --help`). It's now baked into `postcreate.sh`'s
+`claude mcp add` line. Safe here specifically because the container is
+hardened, isolated, and non-root — granting the headless browser local-file
+read is exactly its job in this environment, nothing more.
+
+**Restart gotcha:** changing the registration (via `claude mcp add` or by
+editing `postcreate.sh`) updates `${CLAUDE_CONFIG_DIR}/.claude.json`, but the
+**already-running** MCP server process keeps its old args — `file://` stays
+blocked for the rest of the current session. The new flag only takes effect
+when the server is re-spawned, i.e. on the **next Claude Code session**. So
+after adding the flag: restart the session, *then* navigate to
+`file:///workspaces/www/TEKII_BUILD/DOC/<domain>/index.html`. (Same caveat for
+any later flag change, e.g. `--output-dir` below.) Mid-session workaround
+without a restart: pass an **absolute** path where the flag's effect would
+otherwise apply — e.g. `browser_take_screenshot`'s `filename` as an absolute
+path under the desired output dir.
+
+**Output location — `--output-dir` into `TEKII_BUILD/ARTIFACTS/`.** By default
+Playwright MCP writes screenshots (relative `filename`s) to its working dir —
+the workspace root — and its console/snapshot logs to a `.playwright-mcp/`
+folder there. **Neither is gitignored**, so both pollute the checkout as
+untracked files. `postcreate.sh` therefore adds
+`--output-dir "${WORKSPACE}/TEKII_BUILD/ARTIFACTS"`, which redirects *both*
+into the `TEKII_BUILD` tree — already gitignored (`.gitignore`'s `TEKII_BUILD`
+line), container-private (named volume, no host bind-mount leak), and wiped by
+`make realclean`. That makes captures genuinely disposable dev artifacts with
+zero repo-pollution risk and no extra `.gitignore` entry — preferred over
+`/tmp` (which is off-workspace and invisible in the file tree).
+
 ### Bind-mount hygiene — the container ignores host browser state
 The workspace bind-mount exposes the host's gitignored `.claude/node/` and
 `.claude/chrome-profile/` inside the container. The container uses **neither**:

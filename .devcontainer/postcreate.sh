@@ -26,8 +26,21 @@ sudo chown -R vscode:vscode "${WORKSPACE}/TEKII_BUILD" "${HOME}/.claude"
 #      --headless          no display in the container
 #      --isolated          in-memory profile (no on-disk SingletonLock)
 #      --no-sandbox        required for Chromium in a container
+#      --allow-unrestricted-file-access
+#                          lift Playwright MCP's default block on file:// URLs,
+#                          so it can screenshot the file://-based `make preview`
+#                          output (see knowledge/notes/file-relative-preview.md).
+#                          Safe here: hardened, isolated, non-root container.
+#      --output-dir        write screenshots + console/snapshot logs into the
+#                          gitignored, container-private, realclean-wiped
+#                          TEKII_BUILD tree instead of the workspace root (whose
+#                          default .playwright-mcp/ and *.png are NOT gitignored
+#                          and would pollute the repo).
 claude mcp remove playwright --scope local >/dev/null 2>&1 || true
+mkdir -p "${WORKSPACE}/TEKII_BUILD/ARTIFACTS"
 claude mcp add playwright --scope local -- \
-  playwright-mcp --headless --browser chromium --isolated --no-sandbox
+  playwright-mcp --headless --browser chromium --isolated --no-sandbox \
+    --allow-unrestricted-file-access \
+    --output-dir "${WORKSPACE}/TEKII_BUILD/ARTIFACTS"
 
 echo "postcreate: TEKII_BUILD owned by vscode; Playwright MCP registered (local scope)."
