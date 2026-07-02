@@ -57,6 +57,17 @@ RUN set -eux; \
 # fails to write. (postcreate.sh also chowns it, to fix pre-existing volumes.)
 RUN mkdir -p /home/vscode/.claude && chown vscode:vscode /home/vscode/.claude
 
+# --- Managed settings: container defaults to bypassPermissions ----------------
+# Container-only Claude Code policy (highest-precedence managed scope, baked into
+# the image — NOT the shared repo `.claude/`). The container is hardened
+# (firewall + non-root + isolated), so it defaults to skip-permissions: with no
+# interactive prompts, Claude writes NO permission grants to the bind-mounted
+# `.claude/settings.local.json`, so none leak to the host. (Per-file isolation
+# isn't viable — Claude writes settings.local.json via atomic temp+rename, which
+# fails with EBUSY over a single-file bind-mount; see knowledge/notes.)
+RUN mkdir -p /etc/claude-code
+COPY managed-settings.json /etc/claude-code/managed-settings.json
+
 # --- Hardened egress firewall (run from postStartCommand via passwordless sudo)
 # Installed under a tekii-* name on purpose: the claude-code feature ships its
 # OWN /usr/local/bin/init-firewall.sh and layers AFTER this Dockerfile, so it

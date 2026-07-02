@@ -32,6 +32,9 @@ two:
   reference; installed as `/usr/local/bin/tekii-init-firewall.sh` (see the
   firewall section for why the `tekii-` name matters).
 - `postcreate.sh` — claims the build volume and registers the Playwright MCP.
+- `managed-settings.json` — container-only Claude policy baked to
+  `/etc/claude-code/managed-settings.json` (defaults to `bypassPermissions`;
+  see the permission-grant isolation section).
 
 ## Why these choices
 
@@ -201,23 +204,75 @@ Host-Claude and container-Claude do **not** share auto-memory: the container's
 Durable, cross-scenario knowledge therefore belongs in this `knowledge/` tree
 (bind-mounted, shared) — this note is an example of that channel.
 
-## 📌 Pinned limitation: permission grants leak host ↔ container (unsolved)
-`.claude/settings.local.json` (the per-checkout permission allowlist +
-`enabledPlugins`) is **bind-mounted**, so an "always allow, don't ask again in
-this project" granted in one environment appears in the other. Note "local"
-means *uncommitted / per-working-copy*, **not** per-runtime-environment — the
-two environments share one working copy, hence one file. This is worrisome
-because grants made in the (looser) container bleed into the host. Candidate
-fixes, all non-trivial (deferred until primary work moves into the container):
-- steer container "always allow" into **user scope** (`$CLAUDE_CONFIG_DIR`, the
-  container-only volume) instead of project scope — but that's a manual,
-  per-decision choice;
-- give the container its **own** `settings.local.json` by overlaying that path
-  with a container-private mount (like `TEKII_BUILD`) — fiddly, since a Docker
-  volume mounts as a directory, not a file (needs a bind-mounted file or a
-  postCreate symlink);
-- keep the shared baseline allowlist in committed `.claude/settings.json` and
-  treat `settings.local.json` as disposable per environment.
+## Permission-grant isolation — container defaults to `bypassPermissions` (on trial)
+
+**The problem.** `.claude/settings.local.json` (the per-checkout permission
+allowlist) is **bind-mounted**, so an "always allow, don't ask again in this
+project" granted in one environment appears in the other. "local" means
+*uncommitted / per-working-copy*, **not** per-runtime-environment — host and
+container share one working copy, hence one file. Grants made in the looser
+container bleeding to the host is the worry.
+
+**What the docs pin down (verified).**
+- "Don't ask again" **always** writes to project-local `.claude/settings.local.json`;
+  the target is **not** redirectable.
+- `CLAUDE_CONFIG_DIR` relocates only **user**-scope files (`~/.claude/*`), not
+  project-local ones.
+- Settings precedence: **Managed → command-line → Local → Project → User**, and
+  permission arrays (`allow`/`ask`/`deny`) **merge** across scopes.
+
+**Why per-file isolation (the obvious fix) was rejected.** Giving the container
+its own `settings.local.json` via a *single-file* bind-mount does **not** work:
+Claude writes that file **atomically** — `settings.local.json.tmp.<pid>.<hash>`
+then `rename()` onto the target (confirmed by `strace` of a config write) — and
+**`rename()` onto a single-file bind-mount fails with `EBUSY`**
+("Device or resource busy"; confirmed with a direct `mv`-over-bind-mount test).
+So the grant write would error / not persist.
+
+**The implemented fix (Option 3).** The container defaults to
+`permissions.defaultMode: "bypassPermissions"` via **managed settings** baked
+into the image at `/etc/claude-code/managed-settings.json`
+(`.devcontainer/managed-settings.json`, `COPY`ed in the Dockerfile). Managed
+scope is container-only (not the shared repo). In bypass mode there are no
+interactive prompts, so Claude writes **no** permission grants to
+`settings.local.json` (verified: the file stayed `{}` after a *genuinely gated*
+command ran). Safe to run unprompted because the container is hardened (egress
+firewall + non-root + `--isolated` browser).
+
+**This is a trial.** Kept as a first attempt; revisit whether it's enough or
+whether Option 1 (below) is worth building.
+
+### How you switch to interactive, and the residual leak
+`defaultMode` sets only the *default* — it is **not** a lock. An explicit
+`claude --permission-mode default` (or `plan`/`acceptEdits`) **overrides** the
+managed bypass (verified: with managed bypass, the flag made a gated write get
+denied). In-session, **Shift+Tab** cycles modes.
+- Plain **"yes"** (approve once) is *not* persisted → no leak.
+- Only **"yes, don't ask again"** while interactive persists to the shared
+  `settings.local.json` → *that* grant leaks. This is the one residual case.
+
+### Testing gotcha (cost us time — record it)
+Simple/read-only Bash commands like `echo` are **auto-approved regardless of
+permission mode**, so they run in `default` mode too and are **useless** for
+testing whether bypass is active. Test permission behavior with a genuinely
+gated action — e.g. a shell **file-write** (`date > /tmp/x`): denied in
+`default` mode, runs in `bypassPermissions`.
+
+### Fallback — Option 1: true isolation via a container-private `.claude/` volume (NOT built)
+If the residual "don't ask again" leak (or wanting always-interactive without
+leaking) proves unacceptable, isolate the *whole* `.claude/` instead of the
+single file — atomic `rename()` works **inside a volume directory**, only
+onto a single-file bind-mount does it EBUSY. Sketch:
+- Mount a **named volume** at `/workspaces/www/.claude` (container-private;
+  hides the host's `.claude`, including `settings.local.json` → fully isolated).
+- Re-expose the shared **committed** parts by a **second read-only bind** of the
+  repo's `.claude` at e.g. `/workspaces/www/.claude-shared`, and in
+  `postcreate.sh` **symlink** `settings.json` and `skills/` from there into the
+  volume (skills stay live-synced with the repo).
+- `chown -R vscode:vscode` the volume (root-owned on first mount, like the other
+  volumes). Grants then persist in the volume, isolated, across rebuilds.
+- Cost: one volume + one extra mount + postCreate symlink/chown logic; more
+  moving parts than Option 3.
 
 See also: [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
 [`file://`-relative preview](file-relative-preview.md),
