@@ -165,6 +165,24 @@ line — including `-e GH_TOKEN=…` — at debug level into
 the PAT before sharing those logs. The fine-grained, short-expiry, repo-scoped
 token keeps that exposure low-risk.
 
+### Side effect: the `/model` picker shows fewer models than the host (no Fable)
+The container's `/model` list is a **subset** of the host's — notably it omits
+newer models like **Fable 5** — even though both run the **same Claude Code
+version** and authenticate as the **same account** (`api.anthropic.com` is
+allowlisted; there is no entitlement difference). The cause is a direct
+consequence of two firewall/telemetry choices above: which models the picker
+advertises is **feature-gated via Statsig** (`statsig.anthropic.com`), and this
+container cannot reach that gate — `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
+tells the CLI not to contact Statsig, and the firewall omits
+`statsig.anthropic.com` from the allowlist anyway. With the gate unresolvable,
+Claude Code falls back to the **static model list baked into the CLI build**,
+which excludes models still being rolled out behind gates. So it is *not* a
+version or account problem; it is the hardened setup deliberately severing the
+feature-gate channel. Restoring the full list would mean allowlisting
+`statsig.anthropic.com` **and** dropping `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
+— i.e. re-enabling the non-essential/telemetry traffic this setup exists to cut,
+a real trade-off, not a free toggle. Left as-is by design.
+
 ### `gh` authentication — host env token, never in repo or image
 `gh` reads `GH_TOKEN` from the environment (fully authenticates, no
 `gh auth login`). `devcontainer.json` carries
