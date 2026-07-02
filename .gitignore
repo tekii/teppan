@@ -14,3 +14,4 @@ notas.txt
 .attic/*
 .claude/chrome-profile/
 .claude/node/
+.claude/settings.local.json
