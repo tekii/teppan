@@ -1,0 +1,58 @@
+# TEKii `www` dev container.
+#
+# Layered on Microsoft's devcontainers base (non-root `vscode` user + sudo).
+# The Claude Code and GitHub CLI features are added on top in devcontainer.json;
+# they run *after* this Dockerfile, so Node (installed here) is already on PATH
+# for the feature that installs the Claude Code CLI.
+#
+# Everything the runtime firewall would otherwise have to fetch (Node, the
+# Playwright browser, the Playwright MCP server) is installed HERE, at image
+# build time, before any egress restriction exists.
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
+
+# --- Project build toolchain + firewall deps + tarball extraction ------------
+#   m4/autoconf/make          -> the TEKii m4 site generator (Makefile)
+#   iptables..aggregate,jq    -> .devcontainer/init-firewall.sh
+#   xz-utils                  -> extract the Node .tar.xz below
+# (coreutils/realpath, git, curl come with the base image.)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      m4 autoconf make \
+      iptables ipset iproute2 dnsutils aggregate jq \
+      ca-certificates curl xz-utils \
+ && rm -rf /var/lib/apt/lists/*
+
+# --- Node.js: canonical nodejs.org tarball, pinned + checksum-verified --------
+# Matches the provenance of the project's existing .claude/node runtime
+# (nodejs.org release tarball, not NodeSource/apt) per the "official sources
+# only" rule. Extracted into /usr/local so `node`/`npm`/`npx` land on PATH.
+ARG NODE_VERSION=22.23.1
+RUN set -eux; \
+    arch=x64; \
+    f="node-v${NODE_VERSION}-linux-${arch}.tar.xz"; \
+    curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/${f}"; \
+    curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt"; \
+    grep " ${f}\$" SHASUMS256.txt | sha256sum -c -; \
+    tar -xJf "${f}" -C /usr/local --strip-components=1 --no-same-owner; \
+    rm "${f}" SHASUMS256.txt; \
+    node --version; npm --version
+
+# --- Playwright MCP + its matching Chromium, baked at build time --------------
+# Pin @playwright/mcp; install the browser with the SAME playwright it bundles
+# (resolved from the package's own dep tree, not a fresh `npx playwright@latest`)
+# so the baked Chromium revision is exactly the one the server launches.
+# --with-deps pulls the browser's OS libraries via apt (root, build-time only).
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+ARG PLAYWRIGHT_MCP_VERSION=0.0.77
+RUN set -eux; \
+    npm install -g "@playwright/mcp@${PLAYWRIGHT_MCP_VERSION}"; \
+    ( cd "$(npm root -g)/@playwright/mcp" \
+        && npx playwright install --with-deps chromium ); \
+    chmod -R a+rX /opt/pw-browsers
+
+# --- Hardened egress firewall (run from postStartCommand via passwordless sudo)
+COPY init-firewall.sh /usr/local/bin/init-firewall.sh
+RUN chmod +x /usr/local/bin/init-firewall.sh \
+ && echo 'vscode ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh' \
+      > /etc/sudoers.d/vscode-firewall \
+ && chmod 0440 /etc/sudoers.d/vscode-firewall

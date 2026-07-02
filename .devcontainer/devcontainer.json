@@ -1,0 +1,54 @@
+{
+  // TEKii `www` dev container — Claude Code CLI + Playwright MCP, hardened.
+  // See .devcontainer/Dockerfile and the plan in the repo history for rationale.
+  "name": "TEKii www — Claude Code + Playwright",
+  "build": { "dockerfile": "Dockerfile" },
+
+  // Features layer AFTER the Dockerfile build (Node is already on PATH for the
+  // Claude Code feature's npm install). claude-code:1.0 pins the install
+  // script, not the CLI version (it installs latest + self-updates).
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // Non-root is mandatory: the CLI refuses --dangerously-skip-permissions as root.
+  "remoteUser": "vscode",
+  // Pin the bind-mount target so generated absolute paths ($(PWD)/realpath) and
+  // the TEKII_BUILD volume mount below line up deterministically.
+  "workspaceFolder": "/workspaces/www",
+
+  // Required for init-firewall.sh to manage iptables/ipset inside the container.
+  "runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"],
+
+  "mounts": [
+    // Persist Claude auth/settings/history across rebuilds.
+    "source=tekii-claude-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
+    // Container-private build tree: isolates the container's absolute paths and
+    // .mode-<domain> stamps from the host's shared, bind-mounted TEKII_BUILD
+    // (and avoids slow bind-mount I/O for generated output).
+    "source=tekii-build-${devcontainerId},target=/workspaces/www/TEKII_BUILD,type=volume"
+  ],
+
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+    "PLAYWRIGHT_BROWSERS_PATH": "/opt/pw-browsers",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    // gh auth (Option A): value comes from the host env at create/rebuild; keep
+    // the real token in an untracked file OUTSIDE the repo that your shell
+    // sources. Never committed, never baked into the image.
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
+  },
+
+  // Firewall runs at every start (host CIDRs/DNS can change); wait for it so the
+  // session never starts with egress open.
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "waitFor": "postStartCommand",
+
+  // chown the build volume + register the Playwright MCP (local scope, container-only).
+  "postCreateCommand": ".devcontainer/postcreate.sh",
+
+  "customizations": {
+    "vscode": { "extensions": ["ms-playwright.playwright"] }
+  }
+}
