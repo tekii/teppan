@@ -28,7 +28,9 @@ two:
   toolchain, a pinned Node, the Playwright MCP + its Chromium, and the firewall.
 - `devcontainer.json` — features, non-root user, volumes, `containerEnv`, and
   the firewall / MCP-registration lifecycle hooks.
-- `init-firewall.sh` — Anthropic's reference egress-allowlist script, verbatim.
+- `init-firewall.sh` — egress-allowlist script adapted from Anthropic's
+  reference; installed as `/usr/local/bin/tekii-init-firewall.sh` (see the
+  firewall section for why the `tekii-` name matters).
 - `postcreate.sh` — claims the build volume and registers the Playwright MCP.
 
 ## Why these choices
@@ -90,12 +92,29 @@ Node is installed from the canonical `nodejs.org` tarball (pinned +
 apt (apt's Node was too old for the browser MCP tooling anyway).
 
 ### Hardened firewall + non-root — for safe `--dangerously-skip-permissions`
-`init-firewall.sh` is the Anthropic reference script (default-deny egress;
-allowlist = its domain set + dynamic GitHub CIDRs + host subnet + DNS/localhost/
-established). It needs `NET_ADMIN`/`NET_RAW` (`runArgs`) and runs at
-`postStartCommand` (with `waitFor`, so a session never starts with egress open).
-Non-root `vscode` is mandatory regardless — the CLI refuses
+Default-deny egress; allowlist = a small domain set + dynamic GitHub CIDRs +
+host subnet + DNS/localhost/established. Needs `NET_ADMIN`/`NET_RAW` (`runArgs`)
+and runs at `postStartCommand` (with `waitFor`, so a session never starts with
+egress open). Non-root `vscode` is mandatory regardless — the CLI refuses
 `--dangerously-skip-permissions` as root.
+
+Two non-obvious facts, both learned by a failed first launch:
+- **The `claude-code` feature ships its *own* `init-firewall.sh`** and installs
+  it to `/usr/local/bin/init-firewall.sh`, layering *after* the Dockerfile — so
+  it would silently clobber ours at that path. Our copy is therefore installed
+  as **`tekii-init-firewall.sh`** and `postStartCommand` invokes that name.
+- **The reference allowlist does a hard `exit 1` on any domain it can't
+  resolve**, and `statsig.anthropic.com` currently has **no A record** — so it
+  aborted the whole container start. Our adapted script (a) omits the telemetry
+  domains (`sentry.io`/`statsig.*`), which `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
+  already blocks, and (b) treats an unresolvable domain as a skippable warning,
+  so one dead host can never brick the container again.
+
+**Secret hygiene:** the Dev Containers extension logs the full `docker run …`
+line — including `-e GH_TOKEN=…` — at debug level into
+`~/.config/Code/logs/.../ms-vscode-remote.remote-containers/`. Redact or rotate
+the PAT before sharing those logs. The fine-grained, short-expiry, repo-scoped
+token keeps that exposure low-risk.
 
 ### `gh` authentication — host env token, never in repo or image
 `gh` reads `GH_TOKEN` from the environment (fully authenticates, no

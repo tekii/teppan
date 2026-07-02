@@ -51,8 +51,11 @@ RUN set -eux; \
     chmod -R a+rX /opt/pw-browsers
 
 # --- Hardened egress firewall (run from postStartCommand via passwordless sudo)
-COPY init-firewall.sh /usr/local/bin/init-firewall.sh
-RUN chmod +x /usr/local/bin/init-firewall.sh \
- && echo 'vscode ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh' \
+# Installed under a tekii-* name on purpose: the claude-code feature ships its
+# OWN /usr/local/bin/init-firewall.sh and layers AFTER this Dockerfile, so it
+# would clobber ours at that path. postStartCommand invokes this copy.
+COPY init-firewall.sh /usr/local/bin/tekii-init-firewall.sh
+RUN chmod +x /usr/local/bin/tekii-init-firewall.sh \
+ && echo 'vscode ALL=(root) NOPASSWD: /usr/local/bin/tekii-init-firewall.sh' \
       > /etc/sudoers.d/vscode-firewall \
  && chmod 0440 /etc/sudoers.d/vscode-firewall

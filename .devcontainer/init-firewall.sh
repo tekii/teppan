@@ -63,21 +63,25 @@ while read -r cidr; do
     ipset add allowed-domains "$cidr"
 done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 
-# Resolve and add other allowed domains
+# Resolve and add other allowed domains.
+# Adapted from the Anthropic reference script (not verbatim):
+#  - Telemetry endpoints (sentry.io, statsig.anthropic.com, statsig.com) are
+#    intentionally omitted -- CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 stops
+#    Claude from contacting them, and statsig.anthropic.com currently has NO A
+#    record, so resolving it used to abort container setup.
+#  - A domain that fails to resolve is skipped with a warning instead of a hard
+#    exit, so one dead/CNAME-only host can never brick the whole container.
 for domain in \
     "registry.npmjs.org" \
     "api.anthropic.com" \
-    "sentry.io" \
-    "statsig.anthropic.com" \
-    "statsig.com" \
     "marketplace.visualstudio.com" \
     "vscode.blob.core.windows.net" \
     "update.code.visualstudio.com"; do
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')
     if [ -z "$ips" ]; then
-        echo "ERROR: Failed to resolve $domain"
-        exit 1
+        echo "WARNING: could not resolve $domain -- skipping (non-fatal)"
+        continue
     fi
 
     while read -r ip; do

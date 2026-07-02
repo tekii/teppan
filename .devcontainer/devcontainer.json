@@ -42,7 +42,7 @@
 
   // Firewall runs at every start (host CIDRs/DNS can change); wait for it so the
   // session never starts with egress open.
-  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "postStartCommand": "sudo /usr/local/bin/tekii-init-firewall.sh",
   "waitFor": "postStartCommand",
 
   // chown the build volume + register the Playwright MCP (local scope, container-only).
