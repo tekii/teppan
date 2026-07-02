@@ -50,6 +50,13 @@ RUN set -eux; \
         && npx playwright install --with-deps chromium ); \
     chmod -R a+rX /opt/pw-browsers
 
+# --- Config dir owned by the non-root user ----------------------------------
+# A fresh named volume inherits the ownership of the image directory it mounts
+# over. Pre-create ~/.claude as vscode so the CLAUDE_CONFIG_DIR volume starts
+# vscode-owned; otherwise it mounts root-owned and `claude mcp add` silently
+# fails to write. (postcreate.sh also chowns it, to fix pre-existing volumes.)
+RUN mkdir -p /home/vscode/.claude && chown vscode:vscode /home/vscode/.claude
+
 # --- Hardened egress firewall (run from postStartCommand via passwordless sudo)
 # Installed under a tekii-* name on purpose: the claude-code feature ships its
 # OWN /usr/local/bin/init-firewall.sh and layers AFTER this Dockerfile, so it

@@ -43,8 +43,18 @@ launch-fail) and web (no Node), breaking scenarios 1 and 3. Instead
 `postcreate.sh` registers Playwright at **`local` scope inside the container
 only** (`claude mcp add … --scope local`). The host keeps `chrome-devtools`;
 `install_pkgs.sh` and web are untouched. Registration is **idempotent**
-(remove-then-add) because `~/.claude.json` lives *outside* the mounted
-`~/.claude` volume and is recreated on every rebuild.
+(remove-then-add): with `CLAUDE_CONFIG_DIR` pointing at the persistent
+`~/.claude` volume, the local-scope entry is written to
+`${CLAUDE_CONFIG_DIR}/.claude.json` and survives rebuilds, so re-adding is a
+harmless no-op.
+
+**Volume-ownership gotcha (bit us on first launch):** a fresh named volume
+mounts **root-owned**, and `vscode` can't write into it. When `~/.claude` was
+root-owned, `claude mcp add` printed `Added …` and exited 0 but **silently
+failed to write the file** — `claude mcp list` then showed nothing. Fix:
+`postcreate.sh` `chown -R vscode:vscode` **both** volumes (`TEKII_BUILD` and
+`~/.claude`) before registering, and the Dockerfile pre-creates `~/.claude`
+vscode-owned so fresh volumes initialise correctly.
 
 ### Browser baked at build time; Playwright MCP pinned to match
 `@playwright/mcp` is pinned, and its Chromium is installed **at image-build

@@ -9,14 +9,18 @@ set -euo pipefail
 
 WORKSPACE="/workspaces/www"
 
-# 1. A freshly-created named volume mounts as root:root; hand it to the
-#    workspace user so `make build`/`preview` can write generated output.
-sudo chown vscode:vscode "${WORKSPACE}/TEKII_BUILD"
+# 1. Fresh named volumes mount root-owned; hand them to the workspace user.
+#    - TEKII_BUILD: so `make build`/`preview` can write generated output.
+#    - ~/.claude (CLAUDE_CONFIG_DIR): so `claude mcp add` below can actually
+#      persist ~/.claude/.claude.json. If this volume stays root-owned, the CLI
+#      prints "Added ..."/exit 0 but SILENTLY fails to write, and no MCP is
+#      registered (the symptom that first bit us).
+sudo chown -R vscode:vscode "${WORKSPACE}/TEKII_BUILD" "${HOME}/.claude"
 
 # 2. Register Playwright MCP (Microsoft, @playwright/mcp — baked into the image
-#    at build time, so no npx/network here). local scope writes ~/.claude.json,
-#    which lives OUTSIDE the mounted ~/.claude volume and is recreated on every
-#    rebuild — hence remove-then-add to stay idempotent.
+#    at build time, so no npx/network here). Local scope writes the project
+#    entry in ${CLAUDE_CONFIG_DIR}/.claude.json, which is on the persistent
+#    ~/.claude volume — remove-then-add keeps this idempotent across rebuilds.
 #    Flags mirror upstream's own containerized example:
 #      --browser chromium  bundled Chromium engine (matches PLAYWRIGHT_BROWSERS_PATH)
 #      --headless          no display in the container
