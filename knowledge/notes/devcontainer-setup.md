@@ -183,6 +183,24 @@ Host-Claude and container-Claude do **not** share auto-memory: the container's
 Durable, cross-scenario knowledge therefore belongs in this `knowledge/` tree
 (bind-mounted, shared) — this note is an example of that channel.
 
+## 📌 Pinned limitation: permission grants leak host ↔ container (unsolved)
+`.claude/settings.local.json` (the per-checkout permission allowlist +
+`enabledPlugins`) is **bind-mounted**, so an "always allow, don't ask again in
+this project" granted in one environment appears in the other. Note "local"
+means *uncommitted / per-working-copy*, **not** per-runtime-environment — the
+two environments share one working copy, hence one file. This is worrisome
+because grants made in the (looser) container bleed into the host. Candidate
+fixes, all non-trivial (deferred until primary work moves into the container):
+- steer container "always allow" into **user scope** (`$CLAUDE_CONFIG_DIR`, the
+  container-only volume) instead of project scope — but that's a manual,
+  per-decision choice;
+- give the container its **own** `settings.local.json` by overlaying that path
+  with a container-private mount (like `TEKII_BUILD`) — fiddly, since a Docker
+  volume mounts as a directory, not a file (needs a bind-mounted file or a
+  postCreate symlink);
+- keep the shared baseline allowlist in committed `.claude/settings.json` and
+  treat `settings.local.json` as disposable per environment.
+
 See also: [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
 [`file://`-relative preview](file-relative-preview.md),
 [Build & test commands](../build/commands.md).
