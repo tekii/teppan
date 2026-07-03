@@ -23,11 +23,11 @@
 
   "mounts": [
     // Persist Claude auth/settings/history across rebuilds.
-    "source=tekii-claude-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
+    "source=teppan-claude-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
     // Container-private build tree: isolates the container's absolute paths and
     // .mode-<domain> stamps from the host's shared, bind-mounted TEPPAN_BUILD
     // (and avoids slow bind-mount I/O for generated output).
-    "source=tekii-build-${devcontainerId},target=/workspaces/www/TEPPAN_BUILD,type=volume"
+    "source=teppan-build-${devcontainerId},target=/workspaces/www/TEPPAN_BUILD,type=volume"
   ],
 
   "containerEnv": {
