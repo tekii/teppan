@@ -1,5 +1,5 @@
 ## ------------------ ##
 ## mock-a.test/page-a ##
 ## ------------------ ##
-m4_define([__LANDING_MOCK-A_TEST_URL__],[@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html])
+m4_define([__LANDING_MOCK-A_TEST_URL__],[@SRC@/TEPPAN_BUILD/DOC/mock-a.test/page-a.html])
 

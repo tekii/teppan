@@ -8,7 +8,7 @@ timestamp: 2026-06-28
 
 # `Rules.mk` recursive sub-make rationale
 
-In this project, custom page assets are deferred using the `__DASSET` macro in `generator.m4`. This macro populates page-specific deferred rules into makefiles located at `TEKII_BUILD/DOC/<domain>/<page>.mk`.
+In this project, custom page assets are deferred using the `__DASSET` macro in `generator.m4`. This macro populates page-specific deferred rules into makefiles located at `TEPPAN_BUILD/DOC/<domain>/<page>.mk`.
 
 To compile or clean these assets, the main `Makefile` invokes a recursive sub-make command targeting the specific page's `.mk` file:
 ```makefile

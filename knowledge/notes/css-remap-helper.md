@@ -36,7 +36,7 @@ today via its `generator_test.m4` assertions.
 There's also a known follow-up problem if FontAwesome self-hosting is ever
 revived: rewriting the `url(...)` paths to be correct relative to the output
 tree isn't sufficient by itself, because the vendored font files
-(`VENDOR/fontawesome-free-.../webfonts/*`) are never copied into `TEKII_BUILD/DOC`
+(`VENDOR/fontawesome-free-.../webfonts/*`) are never copied into `TEPPAN_BUILD/DOC`
 in the first place (`VENDOR` is gitignored/build-only) — that would need
 `__CP_ASSET`/`__DEFERRED_ASSET` wiring alongside the macro. Full background,
 including a working-prototype trace of the bad relative path this produces

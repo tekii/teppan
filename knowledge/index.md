@@ -12,7 +12,7 @@ A static website (multi-domain, multi-language) generated with GNU `m4`,
 using autoconf's `m4sugar.m4f` macro library standalone (not via
 `configure.ac`/`autoconf`) for its `m4_*` primitives. There is no application
 server — everything is rendered ahead of time into plain HTML/CSS/assets under
-`TEKII_BUILD/DOC`.
+`TEPPAN_BUILD/DOC`.
 
 This knowledge base is authored in the [Open Knowledge Format (OKF)](okf.md) —
 a directory of markdown files with YAML frontmatter.
@@ -42,7 +42,7 @@ a directory of markdown files with YAML frontmatter.
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
   [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),
   [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](notes/css-remap-helper.md),
-  [`make realclean` — recursive `TEKII_BUILD` deletion](notes/realclean-recursive.md),
+  [`make realclean` — recursive `TEPPAN_BUILD` deletion](notes/realclean-recursive.md),
   [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
   [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md).

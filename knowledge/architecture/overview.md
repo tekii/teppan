@@ -17,7 +17,7 @@ timestamp: 2026-06-17
   `generator.m4`. `configure-fontawesome.m4` is currently `dnl`-disabled —
   see [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md).
 - **`*.in.html`** —
-  per-page m4 sources. Each stem gets a generated `.mk` under `TEKII_BUILD/DEP`,
+  per-page m4 sources. Each stem gets a generated `.mk` under `TEPPAN_BUILD/DEP`,
   `-include`d by the `Makefile`. See [Page source conventions](page-source-conventions.md).
 - **`layout.html`** / **`layout-redirect.html`** — page shells that consume
   the diversions produced by a page source.
@@ -27,17 +27,17 @@ timestamp: 2026-06-17
 
 ## Build output layout
 
-- `TEKII_BUILD/DOC/` — published HTML output, assets, and per-page `.mk` deferred rules.
+- `TEPPAN_BUILD/DOC/` — published HTML output, assets, and per-page `.mk` deferred rules.
   This is what gets rsynced/published.
-- `TEKII_BUILD/NAV/` — navigation intermediates only: per-stem `.m4` fragments
-  (e.g. `TEKII_BUILD/NAV/www.tekii.com.ar/index.m4`) assembled into per-domain
+- `TEPPAN_BUILD/NAV/` — navigation intermediates only: per-stem `.m4` fragments
+  (e.g. `TEPPAN_BUILD/NAV/www.tekii.com.ar/index.m4`) assembled into per-domain
   `NAVIGATION.m4` files and the cross-domain `NAVIGATION-LANDING.m4`. Not
-  published. Kept separate from `TEKII_BUILD/DOC` so the published tree contains
+  published. Kept separate from `TEPPAN_BUILD/DOC` so the published tree contains
   only HTML/assets.
 
 ## Generated/vendored paths
 
-`.gitignore` excludes `TEKII_BUILD`, `VENDOR`, `*venv*`, etc. — these are
+`.gitignore` excludes `TEPPAN_BUILD`, `VENDOR`, `*venv*`, etc. — these are
 generated/vendored, not source.
 
 See also: [Domains](domains.md), [`WITH_LAYOUT`/`__LAYOUT__` known issue](../notes/layout-mechanism-duplication.md),

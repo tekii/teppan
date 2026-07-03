@@ -17,10 +17,10 @@ in **two worlds**, and the build relies on the difference:
   path for `realpath`).
 - the **Make (run-time) facet** — e.g. `$(BUILD_ROOT)` emitted into the
   generated `.mk` files — is resolved *later*, by Make. `build` and
-  `preview` now share the single `TEKII_BUILD` root (see the "BUILD MODE
+  `preview` now share the single `TEPPAN_BUILD` root (see the "BUILD MODE
   STAMP" block in `Makefile`); historically this facet's root-agnosticism
   was also what let the same `.mk` work under either of two separate
-  `TEKII_BUILD`/`TEKII_PREVIEW` roots.
+  `TEPPAN_BUILD`/`TEKII_PREVIEW` roots.
 
 ## The rule
 

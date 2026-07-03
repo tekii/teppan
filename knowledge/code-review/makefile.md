@@ -50,7 +50,7 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
   will expand too early, usually to empty) and flag `$$` used outside any
   `.SECONDEXPANSION` context (it will be a literal `$`).
 - **`-include` of generated `.mk` files**: this project's per-stem
-  `TEKII_BUILD/DEP/%.mk` files are `-include`d (the leading `-` suppresses the
+  `TEPPAN_BUILD/DEP/%.mk` files are `-include`d (the leading `-` suppresses the
   error if missing, letting Make fall back to the pattern rule that
   generates them). Don't remove the `-`, and don't add real build logic that
   *only* exists in the generated file without a corresponding pattern rule
@@ -86,7 +86,7 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
   variable (as `do-generate-html`, `do-compress`, etc. already do) over inlining
   long pipelines into a target body.
 - **Prefix `rm` recipe lines with `@`** to suppress Make's echoing of the
-  command: write `@rm -rf TEKII_BUILD` or `@test -f path && rm path || true`,
+  command: write `@rm -rf TEPPAN_BUILD` or `@test -f path && rm path || true`,
   not the bare `rm ...` form. The project does not define `$(RM)` or
   `$(RMDIR)` helper variables — use bare `@rm` and `@rmdir` directly.
 - Comment non-obvious dependency edges (e.g. *why* a target depends on
@@ -101,7 +101,7 @@ or any generated `.mk` content (from `generator.m4`'s `MAKEFILE`/
   deletes an arbitrary directory tree outside the project. Flag any recipe that
   uses `rm -rf` on a Make variable — even a path constant like
   `$(__BUILD_ROOT__)`. The only safe use of `rm -rf` is on a string literal
-  that names a well-known top-level directory (e.g. `@rm -rf TEKII_BUILD` in
+  that names a well-known top-level directory (e.g. `@rm -rf TEPPAN_BUILD` in
   `realclean`). For single-file removal under a variable path, use the
   `test -f` guard instead (see below).
 - **Single-file removal under a Make variable path must use the `test -f`

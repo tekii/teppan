@@ -4,7 +4,7 @@
 
 SRC	:=$(PWD)
 TMP:=/tmp
-BUILD_ROOT:=$(PWD)/TEKII_BUILD
+BUILD_ROOT:=$(PWD)/TEPPAN_BUILD
 VENDOR:=$(PWD)/VENDOR
 
 #
@@ -43,7 +43,7 @@ $(TMP)/%/:
 #
 # BUILD MODE STAMP
 #
-# build and preview now share one BUILD_ROOT (TEKII_BUILD), differing only in
+# build and preview now share one BUILD_ROOT (TEPPAN_BUILD), differing only in
 # __PREVIEW__'s effect on generated HTML (relative vs absolute URLs -- see
 # __ABSOLUTE in generator.m4). Make's mtime-based staleness has no way to
 # notice that switch on its own: a `make build` immediately followed by
@@ -186,7 +186,7 @@ clean : build-clean assets-clean compressed-files-clean makefiles-clean navigati
 
 .PHONY: realclean
 realclean:: clean
-	@rm -rf TEKII_BUILD
+	@rm -rf TEPPAN_BUILD
 	@echo [[[ DONE $@ ]]]
 
 

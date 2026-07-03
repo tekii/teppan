@@ -1,4 +1,4 @@
-m4_define([__MOCK-A_TEST_PAGE-A_ES_URL__],[@SRC@/TEKII_BUILD/DOC/mock-a.test/page-a.html]) # mock-a.test/page-a
-m4_define([__MOCK-B_TEST_PAGE-B_EN_URL__],[@SRC@/TEKII_BUILD/DOC/mock-b.test/en/page-b.html]) # mock-b.test/en/page-b
-m4_define([__MOCK-B_TEST_PAGE-B_BR_URL__],[@SRC@/TEKII_BUILD/DOC/mock-b.test/br/page-b.html]) # mock-b.test/br/page-b
+m4_define([__MOCK-A_TEST_PAGE-A_ES_URL__],[@SRC@/TEPPAN_BUILD/DOC/mock-a.test/page-a.html]) # mock-a.test/page-a
+m4_define([__MOCK-B_TEST_PAGE-B_EN_URL__],[@SRC@/TEPPAN_BUILD/DOC/mock-b.test/en/page-b.html]) # mock-b.test/en/page-b
+m4_define([__MOCK-B_TEST_PAGE-B_BR_URL__],[@SRC@/TEPPAN_BUILD/DOC/mock-b.test/br/page-b.html]) # mock-b.test/br/page-b
 

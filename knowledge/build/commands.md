@@ -11,15 +11,15 @@ timestamp: 2026-06-30
 ## Top-level targets
 
 - `make build` (or just `make` — it's `.DEFAULT_GOAL`) — generate the full
-  site into `TEKII_BUILD/DOC`, with absolute (`http://host/...`) URLs.
+  site into `TEPPAN_BUILD/DOC`, with absolute (`http://host/...`) URLs.
 - `make preview` (equivalently `make PREVIEW=1`) — generate the full site
-  into the **same** `TEKII_BUILD/DOC`, but with relative URLs, so the output
+  into the **same** `TEPPAN_BUILD/DOC`, but with relative URLs, so the output
   is browsable straight off disk (`file://...`) without a host. `preview` is
   just a trampoline that re-invokes `make PREVIEW=1`.
 - `make test` — run `generator_test.m4`; fails if any `__ASSERT_EQ` assertion
   prints `FAIL` (see `.claude/skills/run-tests`).
 - `make clean` / `make realclean` — remove generated output. `realclean`
-  recursively deletes `TEKII_BUILD` entirely (see
+  recursively deletes `TEPPAN_BUILD` entirely (see
   [`make realclean`](../notes/realclean-recursive.md)); `clean` only removes
   files whose rules are still registered in the current source tree.
 
@@ -32,10 +32,10 @@ few narrower targets, so a full `make build` isn't the only option:
   preview) just one domain, e.g. `make tekii-ar-build`. `<domain>` is the
   dash-substituted form of the real domain (`tekii.ar` → `tekii-ar`,
   `www.tekii.com.ar` → `www-tekii-com-ar`).
-- `make $(pwd)/TEKII_BUILD/DOC/<domain>/<page>.html` — build just one page
+- `make $(pwd)/TEPPAN_BUILD/DOC/<domain>/<page>.html` — build just one page
   by its real output path. Must be the **absolute** path: `BUILD_ROOT` is
-  `$(PWD)/TEKII_BUILD`, and Make matches target strings literally, so a
-  relative `TEKII_BUILD/DOC/...` won't match any rule.
+  `$(PWD)/TEPPAN_BUILD`, and Make matches target strings literally, so a
+  relative `TEPPAN_BUILD/DOC/...` won't match any rule.
 
 ## Build mode (`build` vs `preview`) is stamped, not just a flag
 
@@ -44,12 +44,12 @@ See [`file://`-relative preview](../notes/file-relative-preview.md) for why
 directly browsable off disk, no server) — this section covers how the build
 correctly detects and rebuilds across a `build`↔`preview` switch.
 
-`build` and `preview` share one `TEKII_BUILD` tree — there's no separate
+`build` and `preview` share one `TEPPAN_BUILD` tree — there's no separate
 preview directory. The only difference is `__PREVIEW__`'s effect on
 generated HTML (relative vs absolute URLs, see `__ABSOLUTE` in
 `generator.m4`). Because both modes write to the same paths, Make's
 mtime-based staleness can't notice a `build`↔`preview` switch on its own —
-no source file changes between the two. A `TEKII_BUILD/.mode-<domain>`
+no source file changes between the two. A `TEPPAN_BUILD/.mode-<domain>`
 stamp file (one per domain, **not one global file** — see "BUILD MODE
 STAMP" in `Makefile`) records which mode each domain's pages were last
 generated in, and forces exactly the pages that need it to regenerate on a
@@ -64,7 +64,7 @@ $ make build                      # only tekii.ar rebuilds (mismatched) --
                                    # matched "build" and are left alone
 ```
 
-Use the `build-preview` skill to build and serve `TEKII_BUILD/DOC` locally for
+Use the `build-preview` skill to build and serve `TEPPAN_BUILD/DOC` locally for
 manual inspection in a browser.
 
 See also: [Testing conventions](../testing/conventions.md),

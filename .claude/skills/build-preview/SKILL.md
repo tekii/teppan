@@ -19,8 +19,8 @@ full `make` reference, including scoping a preview to one domain.
 make preview
 ```
 
-This writes into `TEKII_BUILD/DOC` with relative `href`s (e.g. `en/index.html`,
-not `http://host/en/index.html`). It shares the same `TEKII_BUILD` tree as
+This writes into `TEPPAN_BUILD/DOC` with relative `href`s (e.g. `en/index.html`,
+not `http://host/en/index.html`). It shares the same `TEPPAN_BUILD` tree as
 `make build` — switching back and forth is safe and only rebuilds the pages
 whose mode actually changed (see the "BUILD MODE STAMP" section of
 `Makefile`).
@@ -37,7 +37,7 @@ genuinely visual is being verified (rendered layout, CSS, screenshots,
 console/network output for a real bug). For anything else — does a link
 point where it should, is the right text/title present, did a macro expand
 correctly — read the generated HTML directly (`Read`/`grep` on
-`TEKII_BUILD/DOC/<domain>/...`) or trace the source macro in `generator.m4`.
+`TEPPAN_BUILD/DOC/<domain>/...`) or trace the source macro in `generator.m4`.
 That's cheaper and just as authoritative; a full browser navigation adds
 nothing for a question that's really "what does this file contain."
 
@@ -56,7 +56,7 @@ Confirm with `ToolSearch` for whichever prefix applies before picking a path.
 **A1. `chrome-devtools` MCP** (`mcp__chrome-devtools__*` — `navigate_page`,
 `new_page`, `take_screenshot`, `take_snapshot`, `list_console_messages`,
 `list_network_requests`, etc.). Open the target page with `new_page`/
-`navigate_page` (`file:///$(pwd)/TEKII_BUILD/DOC/<domain>/index.html`), then
+`navigate_page` (`file:///$(pwd)/TEPPAN_BUILD/DOC/<domain>/index.html`), then
 use `take_screenshot`/`take_snapshot`/console/network tools as needed. It's
 already configured (local scope, project-local profile and Node — see
 [`chrome-devtools` MCP setup](../../../knowledge/notes/chrome-devtools-mcp-setup.md))
@@ -66,7 +66,7 @@ binary. No extra permission dance needed beyond the tool's own call.
 **A2. Playwright MCP** (`mcp__playwright__*` — `browser_navigate`,
 `browser_take_screenshot`, `browser_snapshot`, `browser_console_messages`,
 etc.), inside the dev container only. Navigate with `browser_navigate` to
-`file:///$(pwd)/TEKII_BUILD/DOC/<domain>/index.html`. Three
+`file:///$(pwd)/TEPPAN_BUILD/DOC/<domain>/index.html`. Three
 container-specific gotchas, all detailed in
 [dev container setup](../../../knowledge/notes/devcontainer-setup.md):
 - `file://` needs `--allow-unrestricted-file-access` — already baked into
@@ -80,7 +80,7 @@ container-specific gotchas, all detailed in
 - `browser_take_screenshot`'s `filename` parameter bypasses `--output-dir`
   entirely and resolves relative to the workspace root instead — omit
   `filename` (auto-generated name, lands correctly in
-  `TEKII_BUILD/ARTIFACTS/`) or pass an absolute `TEKII_BUILD/ARTIFACTS/...`
+  `TEPPAN_BUILD/ARTIFACTS/`) or pass an absolute `TEPPAN_BUILD/ARTIFACTS/...`
   path; never a bare relative name, or it leaks an untracked `.png` into
   the repo root.
 
@@ -88,7 +88,7 @@ container-specific gotchas, all detailed in
 still wants eyes-on inspection (not a scripted screenshot/DOM check):
 
 ```
-google-chrome --user-data-dir="$(pwd)/.claude/chrome-profile" --no-first-run "$(realpath TEKII_BUILD/DOC/<domain>/index.html)"
+google-chrome --user-data-dir="$(pwd)/.claude/chrome-profile" --no-first-run "$(realpath TEPPAN_BUILD/DOC/<domain>/index.html)"
 ```
 
 This is **not** in this skill's `allowed-tools` — launching a GUI browser

@@ -55,7 +55,7 @@ harmless no-op.
 mounts **root-owned**, and `vscode` can't write into it. When `~/.claude` was
 root-owned, `claude mcp add` printed `Added …` and exited 0 but **silently
 failed to write the file** — `claude mcp list` then showed nothing. Fix:
-`postcreate.sh` `chown -R vscode:vscode` **both** volumes (`TEKII_BUILD` and
+`postcreate.sh` `chown -R vscode:vscode` **both** volumes (`TEPPAN_BUILD` and
 `~/.claude`) before registering, and the Dockerfile pre-creates `~/.claude`
 vscode-owned so fresh volumes initialise correctly.
 
@@ -98,19 +98,19 @@ editing `postcreate.sh`) updates `${CLAUDE_CONFIG_DIR}/.claude.json`, but the
 blocked for the rest of the current session. The new flag only takes effect
 when the server is re-spawned, i.e. on the **next Claude Code session**. So
 after adding the flag: restart the session, *then* navigate to
-`file:///workspaces/www/TEKII_BUILD/DOC/<domain>/index.html`. (Same caveat for
+`file:///workspaces/www/TEPPAN_BUILD/DOC/<domain>/index.html`. (Same caveat for
 any later flag change, e.g. `--output-dir` below.) Mid-session workaround
 without a restart: pass an **absolute** path where the flag's effect would
 otherwise apply — e.g. `browser_take_screenshot`'s `filename` as an absolute
 path under the desired output dir.
 
-**Output location — `--output-dir` into `TEKII_BUILD/ARTIFACTS/`.** By default
+**Output location — `--output-dir` into `TEPPAN_BUILD/ARTIFACTS/`.** By default
 Playwright MCP writes screenshots (relative `filename`s) to its working dir —
 the workspace root — and its console/snapshot logs to a `.playwright-mcp/`
 folder there. **Neither is gitignored**, so both pollute the checkout as
 untracked files. `postcreate.sh` therefore adds
-`--output-dir "${WORKSPACE}/TEKII_BUILD/ARTIFACTS"`, which redirects *both*
-into the `TEKII_BUILD` tree — already gitignored (`.gitignore`'s `TEKII_BUILD`
+`--output-dir "${WORKSPACE}/TEPPAN_BUILD/ARTIFACTS"`, which redirects *both*
+into the `TEPPAN_BUILD` tree — already gitignored (`.gitignore`'s `TEPPAN_BUILD`
 line), container-private (named volume, no host bind-mount leak), and wiped by
 `make realclean`. That makes captures genuinely disposable dev artifacts with
 zero repo-pollution risk and no extra `.gitignore` entry — preferred over
@@ -119,7 +119,7 @@ zero repo-pollution risk and no extra `.gitignore` entry — preferred over
 **Gotcha: an explicit `filename` on `browser_take_screenshot` bypasses
 `--output-dir` entirely.** Confirmed 2026-07-02 — a screenshot taken with
 `filename: "tekii-ar-home.png"` landed in the workspace root (an untracked
-file), not `TEKII_BUILD/ARTIFACTS/`, even though `--output-dir` was
+file), not `TEPPAN_BUILD/ARTIFACTS/`, even though `--output-dir` was
 correctly registered. Traced into `@playwright/mcp@0.0.77`'s bundled
 `playwright-core/lib/coreBundle.js`, `resolveClientFile()`: when the tool
 call supplies `filename`, it becomes `template.suggestedFilename` and
@@ -132,7 +132,7 @@ snapshot/console-log files, which pass no `filename`, land correctly). This
 is upstream package behavior, not a registration bug — nothing in
 `postcreate.sh` can fix it. **Workaround:** omit `filename` (get an
 auto-generated name, correctly placed), or pass an absolute path under
-`TEKII_BUILD/ARTIFACTS/` as `filename` — never a bare relative name.
+`TEPPAN_BUILD/ARTIFACTS/` as `filename` — never a bare relative name.
 
 ### Bind-mount hygiene — the container ignores host browser state
 The workspace bind-mount exposes the host's gitignored `.claude/node/` and
@@ -145,13 +145,13 @@ persistent on-disk profile to lock.
 
 ### Workspace path & a container-private build tree
 The workspace bind-mounts to `/workspaces/www` (pinned via `workspaceFolder`).
-Because the build bakes **absolute** paths (`BUILD_ROOT := $(PWD)/TEKII_BUILD`
+Because the build bakes **absolute** paths (`BUILD_ROOT := $(PWD)/TEPPAN_BUILD`
 plus m4 `realpath`), the container's paths (`/workspaces/www/…`) differ from the
-host's (`$HOME/www/…`). Since `TEKII_BUILD/` is inside the workspace, host and
+host's (`$HOME/www/…`). Since `TEPPAN_BUILD/` is inside the workspace, host and
 container would otherwise share one tree with conflicting absolute paths and
 `.mode-<domain>` stamps → rebuild churn and wrong `file://` links (see
 [`file://`-relative preview](file-relative-preview.md)). Fix: a **named volume
-over `/workspaces/www/TEKII_BUILD`** gives the container its own private,
+over `/workspaces/www/TEPPAN_BUILD`** gives the container its own private,
 gitignored build tree (also faster than bind-mount I/O). It mounts root-owned,
 so `postcreate.sh` `chown`s it to `vscode`.
 

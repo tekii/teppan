@@ -9,7 +9,7 @@ timestamp: 2026-06-30
 # `file://`-relative preview
 
 `make preview` (`make PREVIEW=1`) exists so the generated site can be opened
-straight off disk in a browser — `file:///.../TEKII_BUILD/DOC/<domain>/index.html`
+straight off disk in a browser — `file:///.../TEPPAN_BUILD/DOC/<domain>/index.html`
 — and navigated link-by-link, with **no local HTTP server**. This is a
 deliberate design goal, not an incidental side effect of the build-mode-stamp
 machinery (see [Build & test commands](../build/commands.md)): the stamp
@@ -25,7 +25,7 @@ So as long as every link in the generated HTML is relative (`en/index.html`,
 not `http://tekii.ar/en/index.html`), the whole site is mutually
 cross-linkable straight from the filesystem — no `python -m http.server`,
 no CORS, no deploy step, just opening one file and clicking around. `build`
-mode's absolute URLs would break this: opening `TEKII_BUILD/DOC/tekii.ar/index.html`
+mode's absolute URLs would break this: opening `TEPPAN_BUILD/DOC/tekii.ar/index.html`
 directly would still *render*, but every link on it would point at the real
 `http://tekii.ar/...` production host instead of the sibling file next to it.
 

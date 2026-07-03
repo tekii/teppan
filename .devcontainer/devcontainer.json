@@ -15,7 +15,7 @@
   // Non-root is mandatory: the CLI refuses --dangerously-skip-permissions as root.
   "remoteUser": "vscode",
   // Pin the bind-mount target so generated absolute paths ($(PWD)/realpath) and
-  // the TEKII_BUILD volume mount below line up deterministically.
+  // the TEPPAN_BUILD volume mount below line up deterministically.
   "workspaceFolder": "/workspaces/www",
 
   // Required for init-firewall.sh to manage iptables/ipset inside the container.
@@ -25,9 +25,9 @@
     // Persist Claude auth/settings/history across rebuilds.
     "source=tekii-claude-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
     // Container-private build tree: isolates the container's absolute paths and
-    // .mode-<domain> stamps from the host's shared, bind-mounted TEKII_BUILD
+    // .mode-<domain> stamps from the host's shared, bind-mounted TEPPAN_BUILD
     // (and avoids slow bind-mount I/O for generated output).
-    "source=tekii-build-${devcontainerId},target=/workspaces/www/TEKII_BUILD,type=volume"
+    "source=tekii-build-${devcontainerId},target=/workspaces/www/TEPPAN_BUILD,type=volume"
   ],
 
   "containerEnv": {
