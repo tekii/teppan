@@ -3,7 +3,7 @@ type: Design Note
 title: Dev container — Claude Code + Playwright MCP, three coexisting scenarios
 description: The .devcontainer/ moves development into a hardened VS Code dev container that replaces the host's chrome-devtools MCP with Microsoft's Playwright MCP — registered at local scope inside the container only, so the host-IDE and Claude-Code-web scenarios are left untouched. Records why each choice was made.
 tags: [design-note, devcontainer, mcp, browser, firewall, playwright, node]
-timestamp: 2026-07-02
+timestamp: 2026-07-03
 ---
 
 # Dev container setup
@@ -298,6 +298,28 @@ onto a single-file bind-mount does it EBUSY. Sketch:
   volumes). Grants then persist in the volume, isolated, across rebuilds.
 - Cost: one volume + one extra mount + postCreate symlink/chown logic; more
   moving parts than Option 3.
+
+## VS Code extensions — declare them, don't hand-install
+
+Add a workspace extension by **declaring it in
+`devcontainer.json`'s `customizations.vscode.extensions`**, never by
+hand-installing it into the running container. A hand-installed extension lives
+on the container's **overlay filesystem** (the same ephemeral layer as the
+sibling worktrees in
+[parallel development](parallel-agent-worktrees.md#container-rebuild-safety)),
+so it is **lost on every rebuild**; a declared one is reinstalled automatically
+on each build — reproducible, and version-controlled with the config. The
+firewall already allowlists the marketplace
+(`marketplace.visualstudio.com`, `vscode.blob.core.windows.net`,
+`update.code.visualstudio.com`), so declared installs work with no extra
+egress rule. `ms-playwright.playwright` is the existing model in the array.
+
+This applies to extensions that must run **in** the container to be useful —
+e.g. the official `anthropic.claude-code` extension (in-editor diffs,
+selection-as-context, a Claude side panel), which has to run in the container's
+VS Code Server to drive the container's hardened `claude`. Note it's a UX layer
+only: driving `claude` from the integrated **terminal** needs no extension at
+all.
 
 See also: [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
 [`file://`-relative preview](file-relative-preview.md),
