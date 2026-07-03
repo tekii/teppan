@@ -15,7 +15,7 @@ Before processing any prompt, detect the language of the input.
 
 Do not silently fix and proceed — always surface errors explicitly so the user stays in control.
 
-# TEKii static site
+# Teppan — the TEKii static multidomain sites generator
 
 *(Content below is loaded from `knowledge/` — see that directory for the
 browsable, OKF-formatted source.)*

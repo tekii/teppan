@@ -1,18 +1,21 @@
 ---
 type: Index
-title: TEKii Knowledge Base
-description: Entry point into the TEKii knowledge base; links to architecture, build/test, testing conventions, code review guidelines, and project conventions.
-tags: [overview, tekii]
+title: Teppan Knowledge Base
+description: Entry point into the Teppan knowledge base; links to architecture, build/test, testing conventions, code review guidelines, and project conventions.
+tags: [overview, teppan, tekii]
 timestamp: 2026-06-17
 ---
 
-# TEKii static site
+# Teppan
 
-A static website (multi-domain, multi-language) generated with GNU `m4`,
-using autoconf's `m4sugar.m4f` macro library standalone (not via
+**Teppan** is the static-site generation project in this repo (the repo name
+`www` is legacy). It builds the **TEKii static multidomain sites** — a
+multi-domain, multi-language bundle of static sites for the company **TEKii** —
+with GNU `m4`, using autoconf's `m4sugar.m4f` macro library standalone (not via
 `configure.ac`/`autoconf`) for its `m4_*` primitives. There is no application
 server — everything is rendered ahead of time into plain HTML/CSS/assets under
-`TEPPAN_BUILD/DOC`.
+`TEPPAN_BUILD/DOC`. See the [glossary](glossary.md) for the
+company / project / repo / deliverable distinction.
 
 This knowledge base is authored in the [Open Knowledge Format (OKF)](okf.md) —
 a directory of markdown files with YAML frontmatter.
