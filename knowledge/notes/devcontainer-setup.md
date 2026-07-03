@@ -208,7 +208,14 @@ a real trade-off, not a free toggle. Left as-is by design.
 `gh` reads `GH_TOKEN` from the environment (fully authenticates, no
 `gh auth login`). `devcontainer.json` carries
 `"GH_TOKEN": "${localEnv:GH_TOKEN}"`, substituted from the **host** environment
-at create/rebuild — keep the real token in an untracked file *outside* the repo.
+at create/rebuild. The host token lives in the **GNOME keyring** (Secret
+Service), not a plaintext file: the committed **`code-with-gh-token.sh`** launcher
+runs `GH_TOKEN="$(secret-tool lookup service gh-token account tekii-www)"` then
+`exec code`, so VS Code — and the container via `${localEnv:GH_TOKEN}` — gets the
+token with **no secret on disk**. Store it once with `secret-tool store` (label
+`tekii/www gh PAT`); manage it in Seahorse (Passwords → Login). The launcher
+holds no secret, so it's committed; each user stores their own PAT in their own
+keyring.
 Use a **fine-grained PAT scoped to `tekii/www`** with a short expiry (bounds the
 blast radius under skip-perms). Never a Docker build `ARG` (baked into image
 history). Do **not** mount host `~/.config/gh` or `~/.ssh`. For HTTPS `git push`,
