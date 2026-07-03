@@ -19,6 +19,10 @@ a directory of markdown files with YAML frontmatter.
 
 ## Sections
 
+- [Glossary & naming](glossary.md) — canonical names: **TEKii** (company),
+  **Teppan** (this project), **www** (legacy repo name), and the **TEKii static
+  multidomain sites** (the deliverable bundle). Read this first — the docs
+  historically conflated these terms.
 - [Architecture](architecture/index.md) — how the site is built: core
   files, the diversion/phase model, domains, and page-source conventions.
 - [Build & test commands](build/commands.md) — `make build`/`preview`/`test`/`clean`,
