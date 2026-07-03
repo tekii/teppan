@@ -16,11 +16,6 @@ m4_divert_push([HEAD])dnl
         <meta name="keywords" content="tekii,trazabilidad,traceability,anmat">
 m4_divert_pop([HEAD])
 
-m4_divert_push([CUSTOM_ELEMENTS])dnl
-        <script async custom-element="amp-position-observer" src="https://cdn.ampproject.org/v0/amp-position-observer-0.1.js"></script>
-        <script async custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js"></script>
-m4_divert_pop([CUSTOM_ELEMENTS])dnl
-
 m4_divert_push([CUSTOM_STYLES])dnl
 dnl<style>
         :root {
@@ -43,8 +38,20 @@ dnl<style>
             bottom: var(--big-air);
             right: var(--big-air);
             position: fixed;
-            opacity: 0;
-            visibility: hidden;
+        }
+        /* Progressive enhancement only: browsers without scroll-driven
+           animations keep the always-visible resting state above. No JS
+           fallback branch to maintain either way. */
+        @supports (animation-timeline: scroll()) {
+            .scrollToTop {
+                opacity: 0;
+                animation: reveal-scroll-to-top linear both;
+                animation-timeline: scroll();
+                animation-range: 400px 500px;
+            }
+            @keyframes reveal-scroll-to-top {
+                to { opacity: 1; }
+            }
         }
         /* we move the anchor down to componsate the fixed header */
         .target {
@@ -62,9 +69,8 @@ m4_divert_push([MAIN])dnl
 dnl<body>
 <section id="about">
     <h1 class="target">
-dnl        <a class="target-anchor" id="top"></a>
+        <a class="target-anchor" id="top"></a>
         __NAV_ITEM(__LANG__,[__ESENBR([Nuestra Historia],[About Us],[])],[__LOCAL_URL_ID__],[])dnl
-        <amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer>
     </h1>
 __ESENBR([dnl
     <p>__TEKII_SRL__ inició actividades en el año 2006 con el objetivo de diseñar e implementar el sistema que registrase los medicamentos distribuidos por los convenios oncológicos,&nbsp;cuatro meses después entró en operación TrazAudit®,&nbsp;el Sistema de Trazabilidad de la industria.</p>
@@ -90,42 +96,6 @@ dnl     <a href="[#]">GET STARTED</a>
 dnl     <a href="[#]">MORE INFO</a>
 dnl </div>
 </section>
-m4_divert_push([EPILOG])dnl
-<amp-animation id="showAnim" layout="nodisplay">
-    <script type="application/json">
-    {
-        "duration": "200ms",
-        "fill": "both",
-        "iterations": "1",
-        "direction": "alternate",
-        "animations": [{
-            "selector": "#scrollToTopButton",
-            "keyframes": [{
-                "opacity": "1",
-                "visibility": "visible"
-            }]
-        }]
-    }
-    </script>
-</amp-animation>
-<amp-animation id="hideAnim" layout="nodisplay">
-    <script type="application/json">
-    {
-        "duration": "200ms",
-        "fill": "both",
-        "iterations": "1",
-        "direction": "alternate",
-        "animations": [{
-            "selector": "#scrollToTopButton",
-            "keyframes": [{
-                "opacity": "0",
-                "visibility": "hidden"
-            }]
-        }]
-    }
-    </script>
-</amp-animation>
-m4_divert_pop([EPILOG])dnl
-<button id="scrollToTopButton" on="tap:main-scroll.scrollTo(duration=200),about.scrollTo(duration=200)" class="scrollToTop">⌃</button>
+<a id="scrollToTopButton" href="[#]top" class="scrollToTop">⌃</a>
 dnl</body>
 m4_divert_pop([MAIN])

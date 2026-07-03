@@ -1,7 +1,7 @@
 dnl m4_include(./configure-fontawesome.m4)dnl
 m4_divert_push([HTML])dnl
 <!DOCTYPE html>
-<html ⚡ lang="__LANG_TAG__">
+<html lang="__LANG_TAG__">
     <head>
         <meta charset="utf-8">
         <!-- m4_quote(__ALTERNATES__) -->
@@ -18,20 +18,18 @@ m4_if(__LANG__,$1,[dnl
 dnl     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Days+One&family=IBM+Plex+Sans&display=swap" rel="stylesheet">
         <!-- BEGIN HEAD divert -->
-m4_undivert([HEAD])[]dnl 
+m4_undivert([HEAD])[]dnl
         <!-- END   HEAD divert -->
 dnl __INCLUDE([meta.json])[]dnl <!-- -->
         <!-- BEGIN custom elements -->
 m4_undivert([CUSTOM_ELEMENTS])[]dnl
         <!-- END custom elements BEGIN custom styles -->
-        <style amp-custom>
-/*__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_INCLUDE_CUSTOM_CSS__*/
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+        <link rel="stylesheet" href="__DASSET(custom.css)">
+        <style>
 /*__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_UNDIVERT_CUSTOM_STYLES__*/
         </style>
         <!-- END custom styles -->
-        <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-        <script async src="https://cdn.ampproject.org/v0.js"></script>
-        <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
     </head>
     <body>
         <!-- BEGIN LOGO DEF -->
@@ -67,10 +65,10 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
             </symbol>
         </svg>
         <!-- END LOGO DEF -- BEGIN LEFT SIDEBAR -->
-        <amp-sidebar id="sidebar" class="ajja" layout="nodisplay" side="left">
-            <svg on="tap:sidebar.close" class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
-
-            <nav toolbar="(min-width: 768px)" toolbar-target="desktop-sidebar">
+        <input type="checkbox" id="sidebar-toggle" class="drawer-toggle" aria-label="Menu">
+        <label for="sidebar-toggle" class="drawer-backdrop drawer-backdrop-sidebar"></label>
+        <nav id="sidebar" class="drawer drawer-left">
+            <label for="sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]close"/></svg></label>
 
             <ul>
 __RENDER_SET([__NAV__ITEMS__],[dnl
@@ -85,18 +83,18 @@ m4_if(__LANG__,$1,[],[dnl
                 <!-- $1 - $2 - $3 -->
                 <li class="nav-item">
                     <a class="" href="__HREF([$3])">
-                        <amp-img src="__DASSET(img/flag-$1.png)" alt="" height=48 width=48 layout="fixed"/>
+                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48">
                     </a>
                 </li>
 ])dnl
 ])dnl
             </ul>
-            </nav>
-        </amp-sidebar>
+        </nav>
         <!-- END LEFT SIDEBAR -- BEGIN RIGHT SIDEBAR -->
-        <amp-sidebar id="lang-sidebar" layout="nodisplay" side="right">
-            <svg on="tap:lang-sidebar.close" class="ui-element" role="button" tabindex="0"><use xlink:href="[#]close"/></svg>
-            <nav toolbar="(min-width: 768px)" toolbar-target="desktop-lang-sidebar">
+        <input type="checkbox" id="lang-sidebar-toggle" class="drawer-toggle" aria-label="Language">
+        <label for="lang-sidebar-toggle" class="drawer-backdrop drawer-backdrop-lang-sidebar"></label>
+        <nav id="lang-sidebar" class="drawer drawer-right">
+            <label for="lang-sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]close"/></svg></label>
             <ul>
 __RENDER_SET([__ALTERNATES__],[dnl
                 <li>
@@ -104,15 +102,14 @@ __RENDER_SET([__ALTERNATES__],[dnl
                 </li>
 ])dnl
             </ul>
-            </nav>
-        </amp-sidebar>
+        </nav>
         <!-- END RIGHT SIDEBAR -- BEGING HEADER -->
         <header>
-            <svg on="tap:sidebar.toggle" role="button" tabindex="0" class="ui-element"><use xlink:href="[#]hamburger"/></svg>
+            <label for="sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]hamburger"/></svg></label>
             <svg class="layout-logo"><use xlink:href="[#]bird2"/></svg>
 dnl         <svg ><use id="header-layout-logo" xlink:href="[#]tekii-logo"/></svg>
             <span class="text-isologo">TEKii</span>
-            <svg on="tap:lang-sidebar.toggle" role="button" tabindex="2" class="ui-element"><use xlink:href="[#]language"/></svg>
+            <label for="lang-sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]language"/></svg></label>
             <div class="lang-dd" style="display: contents;" role="button" tabindex="1">
                 <svg class="ui-element"><use xlink:href="[#]language"/></svg>
                 <div>
@@ -125,6 +122,29 @@ __RENDER_SET([__ALTERNATES__],[dnl
         <!-- END HEADER -- BEGIN DESKTOP-SIDEBAR -->
         <div id="desktop-sidebar">
             <svg class="layout-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use id="header-layout-logo" xlink:href="#tekii-logo"/></svg>
+            <!-- AMP's amp-sidebar toolbar/toolbar-target="desktop-sidebar" used to
+                 clone #sidebar's nav list here at runtime; without AMP that has to be
+                 emitted directly, so this is the same [__RENDER_SET] calls as #sidebar. -->
+            <nav>
+            <ul>
+__RENDER_SET([__NAV__ITEMS__],[dnl
+m4_if($1,__LANG__,[dnl
+                <li class="nav-item">
+                    <a class="link" href="__HREF([$3])[#]$4">$2</a>
+                </li>
+])dnl
+])dnl
+__RENDER_SET([__ALTERNATES__],[dnl
+m4_if(__LANG__,$1,[],[dnl
+                <li class="nav-item">
+                    <a class="" href="__HREF([$3])">
+                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48">
+                    </a>
+                </li>
+])dnl
+])dnl
+            </ul>
+            </nav>
         </div>
         <!-- END DESKTOP-SIDEBAR -- BEGIN MAIN -->
 <main id="main-scroll">
@@ -150,7 +170,7 @@ m4_undivert([MAIN])[]dnl <!-- MAIN DIVERSION WILL BE INSERTED HERE -->
                 style="fill:currentColor;"
                 d="M 255.9038,8 C 168.2324,6.6183065 80.953097,55.008313 39.445924,132.90663 -23.211377,245.88188 12.680441,402.92611 120.28426,475.44184 c 20.94344,9.44101 52.26894,41.3382 73.07966,21.22517 0.23177,-21.31389 3.9845,-52.35982 -2.43759,-67.54224 -28.19575,4.63958 -66.73973,2.9991 -80.26486,-27.02744 -3.95113,-24.32352 -29.308925,-36.93906 -38.388108,-55.17116 26.034025,-9.19853 46.240298,17.19378 58.119248,36.71907 14.44552,18.47211 54.03329,23.2496 65.23086,2.95396 -0.55338,-15.52074 27.85433,-33.71535 -0.742,-30.58302 -34.78433,-3.20897 -73.99609,-17.45306 -87.07528,-53.0254 -10.71116,-30.26535 -14.794143,-65.67973 -2.33349,-95.97137 14.89526,-16.15397 16.40011,-30.9064 11.27621,-51.73159 -1.29808,-21.23879 5.03102,-54.91431 32.90768,-37.47191 21.28824,4.15146 36.86212,31.04499 59.09155,20.4553 36.42949,-7.64754 74.72544,-6.42135 110.53495,3.78839 20.84985,-12.78719 43.33495,-30.52328 69.11858,-27.71523 8.49878,22.02829 10.63774,47.21787 2.60447,69.69868 19.81723,19.01336 29.19466,46.61462 25.4618,73.79842 -0.6732,35.79938 -17.45825,74.94045 -53.62124,87.47639 -15.69755,10.21811 -54.16764,6.83237 -57.61584,15.99801 20.64699,25.66417 11.67628,60.5379 13.52931,90.79482 -2.38509,22.28743 -3.99159,68.62096 31.02182,46.46603 C 448.43031,458.7906 509.03141,351.01283 503.82114,246.4933 502.09138,159.30379 450.87664,74.564218 372.36295,35.567294 336.51682,17.128231 296.15972,7.9403462 255.9038,8 Z"
                 />
-         
+
             </svg>
             <svg id="linedin" role="img" viewBox="0 0 512 512">
                 <path
@@ -159,7 +179,7 @@ m4_undivert([MAIN])[]dnl <!-- MAIN DIVERSION WILL BE INSERTED HERE -->
                 />
             </svg>
             <a href="http://qr.afip.gob.ar/?qr=sifPTfj7txtxzvCuOMriYA,," target="_F960AFIPInfo">
-                <amp-img src="__DASSET(img/DATAWEB.jpg)" alt="" height=327 width=239 layout="fixed"/>
+                <img src="__DASSET(img/DATAWEB.jpg)" alt="" height="327" width="239">
             </a>
 m4_divert_push(KILL)
             <div class="ico-wrapper">

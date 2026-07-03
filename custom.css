@@ -1,6 +1,9 @@
 :root {
-    --small-air: 0.5rem; 
+    --small-air: 0.5rem;
     --big-air: 1rem;
+}
+html {
+    scroll-behavior: smooth;
 }
 body {
     display: flex;
@@ -12,7 +15,7 @@ h1:nth-of-type(1) {
 header, h1, h2 {
     font-family: 'IBM Plex Sans', sans-serif;
 }
-header, footer, amp-sidebar, section {
+header, footer, .drawer, section {
     padding: var(--big-air);
 }
 footer {
@@ -22,7 +25,7 @@ footer {
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 80%;
 }
-footer ul, amp-sidebar ul {
+footer ul, .drawer ul {
     list-style-type: none;
     /*text-align: left;
     margin-block-start: 0em;
@@ -35,7 +38,7 @@ footer a:link, footer a:visited, footer a:hover {
 footer a:hover {
     text-decoration: underline;
 }
-amp-sidebar ul {
+.drawer ul {
     font-family: 'IBM Plex Sans', sans-serif;
     list-style-type: none;
     padding-left: 0pt;
@@ -49,13 +52,59 @@ amp-sidebar ul {
     --logo-bird-color:white;
 }
 
+/*
+ * Off-canvas drawer mechanics (checkbox-hack, CSS-only). AMP's <amp-sidebar>
+ * runtime used to supply positioning/transition/scroll-lock for free --
+ * amp-custom.css never had to define any of this itself, so it's authored
+ * fresh here rather than adapted from an existing rule.
+ */
+.drawer-toggle {
+    position: absolute;
+    opacity: 0;
+}
+.drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+    overflow-y: auto;
+    background: var(--background, #fff);
+    transition: transform .25s ease;
+    z-index: 20;
+}
+.drawer-left {
+    left: 0;
+    transform: translateX(-100%);
+}
+.drawer-right {
+    right: 0;
+    transform: translateX(100%);
+}
+.drawer-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .4);
+    z-index: 19;
+}
+body:has(#sidebar-toggle:checked) #sidebar {
+    transform: translateX(0);
+}
+body:has(#lang-sidebar-toggle:checked) #lang-sidebar {
+    transform: translateX(0);
+}
+body:has(#sidebar-toggle:checked) .drawer-backdrop-sidebar,
+body:has(#lang-sidebar-toggle:checked) .drawer-backdrop-lang-sidebar {
+    display: block;
+}
+body:has(#sidebar-toggle:checked, #lang-sidebar-toggle:checked) {
+    overflow: hidden;
+}
+
 @media only screen and (max-width: 767px) {
     .layout-logo {
         width: 75px;
         height: 75px;
-    }
-    amp-sidebar {
-        width: 300px;
     }
     body {
         flex-direction: column;
@@ -66,12 +115,20 @@ amp-sidebar ul {
         /*grid-template-columns: auto auto auto;
         justify-content: space-between;*/
     }
-    svg.ui-element, header svg:nth-of-type(2) {
+    /* #desktop-sidebar's nav list is a duplicate of #sidebar's -- only ever
+       meant to be shown at the desktop breakpoint below. It was never
+       explicitly hidden here before (it only held a small logo, so the gap
+       was harmless); now that it also carries the nav list, this needs to
+       be explicit. */
+    div#desktop-sidebar {
+        display: none;
+    }
+    svg.ui-element, .ui-element svg, header svg:nth-of-type(2) {
         width: 2rem;
         height: 2rem;
     }
     span.text-isologo {
-        font-family:'Days One', sans-serif; 
+        font-family:'Days One', sans-serif;
         font-size: 36px;
     }
     div.lang-dd {
@@ -111,15 +168,10 @@ amp-sidebar ul {
         -moz-user-select: none;
         outline: none;
     }
-    header svg:focus, amp-sidebar svg:focus {
-        outline: none;
-        /*background: none;
-        border: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;*/
-
+    header label, .drawer label {
+        cursor: pointer;
     }
-    header svg, amp-sidebar svg {
+    header svg, .drawer svg {
         /*-moz-user-select: none;
         -webkit-user-select: none;*/
         outline:none;
@@ -135,7 +187,8 @@ amp-sidebar ul {
         -webkit-user-select: none;*/
         margin-inline-end: 1rem;
     }
-    header svg.ui-element:hover, amp-sidebar svg.ui-element:hover {
+    header svg.ui-element:hover, .drawer svg.ui-element:hover,
+    header .ui-element:hover svg, .drawer .ui-element:hover svg {
         transform:scale(1.1);
     }
 }
@@ -157,22 +210,17 @@ amp-sidebar ul {
         width: 303px;
         flex-grow: 1;
     }
+    div#desktop-sidebar ul {
+        list-style-type: none;
+        padding-left: 0pt;
+        font-family: 'IBM Plex Sans', sans-serif;
+    }
     main {
-        display:flex; 
-        flex-direction: column; 
+        display:flex;
+        flex-direction: column;
         flex-grow: 2;
         /*height: 100vh;*/
         overflow:auto;
     }
 
-}
-
-.amp-sidebar-toolbar-target-shown {
-    background-color:pink;
-    /*display: none;*/
-}
-
-.amp-sidebar-toolbar-target-hidden {
-    background-color:red;
-    /*display: block;*/
 }

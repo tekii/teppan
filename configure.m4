@@ -6,9 +6,10 @@ m4_define([__TEKII_SRL_]_,__TEKII__([ SRL]))
 dnl
 m4_divert_push([MAKEFILE])dnl 
 m4_divert_pop([MAKEFILE])
-# MACROS TO AVOID ERRORS IN CSS HIGHLIGHT BECOSE M4<>CSS SYNTAX
-m4_define([__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_INCLUDE_CUSTOM_CSS__],[dnl
- BEGIN AMP-CUSTOM.CSS */m4_newline([])__INCLUDE([amp-custom.css])m4_newline([/* END AMP-CUSTOM.CSS ])])
+# MACRO TO AVOID ERRORS IN CSS HIGHLIGHT BECOSE M4<>CSS SYNTAX
+# custom.css itself is now delivered via a <link>/__DASSET (see layout.html),
+# not inlined -- only the small per-page CUSTOM_STYLES diversion still needs
+# this treatment.
 m4_define([__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_UNDIVERT_CUSTOM_STYLES__],[dnl
  BEGIN CUSTOM STYLES */m4_newline([])m4_undivert([CUSTOM_STYLES])m4_newline([/* END CUSTOM STYLES ])])
 dnl
