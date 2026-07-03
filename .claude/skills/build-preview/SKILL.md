@@ -41,22 +41,50 @@ correctly — read the generated HTML directly (`Read`/`grep` on
 That's cheaper and just as authoritative; a full browser navigation adds
 nothing for a question that's really "what does this file contain."
 
-If a browser genuinely is warranted, two ways to get one, in order of
-preference:
+If a browser genuinely is warranted, **which MCP server is available depends
+on which of the three environments you're in** (see
+[dev container setup](../../../knowledge/notes/devcontainer-setup.md)) —
+they are mutually exclusive, never both at once, so check rather than assume:
 
-**A. The `chrome-devtools` MCP server**, if connected (check with
-`ToolSearch` for `mcp__chrome-devtools__*` — `navigate_page`, `new_page`,
-`take_screenshot`, `take_snapshot`, `list_console_messages`,
-`list_network_requests`, etc.). This is the right tool once real visual or
-runtime inspection is needed: open the target page with `new_page`/
+- **Host + IDE** → Google's `chrome-devtools` MCP (`mcp__chrome-devtools__*`).
+- **Dev container** → Microsoft's Playwright MCP (`mcp__playwright__*`) —
+  `chrome-devtools` is not registered in-container at all, it's replaced.
+- **Claude Code web** → neither; fall straight to manual/no-browser.
+
+Confirm with `ToolSearch` for whichever prefix applies before picking a path.
+
+**A1. `chrome-devtools` MCP** (`mcp__chrome-devtools__*` — `navigate_page`,
+`new_page`, `take_screenshot`, `take_snapshot`, `list_console_messages`,
+`list_network_requests`, etc.). Open the target page with `new_page`/
 `navigate_page` (`file:///$(pwd)/TEKII_BUILD/DOC/<domain>/index.html`), then
 use `take_screenshot`/`take_snapshot`/console/network tools as needed. It's
 already configured (local scope, project-local profile and Node — see
-`knowledge/notes/` if present, or ask the user) to run against
-`.claude/chrome-profile/` and the real `google-chrome` binary. No extra
-permission dance needed beyond the tool's own call.
+[`chrome-devtools` MCP setup](../../../knowledge/notes/chrome-devtools-mcp-setup.md))
+to run against `.claude/chrome-profile/` and the real `google-chrome`
+binary. No extra permission dance needed beyond the tool's own call.
 
-**B. Manual launch**, only if the MCP server isn't connected and the user
+**A2. Playwright MCP** (`mcp__playwright__*` — `browser_navigate`,
+`browser_take_screenshot`, `browser_snapshot`, `browser_console_messages`,
+etc.), inside the dev container only. Navigate with `browser_navigate` to
+`file:///$(pwd)/TEKII_BUILD/DOC/<domain>/index.html`. Three
+container-specific gotchas, all detailed in
+[dev container setup](../../../knowledge/notes/devcontainer-setup.md):
+- `file://` needs `--allow-unrestricted-file-access` — already baked into
+  `postcreate.sh`, but only takes effect from the *next* session after that
+  flag was added (mid-session, `file://` may still be blocked).
+- The generated pages still carry AMP boilerplate CSS that hides `<body>`
+  for up to 8 seconds regardless of whether the AMP runtime loads (it never
+  does here — no network egress to `cdn.ampproject.org`) — a screenshot
+  taken immediately after navigation comes back blank white. Call
+  `browser_wait_for({time: 9})` before screenshotting.
+- `browser_take_screenshot`'s `filename` parameter bypasses `--output-dir`
+  entirely and resolves relative to the workspace root instead — omit
+  `filename` (auto-generated name, lands correctly in
+  `TEKII_BUILD/ARTIFACTS/`) or pass an absolute `TEKII_BUILD/ARTIFACTS/...`
+  path; never a bare relative name, or it leaks an untracked `.png` into
+  the repo root.
+
+**B. Manual launch**, only if neither MCP server is connected and the user
 still wants eyes-on inspection (not a scripted screenshot/DOM check):
 
 ```

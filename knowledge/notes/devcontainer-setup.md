@@ -116,6 +116,24 @@ line), container-private (named volume, no host bind-mount leak), and wiped by
 zero repo-pollution risk and no extra `.gitignore` entry — preferred over
 `/tmp` (which is off-workspace and invisible in the file tree).
 
+**Gotcha: an explicit `filename` on `browser_take_screenshot` bypasses
+`--output-dir` entirely.** Confirmed 2026-07-02 — a screenshot taken with
+`filename: "tekii-ar-home.png"` landed in the workspace root (an untracked
+file), not `TEKII_BUILD/ARTIFACTS/`, even though `--output-dir` was
+correctly registered. Traced into `@playwright/mcp@0.0.77`'s bundled
+`playwright-core/lib/coreBundle.js`, `resolveClientFile()`: when the tool
+call supplies `filename`, it becomes `template.suggestedFilename` and
+resolves via `resolveClientFilename()` → `this._context.workspaceFile(...)`
+— relative to the **client** workspace (Claude Code's cwd), never
+consulting `--output-dir`. Only when `filename` is *omitted* does
+resolution fall through to `this._context.outputFile(...)`, which is the
+path that actually honors `--output-dir` (why the auto-named
+snapshot/console-log files, which pass no `filename`, land correctly). This
+is upstream package behavior, not a registration bug — nothing in
+`postcreate.sh` can fix it. **Workaround:** omit `filename` (get an
+auto-generated name, correctly placed), or pass an absolute path under
+`TEKII_BUILD/ARTIFACTS/` as `filename` — never a bare relative name.
+
 ### Bind-mount hygiene — the container ignores host browser state
 The workspace bind-mount exposes the host's gitignored `.claude/node/` and
 `.claude/chrome-profile/` inside the container. The container uses **neither**:
