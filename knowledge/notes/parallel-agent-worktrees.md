@@ -8,11 +8,11 @@ timestamp: 2026-07-03
 
 # Parallel development — branch workflow, worktrees, and multi-agent setup
 
-This note records a design discussion, not a shipped feature: it evaluates a
-proposed git workflow and works out what a parallel multi-agent setup would
-require. The conclusions are decisions-of-record; the multi-agent machinery
-(B3 delta, launchers) is a **sketch to build if/when needed**, not yet
-implemented.
+This note records a design discussion. The conclusions are
+decisions-of-record; the **manual worktree flow is empirically validated**
+(smoke-tested 2026-07-03 — see [Validation](#validation-smoke-tested)); the
+**committed B3 infrastructure** (distinct named volumes, launcher scripts)
+remains a **sketch to build if/when needed**, not yet implemented.
 
 ## The premise that started it
 
@@ -100,6 +100,15 @@ gitignored per-project tooling — `.claude/node/`, `.claude/chrome-profile/`,
 in `~/.claude.json`. Harmless if the agent only edits m4/HTML/CSS and runs
 `make test`/`make build`; needs per-worktree re-setup if it needs the browser
 MCP.
+
+**Verified — `make test`/`make build` need *zero* per-worktree setup.** A fresh
+worktree lacks the gitignored `VENDOR`, yet `make test` runs green in it because
+(a) `m4sugar.m4f` is loaded from a **system path**
+(`-R /usr/share/autoconf/m4sugar/m4sugar.m4f`), not `VENDOR`, and (b) `make
+test` needs only tracked files — `generator_test.m4` plus the tracked
+`tests/fixtures/MOCK_VENDOR` — not the real (gitignored, currently absent)
+`VENDOR`. So the "gitignored tooling doesn't follow a worktree" caveat bites the
+**browser MCP only**, never the build/test path.
 
 ## Isolation matrix — host vs. container vs. worktree
 
@@ -237,6 +246,62 @@ framework seam" partition rule is enforced. **Recommendation:** Model B inside
 Claude Code (least to build); Model C (`devcontainer exec` + `claude -p` +
 `tmux`) only for an unattended, GUI-less fleet; Model A as the two-agent
 manual fallback.
+
+## Container rebuild safety
+
+The container is designed to be rebuilt as the recovery path. "Rebuild loses
+nothing" is true **only for what lives in the bind-mount or a named volume** —
+the container's own overlay filesystem is discarded. The ledger:
+
+| Where it lives | Survives a rebuild? |
+|---|---|
+| `/workspaces/www` (**bind-mount** = host repo) — committed work, tracked files, `.git` | ✅ Safe (it's on the host) |
+| `TEPPAN_BUILD`, `~/.claude` (**named volumes**) — build tree, MCP registration, auto-memory | ✅ Survive a normal rebuild (incl. "Rebuild Without Cache"); lost **only** if you explicitly `docker volume rm` / delete volumes |
+| **Container overlay** — ephemeral worktrees at `/workspaces/wt-*`, ad-hoc installs, `tmux` sessions, processes | ❌ Lost on rebuild |
+
+The one real data-loss surface: **uncommitted work in an ephemeral worktree**
+(overlay, not bind-mount). Its **commits** survive — they were written into the
+bind-mounted `/workspaces/www/.git` (the "durable spine") — but uncommitted
+working-tree state does not. So "just rebuild, nothing lost" holds **precisely
+if the work is committed**, which is why the design leans on committing often.
+
+**A broken `.devcontainer/` experiment can make the container fail to start**
+(see the firewall/statsig abort modes in
+[dev container setup](devcontainer-setup.md)), but you are never bricked: the
+config is on the bind-mounted repo, so recover with
+`git checkout master -- .devcontainer/` (or switch branch) and rebuild. Note
+the running container reflects whichever `.devcontainer/` was checked out **at
+build time**, so keep experimental config on its own branch.
+
+## Validation (smoke-tested)
+
+The **manual worktree flow** was smoke-tested end-to-end on the real repo
+(2026-07-03, host-side; the git/build mechanics are identical in the
+container). Two sibling worktrees on throwaway `agent/*` branches off `master`,
+each a distinct fake task, then:
+
+- **`make test` run in both worktrees *in parallel*** → both exited 0, **30
+  PASS / 0 FAIL** each, each building into its **own** `$(PWD)/TEPPAN_BUILD`
+  with no `.mode-<domain>` collision and no write to the main tree — confirming
+  the absolute-path build-isolation property.
+- **Both branches merged into a throwaway integration branch** (disjoint files)
+  → clean merge, post-merge `make test` still 0 FAIL — the "~80% file-boundary"
+  case in practice.
+
+**Verified teardown — leaves zero trace** (throwaway commits become unreachable,
+then GC-pruned; `master` and keeper branches untouched):
+
+```sh
+git worktree remove --force <path>        # --force only if the worktree is dirty
+git branch -D agent/<task>                # -D (force): the branch is unmerged by design
+git worktree prune
+# optional hard reclaim of the now-dangling objects:
+git reflog expire --expire=now --all && git gc --prune=now
+```
+
+The **only** way a test run leaves residue is if you deliberately merge a
+throwaway branch into a keeper branch — which the partition/integration
+discipline says you don't.
 
 See also: [dev container setup](devcontainer-setup.md),
 [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
