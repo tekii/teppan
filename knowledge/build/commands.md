@@ -1,7 +1,7 @@
 ---
 type: Build Reference
 title: Build & test commands
-description: make targets for building, previewing, testing, and cleaning the TEKii static site — full-site, per-domain, and per-page scoping, plus the build-mode stamp and the build-preview skill.
+description: Teppan's make targets for building, previewing, testing, and cleaning the TEKii static multidomain sites — full-bundle, per-domain, and per-page scoping, plus the build-mode stamp and the build-preview skill.
 tags: [build, make, preview, testing]
 timestamp: 2026-06-30
 ---

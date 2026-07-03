@@ -1,7 +1,7 @@
 ---
 type: Index
 title: Architecture
-description: Overview of TEKii's m4-based static site architecture; links to the diversion/phase model, domain layout, and page-source conventions.
+description: Overview of Teppan's m4-based static-site architecture (the generator that builds the TEKii static multidomain sites); links to the diversion/phase model, domain layout, and page-source conventions.
 tags: [architecture, index]
 timestamp: 2026-06-17
 ---
