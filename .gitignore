@@ -16,4 +16,3 @@ notas.txt
 .claude/node/
 .claude/settings.local.json
 .playwright-mcp/
-code-with-gh-token.sh
