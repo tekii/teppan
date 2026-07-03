@@ -1,7 +1,7 @@
 {
-  // TEKii `www` dev container — Claude Code CLI + Playwright MCP, hardened.
+  // Teppan dev container (repo: www) — Claude Code CLI + Playwright MCP, hardened.
   // See .devcontainer/Dockerfile and the plan in the repo history for rationale.
-  "name": "TEKii www — Claude Code + Playwright",
+  "name": "Teppan (www) — Claude Code + Playwright",
   "build": { "dockerfile": "Dockerfile" },
 
   // Features layer AFTER the Dockerfile build (Node is already on PATH for the

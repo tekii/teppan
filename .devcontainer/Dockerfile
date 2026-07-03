@@ -1,4 +1,4 @@
-# TEKii `www` dev container.
+# Teppan dev container (repo: www).
 #
 # Layered on Microsoft's devcontainers base (non-root `vscode` user + sudo).
 # The Claude Code and GitHub CLI features are added on top in devcontainer.json;
@@ -11,7 +11,7 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
 # --- Project build toolchain + firewall deps + tarball extraction ------------
-#   m4/autoconf/make          -> the TEKii m4 site generator (Makefile)
+#   m4/autoconf/make          -> the Teppan m4 site generator (Makefile)
 #   iptables..aggregate,jq    -> .devcontainer/init-firewall.sh
 #   xz-utils                  -> extract the Node .tar.xz below
 # (coreutils/realpath, git, curl come with the base image.)
