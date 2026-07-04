@@ -121,13 +121,18 @@ container boundary:
 | **MCP server** | `chrome-devtools` (host local scope) | `@playwright/mcp` (container volume local scope) | **No** |
 | **Auto-memory** | `-home-<user>-www` key | `-workspaces-www` key, container volume | **No** |
 | **`./.claude/`** (repo subtree: `settings.local.json`, `skills/`, committed `settings.json`) | \<— workspace bind-mount —> | same files | **Yes** |
+| **source tree + `.git`/HEAD** (all tracked files, the branch pointer) | `/home/<user>/www` | `/workspaces/www` (bind-mount) | **Yes — ONE HEAD** |
 
 So host↔container do **not** share the MCP or user-scope `~/.claude`
 (including memory) — that isolation is the container's *volume* setup, not
 worktrees. They **do** share the repo's own `./.claude/`, which is exactly the
 `settings.local.json` permission-grant leak the
 [dev container note](devcontainer-setup.md) documents (mitigated by defaulting
-the container to `bypassPermissions`).
+the container to `bypassPermissions`). **Most consequentially, they share the
+source tree *and* `.git`/HEAD** — the container bind-mounts the host checkout,
+so the two are one repo on one branch pointer. That is the sharpest coupling of
+all, and it caused a real incident — see
+[the shared-HEAD trap](#hostcontainer-the-shared-head-trap) below.
 
 **Worktrees are a third, independent axis.** A host worktree at a new path
 doesn't inherit the main checkout's path-keyed MCP or its gitignored tooling,
@@ -272,6 +277,49 @@ config is on the bind-mounted repo, so recover with
 `git checkout master -- .devcontainer/` (or switch branch) and rebuild. Note
 the running container reflects whichever `.devcontainer/` was checked out **at
 build time**, so keep experimental config on its own branch.
+
+## Host↔container: the shared-HEAD trap
+
+The devcontainer isolates user-scope `~/.claude` (memory/MCP) and the
+`TEPPAN_BUILD` volume, but it does **not** isolate the **source tree or
+`.git`/HEAD** — those are bind-mounted. So the host checkout (`/home/<user>/www`)
+and the container's `/workspaces/www` are **one repo on one branch pointer**.
+Two git-active sessions on that shared checkout is *negative* isolation — the
+opposite of what worktrees/B2 give. The clash condition is **agent-agnostic**:
+it's any two git-active sessions on one shared tree+HEAD (agent-agent,
+user-agent, user-user alike).
+
+**Real incident (2026-07-03, resolved benign).** A host-side session ran
+`git checkout master` (to commit an unrelated `knowledge/` doc) while a
+container session was live on `css-water-migration`. Because HEAD is shared, the
+checkout **reverted the container's in-context files** (`layout.html`,
+`configure.m4`, …) to their `master` content *underneath* the live session. The
+container harness then emitted its standard **external-file-change
+notifications** — *"Note: <file> was modified… don't tell the user, they are
+already aware…"* — one per reverted file, batched onto the session's next tool
+result. The container instance briefly suspected **prompt injection**. It was a
+**false alarm**: no data loss (the migration commit was intact — HEAD simply
+moved and moved back), the "don't tell the user" wording is *standard harness
+phrasing*, and the tell was that the notes matched the **reverted files**, not
+the file being read. Correct posture (surface, don't silently obey) but wrong
+classification, for lack of cross-session visibility.
+
+**Prevention — ranked (for "user/agent outside + agent inside, concurrent"):**
+
+1. Current bind-mount, both working in `/workspaces/www` → ❌ shared HEAD (the incident).
+2. **B3** — the container actor works in its **own** container-local worktree
+   (own HEAD) and **never `git checkout` in `/workspaces/www`** → ✅ *if
+   disciplined* (the agent can still wander into the shared checkout — which is
+   exactly what happened).
+3. **B2** — give the container its **own clone** (no host source bind-mount) →
+   ✅✅ no shared HEAD exists; **foolproof by construction**.
+4. Temporal separation (never both git-active at once) → ✅ operational, not structural.
+
+**Takeaway:** B3 is sufficient *if followed*; **B2 (separate clone) is the more
+robust choice for the host↔container seam**, because it removes the shared HEAD
+rather than relying on the agent's restraint. See
+[dev container setup](devcontainer-setup.md) for the volume/bind-mount layout
+this rests on.
 
 ## Validation (smoke-tested)
 
