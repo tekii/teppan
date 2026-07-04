@@ -94,21 +94,16 @@ with no `make realclean` churn between switches — see
 [`file://`-relative preview](file-relative-preview.md) and
 [Build & test commands](../build/commands.md) for the stamp mechanism.
 
-**Caveat:** a fresh worktree is a new path, so it does **not** inherit the
-gitignored per-project tooling — `.claude/node/`, `.claude/chrome-profile/`,
-`.claude/settings.local.json`, or the path-keyed local-scope MCP registration
-in `~/.claude.json`. Harmless if the agent only edits m4/HTML/CSS and runs
-`make test`/`make build`; needs per-worktree re-setup if it needs the browser
-MCP.
-
-**Verified — `make test`/`make build` need *zero* per-worktree setup.** A fresh
-worktree lacks the gitignored `VENDOR`, yet `make test` runs green in it because
-(a) `m4sugar.m4f` is loaded from a **system path**
-(`-R /usr/share/autoconf/m4sugar/m4sugar.m4f`), not `VENDOR`, and (b) `make
-test` needs only tracked files — `generator_test.m4` plus the tracked
-`tests/fixtures/MOCK_VENDOR` — not the real (gitignored, currently absent)
-`VENDOR`. So the "gitignored tooling doesn't follow a worktree" caveat bites the
-**browser MCP only**, never the build/test path.
+**Caveat — browser MCP only, not build/test.** A fresh worktree is a new path,
+so it does **not** inherit the gitignored per-project tooling (`.claude/node/`,
+`.claude/chrome-profile/`, `.claude/settings.local.json`, or the path-keyed
+local-scope MCP registration in `~/.claude.json`). But this bites the **browser
+MCP only**: `make test`/`make build` need **zero** per-worktree setup —
+*verified* (30 PASS in a fresh worktree that lacked `VENDOR`), because
+`m4sugar.m4f` loads from a **system path**
+(`-R /usr/share/autoconf/m4sugar/m4sugar.m4f`) and the tests use only tracked
+files (`generator_test.m4` + `tests/fixtures/MOCK_VENDOR`), never the gitignored
+`VENDOR`.
 
 ## Isolation matrix — host vs. container vs. worktree
 
@@ -315,9 +310,13 @@ classification, for lack of cross-session visibility.
    ✅✅ no shared HEAD exists; **foolproof by construction**.
 4. Temporal separation (never both git-active at once) → ✅ operational, not structural.
 
-**Takeaway:** B3 is sufficient *if followed*; **B2 (separate clone) is the more
-robust choice for the host↔container seam**, because it removes the shared HEAD
-rather than relying on the agent's restraint. See
+**Takeaway (scope by threat model):** B3 is sufficient *if the discipline is
+followed*. B2's structural clash-immunity **is** genuinely more robust — but
+that robustness only *pays off against an untrusted/compromised agent*; for
+*cooperating* agents the cost (next section) outweighs it. So the default is
+**B3 + a guard** (the accidental-mishap hooks below), with B2 reserved for the
+compromised-agent threat model — as the **Decision of record** below (end of the
+guarding section) states. See
 [dev container setup](devcontainer-setup.md) for the volume/bind-mount layout
 this rests on.
 
@@ -326,13 +325,13 @@ this rests on.
 B2 removes the clash by construction, but it **relocates** onto you several
 things the shared bind-mount / shared object store gave for free:
 
-1. **Commit durability moves *into* the container.** With the bind-mount,
-   commits are safe even if the container dies — they were written to the
-   **host's** `.git` (the "durable spine"). B2's clone has its **own** `.git`
-   *inside* the container, so a crash/destroy loses **uncommitted** work **and
-   committed work too**, *unless* the clone sits on a **persistent named
-   volume** or the commits were **pushed to a shared remote**. Durability is no
-   longer free — you must re-provide it (persistent volume, or push often).
+1. **Commit durability moves *into* the container.** The bind-mount's "durable
+   spine" (commits land in the host's `.git`, so they survive a container
+   crash — see [Container rebuild safety](#container-rebuild-safety)) is
+   **gone**: B2's clone has its **own** `.git` *inside* the container, so a
+   crash/destroy loses committed work too **unless** the clone is on a
+   **persistent volume** or **pushed**. Durability is no longer free — you must
+   re-provide it.
 2. **Merging goes from local to remote-mediated — the biggest change.** In B3
    all worktrees share **one `.git` object store**, so `git merge agent/b` is
    **local and instant** (the commits are already present — no network). In B2
@@ -367,13 +366,10 @@ things the shared bind-mount / shared object store gave for free:
 
 **Net:** B2 doesn't merely risk "work until pushed" — it **converts a
 single-repo operation into a distributed-VCS workflow** (shared remote,
-credentials everywhere, stale-base conflicts, non-ff reconciliation). B3 relies
-on restraint but keeps everything local and cheap; B2 is structurally
-clash-immune but pays the full multi-repo collaboration tax. So the pragmatic
-default for *cooperating* agents is **B3 with a hard guard against touching
-`/workspaces/www`** (or temporal separation); reserve B2 for when the
-trust/isolation boundary genuinely justifies running a real remote-mediated
-flow.
+credentials everywhere, stale-base conflicts, non-ff reconciliation). That
+multi-repo collaboration tax is why, for *cooperating* agents, the default stays
+**B3 + a guard** (next section) and B2 is reserved for the untrusted/compromised
+case.
 
 ## Guarding `/workspaces/www` against *accidental* HEAD moves
 
@@ -401,10 +397,9 @@ agent's view so it self-corrects for the rest of the session:
   the git hook that guards ref/HEAD updates, and it isn't skipped by
   `--no-verify`.)
 
-| Route | Caught by |
-|---|---|
-| typed `git checkout /workspaces/www` | `PreToolUse` (before it runs — clean) |
-| git nested in a script / `make` / plumbing | `reference-transaction` (inside git) |
+Division of labor: `PreToolUse` cleanly stops the *typed* `git checkout` before
+it runs; `reference-transaction` is the net for the *scripted/nested/plumbing*
+routes `PreToolUse` can't see.
 
 **Placement (accidental model → no tamper concern):** `PreToolUse` in the repo's
 `.claude/settings.json`, the hook in `.git/hooks` (or `core.hooksPath`) —
