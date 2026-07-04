@@ -10,6 +10,16 @@
 # build time, before any egress restriction exists.
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
+# --- Container identity marker -----------------------------------------------
+# A reliable "am I inside this container" signal for the B3 tree guards
+# (scripts/guard-main-head.sh + the reference-transaction/post-checkout git
+# hooks). Image ENV is inherited by BOTH `docker run` children AND `docker exec`d
+# processes, so it survives the headless `devcontainer exec` fleet path and
+# reaches git-hook subprocesses -- unlike VS Code's REMOTE_CONTAINERS, which is
+# set only in attached terminals. The shared .git/hooks run host-side too; this
+# marker is absent on the host, so the guards fail open there.
+ENV TEPPAN_IN_CONTAINER=1
+
 # --- Project build toolchain + firewall deps + tarball extraction ------------
 #   m4/autoconf/make          -> the Teppan m4 site generator (Makefile)
 #   iptables..aggregate,jq    -> .devcontainer/init-firewall.sh

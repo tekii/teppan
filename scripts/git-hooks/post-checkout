@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# post-checkout -- B3 DETECTIVE guard (git hook).
+#
+# Covers the branch-SWITCH route that reference-transaction cannot see (a HEAD
+# symref retarget emits no ref transaction) and that the PreToolUse deny misses
+# when the checkout is scripted/nested from a worktree session. git has no
+# pre-checkout hook, so this fires AFTER the switch: it loudly warns and injects
+# the rule (surfaced in the agent's tool output so it self-corrects), but does
+# NOT auto-undo -- the tree is already switched and a blind restore could clobber
+# real uncommitted work.
+#
+# Args (git):  $1 = previous HEAD   $2 = new HEAD   $3 = 1 branch / 0 file checkout
+#
+# Fail-open on the host: shared .git/hooks runs host-side too; the first line
+# exits when the container marker is absent, with no git call.
+set -uo pipefail
+[ "${TEPPAN_IN_CONTAINER:-}" = 1 ] || exit 0     # host / non-container -> silent
+[ "${3:-0}" = 1 ] || exit 0                      # branch checkouts only (not file restores)
+[ "${1:-}" = "${2:-}" ] && exit 0                # no-op switch (same commit)
+case "${1:-}" in *[!0]*) : ;; *) exit 0 ;; esac  # skip initial/orphan checkout (prev all-zero)
+
+# Main worktree only -- a linked worktree switching its own branch is fine.
+gitdir=$(git rev-parse --absolute-git-dir 2>/dev/null)                       || exit 0
+common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)  || exit 0
+[ "$gitdir" = "$common" ] || exit 0
+
+cat >&2 <<'MSG'
+B3 guard (WARNING -- the switch already happened): the SHARED checkout
+/workspaces/www just changed branches. On the shared HEAD this reverts in-context
+files for any other session on this checkout (the shared-HEAD trap). Agents must
+work in their own worktree (/workspaces/wt-<task>), never checkout/switch in
+/workspaces/www. If this was accidental, return now:  git switch -   (inspect
+git reflog if files look wrong).
+MSG
+exit 0
