@@ -24,12 +24,17 @@ ENV TEPPAN_IN_CONTAINER=1
 #   m4/autoconf/make          -> the Teppan m4 site generator (Makefile)
 #   iptables..aggregate,jq    -> .devcontainer/init-firewall.sh
 #   xz-utils                  -> extract the Node .tar.xz below
+#   tmux                      -> B3 fleet: scripts/b3-fleet.sh runs each agent's
+#                                claude under tmux so it survives a VS Code
+#                                reload/reconnect/window-close (see
+#                                knowledge/notes/b3-fleet-runbook.md)
 # (coreutils/realpath, git, curl come with the base image.)
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       m4 autoconf make \
       iptables ipset iproute2 dnsutils aggregate jq \
       ca-certificates curl xz-utils \
+      tmux \
  && rm -rf /var/lib/apt/lists/*
 
 # --- Node.js: canonical nodejs.org tarball, pinned + checksum-verified --------
