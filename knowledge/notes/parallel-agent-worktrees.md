@@ -10,9 +10,13 @@ timestamp: 2026-07-03
 
 This note records a design discussion. The conclusions are
 decisions-of-record; the **manual worktree flow is empirically validated**
-(smoke-tested 2026-07-03 — see [Validation](#validation-smoke-tested)); the
-**committed B3 infrastructure** (distinct named volumes, launcher scripts)
-remains a **sketch to build if/when needed**, not yet implemented.
+(smoke-tested 2026-07-03 — see [Validation](#validation-smoke-tested)). The
+**B3 launcher + the three accidental-HEAD-move guards are now implemented** on
+`feat/b3-multi-agent` (`scripts/b3-fleet.sh`, `scripts/git-hooks/`,
+`scripts/guard-main-head.sh`) and empirically validated (2026-07-04) — see
+[Guarding `/workspaces/www`](#guarding-workspaceswww-against-accidental-head-moves).
+The **per-agent B2 container infrastructure** (distinct named volumes) remains a
+**sketch to build if/when needed**, for the compromised-agent threat model only.
 
 ## The premise that started it
 
@@ -190,7 +194,11 @@ Everything that makes the container a trust boundary is **reused unchanged**
    `CLAUDE_CONFIG_DIR`, but then re-register the MCP per dir).
 4. **Launcher + integration** — `git worktree add` per task → `claude` per
    worktree (under `tmux`) → merge each `agent/<task>` to `master` on the main
-   worktree, gated on `make test` → `git worktree remove`.
+   worktree, gated on `make test` → `git worktree remove`. Implemented as
+   `scripts/b3-fleet.sh` (`provision`/`spawn`/`up`/`integrate`/`teardown`/`list`);
+   `integrate` keeps the main checkout *on* `master` and only advances it via
+   `merge --no-ff` (never `checkout`), so it stays clear of the HEAD-move guards
+   below (using the inline `TEPPAN_MAIN_HEAD_OK=1` override for the merge itself).
 
 Gotchas: N Playwright MCP = N headless Chromium (all `--isolated`, so no
 `SingletonLock` clash — see [chrome-devtools MCP setup](chrome-devtools-mcp-setup.md));
@@ -381,38 +389,94 @@ agent is **out of scope of this protection**: deliberate evasion (routes the
 guard doesn't match, a direct `.git/HEAD` file-write) or disabling the guard
 would need **capability removal** (RO-mount / own clone), not the hooks below.
 
-Two complementary hooks, each of which also **injects the rule** into the
-agent's view so it self-corrects for the rest of the session:
+**Three complementary guards** (implemented on `feat/b3-multi-agent`), each of
+which also **injects the rule** into the agent's view so it self-corrects for
+the rest of the session:
 
-- **`PreToolUse` deny (harness layer) — the clean front door.** Fires *before*
-  the Bash command runs, so a denied `git checkout …` on the main checkout
-  **never executes** → nothing touched, no partial state. Blind spot: it matches
-  the **command string**, so git nested in a `script`/`make` slips past.
-- **`reference-transaction` git hook — the backstop.** Runs *inside* git's ref
-  machinery, so it catches **every** git-path HEAD move (typed, scripted,
-  plumbing) — the routes `PreToolUse` can't see — and aborts with a message.
-  Caveat: aborting a **`checkout`** mid-transaction can leave a half-applied
-  working tree, so it's the net for the scripted case, not the primary. (Note:
-  **not** `pre-commit` — a HEAD move isn't a commit; `reference-transaction` is
-  the git hook that guards ref/HEAD updates, and it isn't skipped by
-  `--no-verify`.)
+- **`PreToolUse` deny (harness layer) — the clean front door.**
+  (`scripts/guard-main-head.sh`, wired in `.claude/settings.json`.) Fires
+  *before* the Bash command runs, so a denied `git checkout|switch|reset …` on
+  the main checkout **never executes** → nothing touched, no partial state.
+  Blind spot: it matches the **command string** + the session `cwd`, so a
+  checkout nested in a `script`/`make`, or one run from a *worktree* session via
+  `cd /workspaces/www && …` beyond the literal-path heuristic, slips past.
+- **`reference-transaction` git hook — the ref-move backstop.**
+  (`scripts/git-hooks/reference-transaction`.) Runs *inside* git's ref
+  machinery, so it catches the **scripted/plumbing** routes `PreToolUse` can't
+  see — but **only for operations that change a ref's object id**: `reset`,
+  `commit`, `merge`, detached checkout, branch force-move/delete, `update-ref`
+  (all surface as `HEAD` or `refs/heads/<current>`). It **aborts** those.
+- **`post-checkout` git hook — the branch-switch detective.**
+  (`scripts/git-hooks/post-checkout`.) Covers the one route the other two miss
+  (see the correction below). git has no `pre-checkout` hook, so it fires
+  *after* the switch: it loudly warns + injects the rule, but does **not**
+  auto-undo (the tree is already switched; a blind restore could clobber real
+  uncommitted work).
 
-Division of labor: `PreToolUse` cleanly stops the *typed* `git checkout` before
-it runs; `reference-transaction` is the net for the *scripted/nested/plumbing*
-routes `PreToolUse` can't see.
+**Empirical correction (git 2.43, validated 2026-07-04 — supersedes an earlier
+claim here that `reference-transaction` "catches every git-path HEAD move"):**
 
-**Placement (accidental model → no tamper concern):** `PreToolUse` in the repo's
-`.claude/settings.json`, the hook in `.git/hooks` (or `core.hooksPath`) —
-version-controlled, no image baking. Managed-settings placement and capability
-removal belong only to the out-of-scope adversarial case.
+- **`git checkout|switch <branch>` emits NO `reference-transaction` at all.**
+  Retargeting the `HEAD` *symref* is not a ref-object-id update, so the hook
+  never fires for a branch switch — which is *the exact incident operation*
+  (`git checkout master`). Neither mandated guard catches a **scripted/nested**
+  branch checkout from a worktree; that gap is precisely why `post-checkout`
+  (detective) was added.
+- **An aborted `git reset --hard` still clobbers the working tree.** `reset`
+  updates the index+worktree *before* the ref transaction fires, so aborting at
+  `prepared` leaves the tree reverted with `HEAD` intact — a half-applied state
+  (recover with `git restore --source=HEAD --staged --worktree .`). The hook
+  *prevents the ref move* (so the damage is recoverable from the untouched
+  HEAD), it does not prevent the file touch. (The note's old worry about a
+  half-applied *checkout* was moot — checkout never reaches the hook.)
 
-**Mental model:** `PreToolUse` = clean front door; `reference-transaction` =
-catches whatever comes in a window. Against mere accidents, two doors are plenty
-— you don't need to brick up the walls.
+Corrected coverage (accidental, in the shared main checkout):
 
-**Decision of record (2026-07-03):** for concurrent host↔container work, keep
-**B3** (bind-mount, agents confined to their own worktrees) plus the
-`PreToolUse` + `reference-transaction` guards above — **scoped to accidental
+| Route | PreToolUse | reference-transaction | post-checkout |
+|---|---|---|---|
+| **typed** `checkout`/`switch <branch>` | ✅ deny (prevents) | ❌ invisible | ⚠️ detect-after |
+| **scripted/nested** `checkout <branch>` | ❌ (cwd is worktree) | ❌ invisible | ✅ **only catch** (detect-after) |
+| `reset --hard` (typed / scripted) | ✅ deny / — | ⚠️ aborts ref; tree already touched (HEAD safe) | — |
+| commit/merge on master (integrator) | allow (override) | allow (override) | — |
+| branch force-move / delete / `update-ref` | ✅ (if typed) | ✅ **aborts cleanly** (pure-ref) | — |
+| linked worktree moving its **own** HEAD | allow | allow (early-exit) | allow (early-exit) |
+| **host** actor on `/home/<user>/www` | allow | allow (fail-open) | allow (fail-open) |
+
+**Actor discrimination (empirically validated).** All three self-gate with:
+(1) **container vs. host** — a `TEPPAN_IN_CONTAINER=1` image `ENV` (Dockerfile),
+the guards' *first* line, chosen over VS Code's `REMOTE_CONTAINERS` because image
+`ENV` is inherited by both `docker run` children and headless `devcontainer exec`
+processes (so it reaches git-hook subprocesses); host has no marker → **fail-open
+with no git call**, so a hook bug can never disrupt host git; (2) **main vs.
+linked worktree** — `git rev-parse --absolute-git-dir == --git-common-dir` (a
+linked worktree moving its *own* HEAD is always allowed); (3) **op type** — the
+transaction ref name (`HEAD`/current branch vs. an unrelated `refs/heads/*`); and
+(4) the **sanctioned-integrator escape hatch** — an *inline* (never `export`ed)
+`TEPPAN_MAIN_HEAD_OK=1` on the launcher's merge/rollback step, since the
+integrator's `git merge` on master *is* a `refs/heads/master` update the
+ref-transaction guard would otherwise block.
+
+**Installation.** `PreToolUse` lives in the repo's shared `.claude/settings.json`.
+The two git hooks are **copied** (`scripts/install-git-hooks.sh`, run from
+`.devcontainer/postcreate.sh`, idempotent) from tracked sources in
+`scripts/git-hooks/` into the shared common `.git/hooks/` — *not*
+`core.hooksPath` and *not* a symlink: the single `.git` is bind-mount-shared, so
+an absolute `core.hooksPath` can't be valid on both `/workspaces/www` and
+`/home/<user>/www`, and the worktrees live outside the repo so a relative one
+wouldn't resolve there. Copying into the shared common dir covers host,
+container, and every worktree uniformly; the `TEPPAN_IN_CONTAINER` gate makes the
+shared install safe (inert on the host). (`reference-transaction`/`post-checkout`
+are the right hooks — **not** `pre-commit`; a HEAD move isn't a commit, and they
+aren't skipped by `--no-verify`.)
+
+**Mental model:** `PreToolUse` = preventive front door (typed); the two git hooks
+= the net for what comes scripted/nested — `reference-transaction` aborts ref
+moves, `post-checkout` warns on the branch switch that no git hook can prevent.
+
+**Decision of record (2026-07-03; guards implemented + coverage corrected
+2026-07-04):** for concurrent host↔container work, keep **B3** (bind-mount,
+agents confined to their own worktrees) plus the `PreToolUse` +
+`reference-transaction` + `post-checkout` guards above — **scoped to accidental
 mishaps**. **B2** (separate clone) is reserved for a threat model that includes
 a **compromised/injected** agent, which these guards deliberately do **not**
 cover. Primary mechanism is still the discipline ("agent works only in its own
