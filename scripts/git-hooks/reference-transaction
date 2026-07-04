@@ -34,7 +34,15 @@ common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)  || 
 [ "$gitdir" = "$common" ] || exit 0
 
 cur=$(git symbolic-ref --quiet HEAD 2>/dev/null || true)   # refs/heads/master; empty if detached
-while read -r _old _new ref; do
+while read -r _old new ref; do
+  # Skip symref writes (new = "ref:refs/..."). These are worktree-init side
+  # effects (git 2.55's `git worktree add` writes a `ref:` HEAD in the MAIN
+  # git-dir -- blocking it would break provisioning) or a plain HEAD retarget;
+  # neither reverts the working tree. The file-reverting HEAD moves
+  # (git checkout|switch <branch>) never reach this hook at all. Only real
+  # object-id moves of HEAD / the current branch (reset, commit, merge, detached
+  # checkout) are the accidents worth aborting.
+  case "$new" in ref:*) continue ;; esac
   if [ "$ref" = HEAD ] || { [ -n "$cur" ] && [ "$ref" = "$cur" ]; }; then
     {
       echo "B3 guard: refusing to move the SHARED /workspaces/www HEAD from a container session."

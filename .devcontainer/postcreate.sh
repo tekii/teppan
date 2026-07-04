@@ -17,6 +17,13 @@ WORKSPACE="/workspaces/www"
 #      registered (the symptom that first bit us).
 sudo chown -R vscode:vscode "${WORKSPACE}/TEPPAN_BUILD" "${HOME}/.claude"
 
+# 1b. Make /workspaces itself writable by the workspace user so the B3 launcher
+#     (scripts/b3-fleet.sh) can create sibling worktrees at /workspaces/wt-<task>
+#     -- OUTSIDE the /workspaces/www bind-mount, so they are container-local and
+#     ephemeral. The runtime creates /workspaces root-owned; chown just the dir
+#     (not -R -- /workspaces/www is a separate mount and stays as-is).
+sudo chown vscode:vscode /workspaces
+
 # 2. Register Playwright MCP (Microsoft, @playwright/mcp — baked into the image
 #    at build time, so no npx/network here). Local scope writes the project
 #    entry in ${CLAUDE_CONFIG_DIR}/.claude.json, which is on the persistent

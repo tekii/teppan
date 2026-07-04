@@ -13,7 +13,9 @@ decisions-of-record; the **manual worktree flow is empirically validated**
 (smoke-tested 2026-07-03 — see [Validation](#validation-smoke-tested)). The
 **B3 launcher + the three accidental-HEAD-move guards are now implemented** on
 `feat/b3-multi-agent` (`scripts/b3-fleet.sh`, `scripts/git-hooks/`,
-`scripts/guard-main-head.sh`) and empirically validated (2026-07-04) — see
+`scripts/guard-main-head.sh`) and empirically validated end-to-end in the
+rebuilt container (2026-07-04, git 2.55 — provision → 30-PASS `make test` in a
+fresh worktree → teardown, plus every guard path) — see
 [Guarding `/workspaces/www`](#guarding-workspaceswww-against-accidental-head-moves).
 The **per-agent B2 container infrastructure** (distinct named volumes) remains a
 **sketch to build if/when needed**, for the compromised-agent threat model only.
@@ -450,7 +452,12 @@ processes (so it reaches git-hook subprocesses); host has no marker → **fail-o
 with no git call**, so a hook bug can never disrupt host git; (2) **main vs.
 linked worktree** — `git rev-parse --absolute-git-dir == --git-common-dir` (a
 linked worktree moving its *own* HEAD is always allowed); (3) **op type** — the
-transaction ref name (`HEAD`/current branch vs. an unrelated `refs/heads/*`); and
+transaction ref name (`HEAD`/current branch vs. an unrelated `refs/heads/*`),
+*skipping symref writes* (`new = ref:…`): those never revert the working tree,
+and git **2.55**'s `git worktree add` initializes the new worktree's HEAD as a
+`ref:` write **in the main git-dir** — without the skip, the guard would block
+its own `provision` step (git 2.43 didn't do this; caught only by in-container
+validation); and
 (4) the **sanctioned-integrator escape hatch** — an *inline* (never `export`ed)
 `TEPPAN_MAIN_HEAD_OK=1` on the launcher's merge/rollback step, since the
 integrator's `git merge` on master *is* a `refs/heads/master` update the
