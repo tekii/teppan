@@ -415,6 +415,14 @@ removal belong only to the out-of-scope adversarial case.
 catches whatever comes in a window. Against mere accidents, two doors are plenty
 — you don't need to brick up the walls.
 
+**Decision of record (2026-07-03):** for concurrent host↔container work, keep
+**B3** (bind-mount, agents confined to their own worktrees) plus the
+`PreToolUse` + `reference-transaction` guards above — **scoped to accidental
+mishaps**. **B2** (separate clone) is reserved for a threat model that includes
+a **compromised/injected** agent, which these guards deliberately do **not**
+cover. Primary mechanism is still the discipline ("agent works only in its own
+worktree"); the hooks are the safety net for a slip.
+
 ## Validation (smoke-tested)
 
 The **manual worktree flow** was smoke-tested end-to-end on the real repo
