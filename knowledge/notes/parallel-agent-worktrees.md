@@ -211,7 +211,8 @@ where Node is system-wide and the browser is baked).
 ### VS Code interaction
 
 VS Code Dev Containers is **one window : one container : one folder**
-(`workspaceFolder = /workspaces/www`). This sorts the topologies:
+(`workspaceFolder = /workspaces/${localWorkspaceFolderBasename}`, i.e.
+`$WORKSPACE_ROOT`; `/workspaces/www` in the current checkout). This sorts the topologies:
 
 - **B3 plays well** — still one container; VS Code attaches normally, agents
   are terminal processes, worktrees outside the folder are simply not shown in
@@ -463,14 +464,23 @@ validation); and
 integrator's `git merge` on master *is* a `refs/heads/master` update the
 ref-transaction guard would otherwise block.
 
+**Name-agnostic — no hardcoded path.** None of the guards bake in `/workspaces/www`:
+`guard-main-head.sh`'s `cwd` check and the launcher (`scripts/b3-fleet.sh`) read
+**`$WORKSPACE_ROOT`** (= the devcontainer's `${containerWorkspaceFolder}`, exported
+via `containerEnv`), and the two git hooks discriminate purely via
+`git rev-parse --absolute-git-dir == --git-common-dir`. So the concrete
+`/workspaces/www` path throughout this note is just *the current example* — rename
+the repo/folder to anything and the guards, launcher, and build work unchanged.
+See [no user-specific or hardcoded absolute paths](../conventions/no-user-specific-paths.md).
+
 **Installation.** `PreToolUse` lives in the repo's shared `.claude/settings.json`.
 The two git hooks are **copied** (`scripts/install-git-hooks.sh`, run from
 `.devcontainer/postcreate.sh`, idempotent) from tracked sources in
 `scripts/git-hooks/` into the shared common `.git/hooks/` — *not*
 `core.hooksPath` and *not* a symlink: the single `.git` is bind-mount-shared, so
-an absolute `core.hooksPath` can't be valid on both `/workspaces/www` and
-`/home/<user>/www`, and the worktrees live outside the repo so a relative one
-wouldn't resolve there. Copying into the shared common dir covers host,
+an absolute `core.hooksPath` can't be valid on both the container checkout path
+(`$WORKSPACE_ROOT`) and the host's (`/home/<user>/…`), and the worktrees live
+outside the repo so a relative one wouldn't resolve there. Copying into the shared common dir covers host,
 container, and every worktree uniformly; the `TEPPAN_IN_CONTAINER` gate makes the
 shared install safe (inert on the host). (`reference-transaction`/`post-checkout`
 are the right hooks — **not** `pre-commit`; a HEAD move isn't a commit, and they
