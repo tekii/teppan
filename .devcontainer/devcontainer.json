@@ -54,6 +54,6 @@
   "postCreateCommand": ".devcontainer/postcreate.sh",
 
   "customizations": {
-    "vscode": { "extensions": ["ms-playwright.playwright"] }
+    "vscode": { "extensions": ["ms-playwright.playwright", "ms-vscode.makefile-tools"] }
   }
 }

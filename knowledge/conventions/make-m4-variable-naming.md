@@ -1,7 +1,7 @@
 ---
 type: Convention
 title: Make vs m4 variable naming — `__X__` is the m4 facet, plain `X` is the Make facet
-description: A path constant that exists in both the m4 (compile-time) and Make (run-time) worlds carries two names that name the two facets — `__X__` for the m4 macro, plain `X` for the Make variable — bridged by the uniform `-D __X__=$(X)` pattern. Make-only variables stay plain; this naming is never applied to m4-only macros.
+description: A path constant that exists in both the m4 (compile-time) and Make (run-time) worlds carries two names that name the two facets — `__X__` for the m4 macro, plain `X` for the Make variable — bridged by the uniform `-D __X__=$(X)` pattern. Make-only variables stay plain; this naming is never applied to m4-only macros. Also: the `_ROOT` suffix idiom for base-directory variables (BUILD_ROOT, WORKSPACE_ROOT), preferred over `_MAIN`.
 tags: [m4, makefile, conventions, naming]
 timestamp: 2026-06-29
 ---
@@ -71,6 +71,24 @@ noise. Flag `[$(X)]` in newly emitted Make text. (This is distinct from the
 genuinely load-bearing `[$]@` / `[$$]` / `[#]` quotes, which protect
 characters m4 *does* treat specially — keep those.)
 
+## Suffix semantics: `_ROOT` for a base directory
+
+Orthogonal to the `__X__`/`X` *facet* affix above is the **suffix**, which
+should name what the value *is*:
+
+- **`_ROOT`** = the base/top directory of a tree — the idiom for a path/dir
+  variable (`BUILD_ROOT`, `SRC`, and `WORKSPACE_ROOT` = the container's
+  workspace folder, `${containerWorkspaceFolder}`). Prefer it for such
+  variables; it's consistent across the tree.
+- Avoid **`_MAIN`** for a directory: it reads as *the primary one among
+  alternatives* (a main replica, the main branch), not "a directory." An
+  earlier draft named the workspace path `CONTAINER_MAIN`; it was renamed to
+  `WORKSPACE_ROOT` for exactly this reason — and note `CONTAINER_ROOT` would
+  have mis-read as the container's filesystem root (`/`), so **name by the
+  thing**: `WORKSPACE_ROOT` is the root of the *workspace*.
+
 See also: [M4 code review guidelines](../code-review/m4.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md),
-[Diversion/phase model](../architecture/diversion-phase-model.md).
+[Diversion/phase model](../architecture/diversion-phase-model.md),
+[no user-specific or hardcoded absolute paths](no-user-specific-paths.md)
+(where `WORKSPACE_ROOT` is the de-hardcoded workspace path).
