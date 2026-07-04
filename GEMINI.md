@@ -12,7 +12,7 @@ TEKii is built without an application server or complex JS build tools. Instead,
 - **`generator.m4`**: The core template and macro processor that handles routing, layout inclusion, diversions, asset mapping, and localization.
 - **`layout.html`**: The main page layout containing structure, navigation, footer, and placeholder slots filled by diversions.
 - **Source pages (`*.in.html`)**: Source templates (e.g., `contact.in.html`, `news.in.html`) that contain actual page contents wrapped in `m4` macro calls.
-- **[knowledge/](file:///home/rodablo/www/knowledge)**: The local knowledge base containing deep explanations of the architecture, build conventions, testing practices, and styling rules (starting with [index.md](file:///home/rodablo/www/knowledge/index.md)).
+- **[knowledge/](knowledge)**: The local knowledge base containing deep explanations of the architecture, build conventions, testing practices, and styling rules (starting with [index.md](knowledge/index.md)).
 
 ---
 

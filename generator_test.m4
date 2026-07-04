@@ -262,7 +262,7 @@ NAVIGATION-----------------------------
 
 INC_CSS--------------------------------
 dnl m4_changequote(«,»)
-dnl m4_bregexp([m4_include(/home/rodablo/www/_build/vendor/fontawesome-free-5.13.0-web/css/all.css)],[url\($1\)],[\1])
+dnl m4_bregexp([m4_include(_build/vendor/fontawesome-free-5.13.0-web/css/all.css)],[url\($1\)],[\1])
 dnl m4_bregexp([jsflkfjdlskjfurl("roro")sjdlurl("tata")fkjslkdfj],[\(url("\(.+\)")\)],[\1])
 dnl m4_changequote([,])
 dnl m4_define([__TOTO__],m4_flatten(m4_esyscmd_s([grep -oP '(?<=url\(\").+?(?=\"\))' _build/vendor/fontawesome-free-5.13.0-web/css/all.css])))

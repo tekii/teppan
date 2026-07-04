@@ -9,9 +9,9 @@ This file contains workspace-scoped rules and style guidelines for Antigravity a
 The TEKii codebase is a static site generator utilizing GNU `m4` (with `m4sugar`) and GNU `make`. There is no node/npm build process; everything is processed via local macros and the Makefile into `BUILD/DOC`.
 
 Before performing any code modifications, agents **MUST** read and familiarize themselves with:
-- **[CLAUDE.md](file:///home/rodablo/www/CLAUDE.md)**: Entry point for knowledge base index references.
-- **[GEMINI.md](file:///home/rodablo/www/GEMINI.md)**: Detailed tech stack, build commands, and m4 macro principles.
-- **[knowledge/](file:///home/rodablo/www/knowledge)** directory: Contains specific guidelines for architecture, testing, and reviews (starting with [index.md](file:///home/rodablo/www/knowledge/index.md)).
+- **[CLAUDE.md](../CLAUDE.md)**: Entry point for knowledge base index references.
+- **[GEMINI.md](../GEMINI.md)**: Detailed tech stack, build commands, and m4 macro principles.
+- **[knowledge/](../knowledge)** directory: Contains specific guidelines for architecture, testing, and reviews (starting with [index.md](../knowledge/index.md)).
 
 ---
 
