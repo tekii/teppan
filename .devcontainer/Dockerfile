@@ -1,4 +1,4 @@
-# Teppan dev container (repo: www).
+# Teppan dev container (repo: teppan).
 #
 # Layered on Microsoft's devcontainers base (non-root `vscode` user + sudo).
 # The Claude Code and GitHub CLI features are added on top in devcontainer.json;

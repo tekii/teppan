@@ -3,7 +3,7 @@ pkg
 tmp
 *~
 .vscode/*
-www.code-workspace
+*.code-workspace
 *.patch
 *venv*
 *.egg-info

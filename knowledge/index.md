@@ -8,8 +8,9 @@ timestamp: 2026-06-17
 
 # Teppan
 
-**Teppan** is the static-site generation project in this repo (the repo name
-`www` is legacy). It builds the **TEKii static multidomain sites** — a
+**Teppan** is the static-site generation project in this repo `tekii/teppan`
+(renamed from the legacy `www` on 2026-07-04). It builds the **TEKii static
+multidomain sites** — a
 multi-domain, multi-language bundle of static sites for the company **TEKii** —
 with GNU `m4`, using autoconf's `m4sugar.m4f` macro library standalone (not via
 `configure.ac`/`autoconf`) for its `m4_*` primitives. There is no application
@@ -23,7 +24,8 @@ a directory of markdown files with YAML frontmatter.
 ## Sections
 
 - [Glossary & naming](glossary.md) — canonical names: **TEKii** (company),
-  **Teppan** (this project), **www** (legacy repo name), and the **TEKii static
+  **Teppan** (this project — and now the repo name), **www** (the former repo
+  name), and the **TEKii static
   multidomain sites** (the deliverable bundle). Read this first — the docs
   historically conflated these terms.
 - [Architecture](architecture/index.md) — how the sites are built: core

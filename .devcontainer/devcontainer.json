@@ -1,7 +1,7 @@
 {
-  // Teppan dev container (repo: www) — Claude Code CLI + Playwright MCP, hardened.
+  // Teppan dev container (repo: teppan) — Claude Code CLI + Playwright MCP, hardened.
   // See .devcontainer/Dockerfile and the plan in the repo history for rationale.
-  "name": "Teppan (www) — Claude Code + Playwright",
+  "name": "Teppan",
   "build": { "dockerfile": "Dockerfile" },
 
   // Features layer AFTER the Dockerfile build (Node is already on PATH for the

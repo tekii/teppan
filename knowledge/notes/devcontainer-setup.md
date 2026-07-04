@@ -98,7 +98,7 @@ editing `postcreate.sh`) updates `${CLAUDE_CONFIG_DIR}/.claude.json`, but the
 blocked for the rest of the current session. The new flag only takes effect
 when the server is re-spawned, i.e. on the **next Claude Code session**. So
 after adding the flag: restart the session, *then* navigate to
-`file:///workspaces/www/TEPPAN_BUILD/DOC/<domain>/index.html`. (Same caveat for
+`file:///workspaces/teppan/TEPPAN_BUILD/DOC/<domain>/index.html`. (Same caveat for
 any later flag change, e.g. `--output-dir` below.) Mid-session workaround
 without a restart: pass an **absolute** path where the flag's effect would
 otherwise apply — e.g. `browser_take_screenshot`'s `filename` as an absolute
@@ -144,14 +144,14 @@ its own Node in `/usr/local`, its own baked browser, and Playwright MCP runs
 persistent on-disk profile to lock.
 
 ### Workspace path & a container-private build tree
-The workspace bind-mounts to `/workspaces/www` (pinned via `workspaceFolder`).
+The workspace bind-mounts to `/workspaces/teppan` (pinned via `workspaceFolder`).
 Because the build bakes **absolute** paths (`BUILD_ROOT := $(PWD)/TEPPAN_BUILD`
-plus m4 `realpath`), the container's paths (`/workspaces/www/…`) differ from the
-host's (`$HOME/www/…`). Since `TEPPAN_BUILD/` is inside the workspace, host and
+plus m4 `realpath`), the container's paths (`/workspaces/teppan/…`) differ from the
+host's (`$HOME/teppan/…`). Since `TEPPAN_BUILD/` is inside the workspace, host and
 container would otherwise share one tree with conflicting absolute paths and
 `.mode-<domain>` stamps → rebuild churn and wrong `file://` links (see
 [`file://`-relative preview](file-relative-preview.md)). Fix: a **named volume
-over `/workspaces/www/TEPPAN_BUILD`** gives the container its own private,
+over `/workspaces/teppan/TEPPAN_BUILD`** gives the container its own private,
 gitignored build tree (also faster than bind-mount I/O). It mounts root-owned,
 so `postcreate.sh` `chown`s it to `vscode`.
 
@@ -213,10 +213,10 @@ Service), not a plaintext file: the committed **`code-with-gh-token.sh`** launch
 runs `GH_TOKEN="$(secret-tool lookup service gh-token account tekii-www)"` then
 `exec code`, so VS Code — and the container via `${localEnv:GH_TOKEN}` — gets the
 token with **no secret on disk**. Store it once with `secret-tool store` (label
-`tekii/www gh PAT`); manage it in Seahorse (Passwords → Login). The launcher
+`tekii/teppan gh PAT`); manage it in Seahorse (Passwords → Login). The launcher
 holds no secret, so it's committed; each user stores their own PAT in their own
 keyring.
-Use a **fine-grained PAT scoped to `tekii/www`** with a short expiry (bounds the
+Use a **fine-grained PAT scoped to `tekii/teppan`** with a short expiry (bounds the
 blast radius under skip-perms). Never a Docker build `ARG` (baked into image
 history). Do **not** mount host `~/.config/gh` or `~/.ssh`. For HTTPS `git push`,
 run `gh auth setup-git` once. Web/Codespaces uses the same contract via a
@@ -225,7 +225,7 @@ Codespaces secret named `GH_TOKEN`; the host keeps its own `gh auth login`.
 ## Memory is not shared across scenarios
 Host-Claude and container-Claude do **not** share auto-memory: the container's
 `~/.claude` is a separate named volume, and the project-path key differs
-(`-workspaces-www` vs the host's `-home-<user>-www`). Web is a third store.
+(`-workspaces-teppan` vs the host's `-home-<user>-teppan`). Web is a third store.
 Durable, cross-scenario knowledge therefore belongs in this `knowledge/` tree
 (bind-mounted, shared) — this note is an example of that channel.
 
@@ -288,10 +288,10 @@ If the residual "don't ask again" leak (or wanting always-interactive without
 leaking) proves unacceptable, isolate the *whole* `.claude/` instead of the
 single file — atomic `rename()` works **inside a volume directory**, only
 onto a single-file bind-mount does it EBUSY. Sketch:
-- Mount a **named volume** at `/workspaces/www/.claude` (container-private;
+- Mount a **named volume** at `/workspaces/teppan/.claude` (container-private;
   hides the host's `.claude`, including `settings.local.json` → fully isolated).
 - Re-expose the shared **committed** parts by a **second read-only bind** of the
-  repo's `.claude` at e.g. `/workspaces/www/.claude-shared`, and in
+  repo's `.claude` at e.g. `/workspaces/teppan/.claude-shared`, and in
   `postcreate.sh` **symlink** `settings.json` and `skills/` from there into the
   volume (skills stay live-synced with the repo).
 - `chown -R vscode:vscode` the volume (root-owned on first mount, like the other

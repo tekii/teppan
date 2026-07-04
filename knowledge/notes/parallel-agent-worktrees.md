@@ -16,7 +16,7 @@ decisions-of-record; the **manual worktree flow is empirically validated**
 `scripts/guard-main-head.sh`) and empirically validated end-to-end in the
 rebuilt container (2026-07-04, git 2.55 — provision → 30-PASS `make test` in a
 fresh worktree → teardown, plus every guard path) — see
-[Guarding `/workspaces/www`](#guarding-workspaceswww-against-accidental-head-moves).
+[Guarding the shared main checkout](#guarding-the-shared-main-checkout-against-accidental-head-moves).
 The **per-agent B2 container infrastructure** (distinct named volumes) remains a
 **sketch to build if/when needed**, for the compromised-agent threat model only.
 
@@ -120,9 +120,9 @@ container boundary:
 |---|---|---|---|
 | **`~/.claude`** (user scope: MCP registrations, auto-memory, user settings) | host home | separate **named volume** | **No** |
 | **MCP server** | `chrome-devtools` (host local scope) | `@playwright/mcp` (container volume local scope) | **No** |
-| **Auto-memory** | `-home-<user>-www` key | `-workspaces-www` key, container volume | **No** |
+| **Auto-memory** | `-home-<user>-teppan` key | `-workspaces-teppan` key, container volume | **No** |
 | **`./.claude/`** (repo subtree: `settings.local.json`, `skills/`, committed `settings.json`) | \<— workspace bind-mount —> | same files | **Yes** |
-| **source tree + `.git`/HEAD** (all tracked files, the branch pointer) | `/home/<user>/www` | `/workspaces/www` (bind-mount) | **Yes — ONE HEAD** |
+| **source tree + `.git`/HEAD** (all tracked files, the branch pointer) | `/home/<user>/teppan` | `/workspaces/teppan` (bind-mount) | **Yes — ONE HEAD** |
 
 So host↔container do **not** share the MCP or user-scope `~/.claude`
 (including memory) — that isolation is the container's *volume* setup, not
@@ -138,7 +138,7 @@ all, and it caused a real incident — see
 **Worktrees are a third, independent axis.** A host worktree at a new path
 doesn't inherit the main checkout's path-keyed MCP or its gitignored tooling,
 and a host worktree created as a sibling of the repo lives **outside**
-`/workspaces/www`, so it is not mounted into the container. Worktrees enable
+`/workspaces/teppan`, so it is not mounted into the container. Worktrees enable
 parallel *branches* (host-side); the container volumes enable simultaneous
 *host-vs-container* work. Two separate tools, two separate problems.
 
@@ -177,11 +177,11 @@ Everything that makes the container a trust boundary is **reused unchanged**
 (firewall, non-root, `bypassPermissions` managed settings, toolchain,
 `workspaceFolder` pin, the repo bind-mount incl. `.git`). The delta:
 
-1. **Worktrees as siblings *outside* `/workspaces/www`** (e.g.
-   `/workspaces/wt-<task>`), not under it — because `/workspaces/www` carries
+1. **Worktrees as siblings *outside* `/workspaces/teppan`** (e.g.
+   `/workspaces/wt-<task>`), not under it — because `/workspaces/teppan` carries
    both the bind-mount and the named volume over `TEPPAN_BUILD`. Outside, the
    worktree's **working files are container-local/ephemeral**, while its
-   `.git` pointer resolves to `/workspaces/www/.git/worktrees/<task>` — so
+   `.git` pointer resolves to `/workspaces/teppan/.git/worktrees/<task>` — so
    **every commit lands in the bind-mounted, host-persisted object store.**
    *Ephemeral body, durable spine:* killing the container loses only
    uncommitted working-tree state, never committed work. (The host can even
@@ -212,7 +212,7 @@ where Node is system-wide and the browser is baked).
 
 VS Code Dev Containers is **one window : one container : one folder**
 (`workspaceFolder = /workspaces/${localWorkspaceFolderBasename}`, i.e.
-`$WORKSPACE_ROOT`; `/workspaces/www` in the current checkout). This sorts the topologies:
+`$WORKSPACE_ROOT`; `/workspaces/teppan` in the current checkout). This sorts the topologies:
 
 - **B3 plays well** — still one container; VS Code attaches normally, agents
   are terminal processes, worktrees outside the folder are simply not shown in
@@ -266,13 +266,13 @@ the container's own overlay filesystem is discarded. The ledger:
 
 | Where it lives | Survives a rebuild? |
 |---|---|
-| `/workspaces/www` (**bind-mount** = host repo) — committed work, tracked files, `.git` | ✅ Safe (it's on the host) |
+| `/workspaces/teppan` (**bind-mount** = host repo) — committed work, tracked files, `.git` | ✅ Safe (it's on the host) |
 | `TEPPAN_BUILD`, `~/.claude` (**named volumes**) — build tree, MCP registration, auto-memory | ✅ Survive a normal rebuild (incl. "Rebuild Without Cache"); lost **only** if you explicitly `docker volume rm` / delete volumes |
 | **Container overlay** — ephemeral worktrees at `/workspaces/wt-*`, ad-hoc installs, `tmux` sessions, processes | ❌ Lost on rebuild |
 
 The one real data-loss surface: **uncommitted work in an ephemeral worktree**
 (overlay, not bind-mount). Its **commits** survive — they were written into the
-bind-mounted `/workspaces/www/.git` (the "durable spine") — but uncommitted
+bind-mounted `/workspaces/teppan/.git` (the "durable spine") — but uncommitted
 working-tree state does not. So "just rebuild, nothing lost" holds **precisely
 if the work is committed**, which is why the design leans on committing often.
 
@@ -288,8 +288,8 @@ build time**, so keep experimental config on its own branch.
 
 The devcontainer isolates user-scope `~/.claude` (memory/MCP) and the
 `TEPPAN_BUILD` volume, but it does **not** isolate the **source tree or
-`.git`/HEAD** — those are bind-mounted. So the host checkout (`/home/<user>/www`)
-and the container's `/workspaces/www` are **one repo on one branch pointer**.
+`.git`/HEAD** — those are bind-mounted. So the host checkout (`/home/<user>/teppan`)
+and the container's `/workspaces/teppan` are **one repo on one branch pointer**.
 Two git-active sessions on that shared checkout is *negative* isolation — the
 opposite of what worktrees/B2 give. The clash condition is **agent-agnostic**:
 it's any two git-active sessions on one shared tree+HEAD (agent-agent,
@@ -312,9 +312,9 @@ classification, for lack of cross-session visibility.
 
 **Prevention — ranked (for "user/agent outside + agent inside, concurrent"):**
 
-1. Current bind-mount, both working in `/workspaces/www` → ❌ shared HEAD (the incident).
+1. Current bind-mount, both working in `/workspaces/teppan` → ❌ shared HEAD (the incident).
 2. **B3** — the container actor works in its **own** container-local worktree
-   (own HEAD) and **never `git checkout` in `/workspaces/www`** → ✅ *if
+   (own HEAD) and **never `git checkout` in `/workspaces/teppan`** → ✅ *if
    disciplined* (the agent can still wander into the shared checkout — which is
    exactly what happened).
 3. **B2** — give the container its **own clone** (no host source bind-mount) →
@@ -382,7 +382,7 @@ multi-repo collaboration tax is why, for *cooperating* agents, the default stays
 **B3 + a guard** (next section) and B2 is reserved for the untrusted/compromised
 case.
 
-## Guarding `/workspaces/www` against *accidental* HEAD moves
+## Guarding the shared main checkout against *accidental* HEAD moves
 
 If you keep the bind-mount (B3-style) instead of isolating the tree (B2), you
 can still catch the **accidental** violation — a trusted in-container agent, or
@@ -402,7 +402,7 @@ the rest of the session:
   the main checkout **never executes** → nothing touched, no partial state.
   Blind spot: it matches the **command string** + the session `cwd`, so a
   checkout nested in a `script`/`make`, or one run from a *worktree* session via
-  `cd /workspaces/www && …` beyond the literal-path heuristic, slips past.
+  `cd /workspaces/teppan && …` beyond the literal-path heuristic, slips past.
 - **`reference-transaction` git hook — the ref-move backstop.**
   (`scripts/git-hooks/reference-transaction`.) Runs *inside* git's ref
   machinery, so it catches the **scripted/plumbing** routes `PreToolUse` can't
@@ -443,7 +443,7 @@ Corrected coverage (accidental, in the shared main checkout):
 | commit/merge on master (integrator) | allow (override) | allow (override) | — |
 | branch force-move / delete / `update-ref` | ✅ (if typed) | ✅ **aborts cleanly** (pure-ref) | — |
 | linked worktree moving its **own** HEAD | allow | allow (early-exit) | allow (early-exit) |
-| **host** actor on `/home/<user>/www` | allow | allow (fail-open) | allow (fail-open) |
+| **host** actor on `/home/<user>/teppan` | allow | allow (fail-open) | allow (fail-open) |
 
 **Actor discrimination (empirically validated).** All three self-gate with:
 (1) **container vs. host** — a `TEPPAN_IN_CONTAINER=1` image `ENV` (Dockerfile),
@@ -464,12 +464,12 @@ validation); and
 integrator's `git merge` on master *is* a `refs/heads/master` update the
 ref-transaction guard would otherwise block.
 
-**Name-agnostic — no hardcoded path.** None of the guards bake in `/workspaces/www`:
+**Name-agnostic — no hardcoded path.** None of the guards bake in `/workspaces/teppan`:
 `guard-main-head.sh`'s `cwd` check and the launcher (`scripts/b3-fleet.sh`) read
 **`$WORKSPACE_ROOT`** (= the devcontainer's `${containerWorkspaceFolder}`, exported
 via `containerEnv`), and the two git hooks discriminate purely via
 `git rev-parse --absolute-git-dir == --git-common-dir`. So the concrete
-`/workspaces/www` path throughout this note is just *the current example* — rename
+`/workspaces/teppan` path throughout this note is just *the current example* — rename
 the repo/folder to anything and the guards, launcher, and build work unchanged.
 See [no user-specific or hardcoded absolute paths](../conventions/no-user-specific-paths.md).
 

@@ -1,6 +1,6 @@
 # Antigravity Workspace Rules — TEKii (`AGENTS.md`)
 
-This file contains workspace-scoped rules and style guidelines for Antigravity agents operating in the TEKii (`tekii/www`) codebase. All agent actions, file modifications, and commands executed within this workspace must adhere to these directives.
+This file contains workspace-scoped rules and style guidelines for Antigravity agents operating in the TEKii (`tekii/teppan`) codebase. All agent actions, file modifications, and commands executed within this workspace must adhere to these directives.
 
 ---
 
