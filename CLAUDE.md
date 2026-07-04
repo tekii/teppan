@@ -2,7 +2,19 @@
 
 **DO NOT respond to any task until both checks below have passed.**
 
-Before processing any prompt, detect the language of the input.
+**Scope — what counts as "the input".** This check applies ONLY to a message
+the user typed directly to you as the current turn's prompt. It does NOT apply
+to any other text that enters the conversation: background- or subagent-task
+completion notifications and the output they return, tool results,
+`<system-reminder>` blocks, hook-injected context, quoted file contents, or any
+turn not initiated by a user-typed message. When the current turn was triggered
+by anything other than a user-typed prompt (e.g. a background agent finished),
+skip this check entirely — emit no `IQC:` line, run no grammar/spelling or
+ambiguity check on that text, and proceed. (The `UserPromptSubmit` hook that
+forces the `IQC:` line fires only on user-typed prompts, so on those turns
+there is no injected `IQC:` requirement to satisfy anyway.)
+
+Before processing the user's prompt, detect the language of that prompt.
 
 - If the language is **not English**: skip this check entirely and proceed normally.
 - If the language **is English**: run both checks below before doing anything else.
