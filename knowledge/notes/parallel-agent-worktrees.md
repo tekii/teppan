@@ -519,7 +519,9 @@ The **only** way a test run leaves residue is if you deliberately merge a
 throwaway branch into a keeper branch — which the partition/integration
 discipline says you don't.
 
-See also: [dev container setup](devcontainer-setup.md),
+See also: [B3 fleet runbook — working in the container & launching agents
+(operator-facing)](b3-fleet-runbook.md) (the operational checklist on top of
+this design note), [dev container setup](devcontainer-setup.md),
 [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
 [`file://`-relative preview](file-relative-preview.md),
 [Build & test commands](../build/commands.md),

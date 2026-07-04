@@ -50,3 +50,6 @@ a directory of markdown files with YAML frontmatter.
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
   [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md),
   [parallel development — branch workflow, worktrees & multi-agent setup](notes/parallel-agent-worktrees.md).
+- Runbooks (operator-facing) — [B3 fleet runbook — working in the container &
+  launching agents](notes/b3-fleet-runbook.md) **(FOR OPERATORS; agents don't
+  need it)**.
