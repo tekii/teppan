@@ -210,7 +210,7 @@ a real trade-off, not a free toggle. Left as-is by design.
 `"GH_TOKEN": "${localEnv:GH_TOKEN}"`, substituted from the **host** environment
 at create/rebuild. The host token lives in the **GNOME keyring** (Secret
 Service), not a plaintext file: the committed **`code-with-gh-token.sh`** launcher
-runs `GH_TOKEN="$(secret-tool lookup service gh-token account tekii-www)"` then
+runs `GH_TOKEN="$(secret-tool lookup service gh-token account tekii-teppan)"` then
 `exec code`, so VS Code — and the container via `${localEnv:GH_TOKEN}` — gets the
 token with **no secret on disk**. Store it once with `secret-tool store` (label
 `tekii/teppan gh PAT`); manage it in Seahorse (Passwords → Login). The launcher
