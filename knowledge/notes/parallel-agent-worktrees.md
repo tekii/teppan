@@ -321,10 +321,10 @@ rather than relying on the agent's restraint. See
 [dev container setup](devcontainer-setup.md) for the volume/bind-mount layout
 this rests on.
 
-### B2's cost — it *moves* durability and integration onto you
+### B2's cost — it *moves* durability, merging, and integration onto you
 
-B2 removes the clash by construction, but it **relocates** two things the shared
-bind-mount gave for free:
+B2 removes the clash by construction, but it **relocates** onto you several
+things the shared bind-mount / shared object store gave for free:
 
 1. **Commit durability moves *into* the container.** With the bind-mount,
    commits are safe even if the container dies — they were written to the
@@ -333,22 +333,47 @@ bind-mount gave for free:
    committed work too**, *unless* the clone sits on a **persistent named
    volume** or the commits were **pushed to a shared remote**. Durability is no
    longer free — you must re-provide it (persistent volume, or push often).
-2. **Integration needs an explicit git channel.** Two separate `.git`s share no
-   objects, so getting the container's work back to the host/repo requires a
-   **push to a shared remote** (or the host `fetch`ing from the clone) — not the
-   automatic "same object store" the bind-mount gave.
+2. **Merging goes from local to remote-mediated — the biggest change.** In B3
+   all worktrees share **one `.git` object store**, so `git merge agent/b` is
+   **local and instant** (the commits are already present — no network). In B2
+   each clone has its **own** object store, so agent B's commits are physically
+   **absent** from the integrator until **transferred**: a merge becomes
+   *push/fetch, **then** merge*. That forces a shared-remote topology and
+   reintroduces classic collaboration friction — non-fast-forward rejections and
+   `pull → rebase → push` loops that the single object store eliminates.
+3. **Integration is forced through `origin` (firewall-specific).** B2 containers
+   can't see each other's filesystems, and the egress allowlist blocks arbitrary
+   container-to-container / host-to-container git transport — but **`origin`
+   (GitHub) is allowlisted**. So every agent must push its WIP branch to GitHub
+   and the integrator pulls from there: WIP noise on the shared remote, network
+   round-trips per integration, and a **push credential (`GH_TOKEN`/PAT) in
+   *every* hardened container** — N× secret distribution / blast radius, against
+   the [devcontainer note](devcontainer-setup.md)'s minimal-PAT posture.
+4. **Further friction:** *stale base* (a clone integrates against the `master` it
+   last `fetch`ed, not the live one → more conflicts; B3 worktrees see refs
+   instantly); loss of git's *"same branch can't be checked out in two
+   worktrees"* guard (two clones can diverge their own `master`); and *N× disk +
+   provisioning* (a full clone **and** a full container each, vs one container +
+   a cheap `git worktree add`).
 
 | | Bind-mount (current / B3) | B2 (own clone) |
 |---|---|---|
 | Working tree | shared → clash risk (needs discipline) | isolated → clash impossible |
 | Commit durability | **free** (host `.git`) | **your job** (persistent volume or push) |
-| Integration to host | automatic (same `.git`) | explicit (push / fetch) |
+| Merge / integration | **local `git merge`** (shared object store) | **remote-mediated** (push/fetch via `origin`) + non-ff reconciliation |
+| Base freshness | live shared refs | stale until `fetch` → more conflicts |
+| Push credentials | not required to merge | PAT in **every** container |
 | Crash blast radius | host tree can be disturbed | host tree untouched |
 
-**Net:** B3 relies on restraint; **B2 removes the clash structurally but hands
-back the durability + integration the shared `.git` was giving for free.**
-Neither is strictly better — B2 is safer against the incident, at the cost of
-managing the container clone's persistence and a push/fetch path.
+**Net:** B2 doesn't merely risk "work until pushed" — it **converts a
+single-repo operation into a distributed-VCS workflow** (shared remote,
+credentials everywhere, stale-base conflicts, non-ff reconciliation). B3 relies
+on restraint but keeps everything local and cheap; B2 is structurally
+clash-immune but pays the full multi-repo collaboration tax. So the pragmatic
+default for *cooperating* agents is **B3 with a hard guard against touching
+`/workspaces/www`** (or temporal separation); reserve B2 for when the
+trust/isolation boundary genuinely justifies running a real remote-mediated
+flow.
 
 ## Validation (smoke-tested)
 
