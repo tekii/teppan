@@ -17,6 +17,25 @@ timestamp: 2026-07-04
 > lives in [Parallel development](parallel-agent-worktrees.md); this file is the
 > operational checklist that sits on top of it.
 
+## 🚨🚨 DO NOT "Add Folder to Workspace" for a worktree 🚨🚨
+
+> **⚠️ READ THIS FIRST — it will drop your session.**
+> In the dev container, opening a worktree (`/workspaces/wt-<task>`) via VS
+> Code's **"Add Folder to Workspace"** forces a **multi-root workspace → window
+> reload → container reconnect**, which can throw a *"cannot reconnect"* error
+> and **kill your terminal / live Claude session** (learned the hard way,
+> 2026-07-04). Your container and commits survive — but you lose the running
+> session.
+>
+> **To look at a worktree instead:** `cd /workspaces/wt-<task>` in a terminal,
+> **or** open a *separate* VS Code window attached to the same container.
+>
+> **And always run Claude/agents under `tmux`** — `tmux new -s work 'claude'`,
+> or just `scripts/b3-fleet.sh up <task>` (which does it for you). Then *any*
+> reload/reconnect/detach is survivable: `tmux attach -t <session>` brings the
+> live session straight back. A bare integrated-terminal session survives only
+> by VS Code's fragile terminal-persistence and dies on a full window close.
+
 ## Mental model (read once)
 
 - **`/workspaces/www` is the protected integration checkout.** It stays on
