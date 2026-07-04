@@ -7,9 +7,9 @@
 # and once by hand on the host (`scripts/install-git-hooks.sh`).
 #
 # We COPY (not symlink, not core.hooksPath) on purpose: the single .git is
-# bind-mount-shared between host (/home/<user>/www) and container
-# (/workspaces/www), so an absolute core.hooksPath can't be valid on both, and
-# the worktrees live OUTSIDE the repo so a relative one wouldn't resolve there.
+# bind-mount-shared between the host and container checkouts, which sit at
+# different paths, so an absolute core.hooksPath can't be valid on both, and the
+# worktrees live OUTSIDE the repo so a relative one wouldn't resolve there.
 # Copying into the shared common .git/hooks covers all three uniformly; each hook
 # self-gates to the container via TEPPAN_IN_CONTAINER, so a shared install is safe
 # (it fails open on the host).

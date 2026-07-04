@@ -25,11 +25,10 @@ common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)  || 
 [ "$gitdir" = "$common" ] || exit 0
 
 cat >&2 <<'MSG'
-B3 guard (WARNING -- the switch already happened): the SHARED checkout
-/workspaces/www just changed branches. On the shared HEAD this reverts in-context
-files for any other session on this checkout (the shared-HEAD trap). Agents must
-work in their own worktree (/workspaces/wt-<task>), never checkout/switch in
-/workspaces/www. If this was accidental, return now:  git switch -   (inspect
-git reflog if files look wrong).
+B3 guard (WARNING -- the switch already happened): the SHARED main checkout just
+changed branches. On the shared HEAD this reverts in-context files for any other
+session on this checkout (the shared-HEAD trap). Agents must work in their own
+sibling worktree, never checkout/switch in the shared checkout. If this was
+accidental, return now:  git switch -   (inspect git reflog if files look wrong).
 MSG
 exit 0

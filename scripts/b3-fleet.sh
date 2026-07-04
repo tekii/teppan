@@ -4,7 +4,7 @@
 # the agents").
 #
 # One hardened container, N git worktrees, N `claude` processes under tmux.
-# Worktrees are provisioned as siblings OUTSIDE /workspaces/www (container-local,
+# Worktrees are provisioned as siblings OUTSIDE the main checkout (container-local,
 # ephemeral working tree); their commits land in the bind-mounted, host-persisted
 # .git (the "durable spine"). The integrator merges each agent/<task> into master
 # on the main checkout, gated on `make test`, then removes the worktree.
@@ -18,8 +18,11 @@
 #   list                      worktrees + agent tmux sessions
 set -euo pipefail
 
-MAIN=/workspaces/www
-WT_DIR=/workspaces                 # worktrees at $WT_DIR/wt-<task>, OUTSIDE $MAIN
+# Main checkout path, derived (not hardcoded) from the devcontainer's
+# ${containerWorkspaceFolder} via WORKSPACE_ROOT -- name-agnostic. Worktrees are
+# created as siblings in its parent dir, OUTSIDE the workspace bind-mount.
+MAIN="${WORKSPACE_ROOT:?WORKSPACE_ROOT not set (define it in devcontainer.json containerEnv)}"
+WT_DIR="$(dirname "$MAIN")"        # worktrees at $WT_DIR/wt-<task>, OUTSIDE $MAIN
 BASE_BRANCH=${BASE_BRANCH:-master}
 
 die(){ echo "b3-fleet: $*" >&2; exit 1; }

@@ -9,7 +9,7 @@
 # Scope: ACCIDENTAL only. A compromised/injected agent can bypass it (disable the
 # hook, write .git/HEAD directly, unset the marker); that threat model needs
 # capability removal (B2 / read-only mount), not this hook. See
-# knowledge/notes/parallel-agent-worktrees.md ("Guarding /workspaces/www").
+# knowledge/notes/parallel-agent-worktrees.md (the guard section).
 #
 # Coverage (empirically validated on git 2.43 -- see the note's guard section):
 #   CATCHES (aborts the ref move): reset, commit, merge, detached checkout,
@@ -45,8 +45,8 @@ while read -r _old new ref; do
   case "$new" in ref:*) continue ;; esac
   if [ "$ref" = HEAD ] || { [ -n "$cur" ] && [ "$ref" = "$cur" ]; }; then
     {
-      echo "B3 guard: refusing to move the SHARED /workspaces/www HEAD from a container session."
-      echo "  Work in your own worktree (/workspaces/wt-<task>), never in the shared checkout."
+      echo "B3 guard: refusing to move the SHARED main checkout's HEAD from a container session."
+      echo "  Work in your own sibling worktree, never in the shared checkout."
       echo "  Sanctioned integrator override: TEPPAN_MAIN_HEAD_OK=1 <git cmd>"
     } >&2
     exit 1

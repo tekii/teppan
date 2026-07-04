@@ -7,7 +7,9 @@
 #      browser MCP respectively).
 set -euo pipefail
 
-WORKSPACE="/workspaces/www"
+# The main checkout path, derived (not hardcoded) from the devcontainer's
+# ${containerWorkspaceFolder} via WORKSPACE_ROOT -- so this is name-agnostic.
+WORKSPACE="${WORKSPACE_ROOT:?WORKSPACE_ROOT not set (define it in devcontainer.json containerEnv)}"
 
 # 1. Fresh named volumes mount root-owned; hand them to the workspace user.
 #    - TEPPAN_BUILD: so `make build`/`preview` can write generated output.
@@ -18,10 +20,10 @@ WORKSPACE="/workspaces/www"
 sudo chown -R vscode:vscode "${WORKSPACE}/TEPPAN_BUILD" "${HOME}/.claude"
 
 # 1b. Make /workspaces itself writable by the workspace user so the B3 launcher
-#     (scripts/b3-fleet.sh) can create sibling worktrees at /workspaces/wt-<task>
-#     -- OUTSIDE the /workspaces/www bind-mount, so they are container-local and
-#     ephemeral. The runtime creates /workspaces root-owned; chown just the dir
-#     (not -R -- /workspaces/www is a separate mount and stays as-is).
+#     (scripts/b3-fleet.sh) can create sibling worktrees next to the main
+#     checkout -- OUTSIDE the "$WORKSPACE" bind-mount, so they are container-local
+#     and ephemeral. The runtime creates /workspaces root-owned; chown just the
+#     dir (not -R -- the workspace bind-mount is separate and stays as-is).
 sudo chown vscode:vscode /workspaces
 
 # 2. Register Playwright MCP (Microsoft, @playwright/mcp — baked into the image
@@ -54,7 +56,7 @@ claude mcp add playwright --scope local -- \
 #    .git/hooks (reference-transaction + post-checkout). Idempotent; copies the
 #    tracked sources from scripts/git-hooks. The hooks self-gate to the container
 #    via TEPPAN_IN_CONTAINER, so they fail open when the same .git is used on the
-#    host. See knowledge/notes/parallel-agent-worktrees.md ("Guarding /workspaces/www").
+#    host. See knowledge/notes/parallel-agent-worktrees.md (the guard section).
 "${WORKSPACE}/scripts/install-git-hooks.sh"
 
 echo "postcreate: TEPPAN_BUILD owned by vscode; Playwright MCP registered (local scope); B3 git hooks installed."

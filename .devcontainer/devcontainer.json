@@ -16,7 +16,7 @@
   "remoteUser": "vscode",
   // Pin the bind-mount target so generated absolute paths ($(PWD)/realpath) and
   // the TEPPAN_BUILD volume mount below line up deterministically.
-  "workspaceFolder": "/workspaces/www",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
   // Required for init-firewall.sh to manage iptables/ipset inside the container.
   "runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"],
@@ -27,10 +27,15 @@
     // Container-private build tree: isolates the container's absolute paths and
     // .mode-<domain> stamps from the host's shared, bind-mounted TEPPAN_BUILD
     // (and avoids slow bind-mount I/O for generated output).
-    "source=teppan-build-${devcontainerId},target=/workspaces/www/TEPPAN_BUILD,type=volume"
+    "source=teppan-build-${devcontainerId},target=${containerWorkspaceFolder}/TEPPAN_BUILD,type=volume"
   ],
 
   "containerEnv": {
+    // Absolute path of the main checkout inside the container, derived from the
+    // folder basename (NOT hardcoded) so nothing is coupled to the repo being
+    // named "www"/"teppan"/anything. The B3 launcher + guards read this instead
+    // of a literal path. See knowledge/conventions/no-user-specific-paths.md.
+    "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
     "PLAYWRIGHT_BROWSERS_PATH": "/opt/pw-browsers",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
