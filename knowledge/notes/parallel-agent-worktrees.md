@@ -321,6 +321,35 @@ rather than relying on the agent's restraint. See
 [dev container setup](devcontainer-setup.md) for the volume/bind-mount layout
 this rests on.
 
+### B2's cost — it *moves* durability and integration onto you
+
+B2 removes the clash by construction, but it **relocates** two things the shared
+bind-mount gave for free:
+
+1. **Commit durability moves *into* the container.** With the bind-mount,
+   commits are safe even if the container dies — they were written to the
+   **host's** `.git` (the "durable spine"). B2's clone has its **own** `.git`
+   *inside* the container, so a crash/destroy loses **uncommitted** work **and
+   committed work too**, *unless* the clone sits on a **persistent named
+   volume** or the commits were **pushed to a shared remote**. Durability is no
+   longer free — you must re-provide it (persistent volume, or push often).
+2. **Integration needs an explicit git channel.** Two separate `.git`s share no
+   objects, so getting the container's work back to the host/repo requires a
+   **push to a shared remote** (or the host `fetch`ing from the clone) — not the
+   automatic "same object store" the bind-mount gave.
+
+| | Bind-mount (current / B3) | B2 (own clone) |
+|---|---|---|
+| Working tree | shared → clash risk (needs discipline) | isolated → clash impossible |
+| Commit durability | **free** (host `.git`) | **your job** (persistent volume or push) |
+| Integration to host | automatic (same `.git`) | explicit (push / fetch) |
+| Crash blast radius | host tree can be disturbed | host tree untouched |
+
+**Net:** B3 relies on restraint; **B2 removes the clash structurally but hands
+back the durability + integration the shared `.git` was giving for free.**
+Neither is strictly better — B2 is safer against the incident, at the cost of
+managing the container clone's persistence and a push/fetch path.
+
 ## Validation (smoke-tested)
 
 The **manual worktree flow** was smoke-tested end-to-end on the real repo
