@@ -17,7 +17,7 @@ No tracked file may contain a **user-specific absolute path** — a real login
 name or a `/home/<login>/…` (or `/Users/<login>/…`, `C:\Users\…`) path.
 
 - **Docs/links:** use **repo-relative** paths — `[CLAUDE.md](../CLAUDE.md)`,
-  `[knowledge/](knowledge)` — never `file:///home/<login>/www/CLAUDE.md`.
+  `[knowledge/](knowledge)` — never `file:///home/<login>/teppan/CLAUDE.md`.
 - **Prose that must illustrate a home path:** use the `<user>` placeholder
   (`/home/<user>/…`), never a real login. The docs already do this
   consistently (e.g. the isolation matrix in
