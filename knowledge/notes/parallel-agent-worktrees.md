@@ -375,6 +375,46 @@ default for *cooperating* agents is **B3 with a hard guard against touching
 trust/isolation boundary genuinely justifies running a real remote-mediated
 flow.
 
+## Guarding `/workspaces/www` against *accidental* HEAD moves
+
+If you keep the bind-mount (B3-style) instead of isolating the tree (B2), you
+can still catch the **accidental** violation — a trusted in-container agent, or
+a script it runs, that forgets the rule and does `git checkout`/`switch`/`reset`
+in the shared checkout. **Scope: accidental only.** A *compromised/injected*
+agent is **out of scope of this protection**: deliberate evasion (routes the
+guard doesn't match, a direct `.git/HEAD` file-write) or disabling the guard
+would need **capability removal** (RO-mount / own clone), not the hooks below.
+
+Two complementary hooks, each of which also **injects the rule** into the
+agent's view so it self-corrects for the rest of the session:
+
+- **`PreToolUse` deny (harness layer) — the clean front door.** Fires *before*
+  the Bash command runs, so a denied `git checkout …` on the main checkout
+  **never executes** → nothing touched, no partial state. Blind spot: it matches
+  the **command string**, so git nested in a `script`/`make` slips past.
+- **`reference-transaction` git hook — the backstop.** Runs *inside* git's ref
+  machinery, so it catches **every** git-path HEAD move (typed, scripted,
+  plumbing) — the routes `PreToolUse` can't see — and aborts with a message.
+  Caveat: aborting a **`checkout`** mid-transaction can leave a half-applied
+  working tree, so it's the net for the scripted case, not the primary. (Note:
+  **not** `pre-commit` — a HEAD move isn't a commit; `reference-transaction` is
+  the git hook that guards ref/HEAD updates, and it isn't skipped by
+  `--no-verify`.)
+
+| Route | Caught by |
+|---|---|
+| typed `git checkout /workspaces/www` | `PreToolUse` (before it runs — clean) |
+| git nested in a script / `make` / plumbing | `reference-transaction` (inside git) |
+
+**Placement (accidental model → no tamper concern):** `PreToolUse` in the repo's
+`.claude/settings.json`, the hook in `.git/hooks` (or `core.hooksPath`) —
+version-controlled, no image baking. Managed-settings placement and capability
+removal belong only to the out-of-scope adversarial case.
+
+**Mental model:** `PreToolUse` = clean front door; `reference-transaction` =
+catches whatever comes in a window. Against mere accidents, two doors are plenty
+— you don't need to brick up the walls.
+
 ## Validation (smoke-tested)
 
 The **manual worktree flow** was smoke-tested end-to-end on the real repo
