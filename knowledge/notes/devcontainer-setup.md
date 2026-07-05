@@ -155,18 +155,25 @@ over `/workspaces/teppan/TEPPAN_BUILD`** gives the container its own private,
 gitignored build tree (also faster than bind-mount I/O). It mounts root-owned,
 so `postcreate.sh` `chown`s it to `vscode`.
 
-**Caveat — declared ≠ mounted (verify before trusting the isolation).** The
-volume only takes effect in a container **built after** the mount was
-declared (and a volume *rename* — the `source` name embeds
-`${devcontainerId}` — likewise lands only on rebuild, as a fresh empty
-volume): an older running container silently keeps using the host's
-bind-mounted `TEPPAN_BUILD`. Verify with `findmnt -R /workspaces/teppan` — a
-separate volume mount must appear on `TEPPAN_BUILD`. Observed missing on
-2026-07-05: host and container were sharing one build tree and
-cross-poisoning each other's generated `DEP/*.mk` (each side baking its own
-absolute source root). Failure signature and recovery: see
-[the baked-root trap](realclean-recursive.md). Rebuild the container to
-activate the mount.
+**Caveat — declared ≠ mounted (verify before trusting the isolation).** A
+mount declared in `devcontainer.json` — even one present in the running
+container's own docker config (`docker inspect … HostConfig.Mounts`) — is
+not guaranteed to be in effect in the live mount namespace. Observed
+2026-07-05: a container created *after* the declaration carried the
+`TEPPAN_BUILD` volume in its config, yet had **zero** `TEPPAN_BUILD` entries
+in `/proc/self/mountinfo` (the sibling `~/.claude` volume mounted fine), and
+a container *restart* did not heal it. While the volume is inactive, host
+and container share one bind-mounted build tree and cross-poison each
+other's generated `DEP/*.mk` (each side baking its own absolute source
+root). So trust only a runtime probe — `findmnt -R /workspaces/teppan` must
+show a volume mounted on `TEPPAN_BUILD` — and treat a full container
+**rebuild** (not restart) as the fix, re-probing afterwards. Confirmed later
+that day: the rebuild *did* activate the mount and clear the trap, and
+`${devcontainerId}` stayed stable across it — so the sibling `~/.claude`
+volume (and Claude's memory) persisted. Failure signature and recovery: see
+[the baked-root trap](realclean-recursive.md). (A volume *rename* — the
+`source` embeds `${devcontainerId}` — likewise lands only on rebuild, as a
+fresh empty volume.)
 
 ### Node provenance
 Node is installed from the canonical `nodejs.org` tarball (pinned +
