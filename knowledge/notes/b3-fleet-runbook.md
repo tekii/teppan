@@ -42,6 +42,13 @@ timestamp: 2026-07-04
   `master`. It is the shared, bind-mounted tree (host ⇄ container are **one
   HEAD**), so moving its HEAD out from under a live session is the
   "shared-HEAD trap" the guards exist to prevent.
+- **The host/outer session is for infrastructure, not deliverable work.** By
+  convention the host handles the container, VS Code, and tokens/credentials;
+  the actual site/generator/doc work happens **inside the container** (you,
+  Claude, agents). So repo-content changes — even docs — are made in-container
+  via a worktree, never committed from the host, which keeps the host out of
+  the shared checkout (see
+  [Parallel development — the shared-HEAD trap](parallel-agent-worktrees.md)).
 - **Worktrees are where work happens** — one per task, at
   `/workspaces/wt-<task>`, *outside* `/workspaces/teppan` (container-local,
   ephemeral working tree; commits still land in the host-persisted `.git`).
