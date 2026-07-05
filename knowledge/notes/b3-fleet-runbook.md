@@ -105,6 +105,21 @@ framework seam) → **provision** → **spawn** → **integrate** (on `master`, 
 on `make test`). Keep `/workspaces/teppan` on `master` throughout; `integrate`
 only *advances* master (it never `checkout`s), using the override internally.
 
+> **Two `integrate` nuances not visible from its one-line description** (both in
+> `scripts/b3-fleet.sh`, worth knowing before you trust the gate):
+>
+> - **It self-heals a bad merge.** If the *post-merge* `make test` on `master`
+>   fails, `integrate` rolls the merge back automatically
+>   (`TEPPAN_MAIN_HEAD_OK=1 git reset --hard ORIG_HEAD`) and aborts — you are
+>   left on a clean `master`, not a broken one. A *conflicting* merge likewise
+>   stops with nothing torn down.
+> - **The gate is `make test` only — macro-level, not a build.** `make test`
+>   exercises `generator.m4` macros; it does **not** render HTML/CSS. So a change
+>   touching build *inputs* (`layout.html`, `configure.m4`, `*.in.html`, CSS) can
+>   pass the gate while still breaking `make build`. Run `make build` yourself in
+>   the worktree **before** `integrate` for any such change — the gate won't catch
+>   a broken render.
+
 Two other launch models exist (see the design note) for later: **Model B** — a
 parent Claude session orchestrating subagents via the Agent/Workflow tools
 (worktree-isolated); **Model C** — a headless `devcontainer exec … claude -p`
