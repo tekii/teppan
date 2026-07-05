@@ -55,15 +55,15 @@ all. So `helper-css-remap` going missing breaks nothing today; nothing in
 
 Even a faithful port wouldn't produce a *working* URL as-is:
 `--base __TDIR__` makes the rewritten path relative to the page's output
-directory (e.g. `BUILD/DOC/www.tekii.com.ar/en/`), but the `url("...")`
+directory (e.g. `TEPPAN_BUILD/DOC/www.tekii.com.ar/en/`), but the `url("...")`
 targets (`__VENDOR__/fontawesome-free-5.13.0-web/webfonts/*`) point into
 `VENDOR/`, which is gitignored/un-published and never copied into
-`BUILD/DOC`. I confirmed this with a working prototype of the mechanism
+`TEPPAN_BUILD/DOC`. I confirmed this with a working prototype of the mechanism
 below — it correctly computes e.g.
 `../../../../VENDOR/fontawesome-free-5.13.0-web/webfonts/fa-solid-900.woff2`,
 which is the *right relative-path math* but points at a directory that
 doesn't exist in the published site. Reviving this tool usefully requires
-also `__CP_ASSET`-ing the webfont files into `BUILD/DOC` and rewriting
+also `__CP_ASSET`-ing the webfont files into `TEPPAN_BUILD/DOC` and rewriting
 `url(...)` to point *there* instead — i.e. "port the regex tool" alone isn't
 enough; the icon-delivery story needs deciding first (see "Recommendation"
 below).

@@ -7,8 +7,8 @@ I plan to implement a new preview build seperate from the actual "to be publishe
 ### The two stated motivations above are already solved
 
 `.claude/skills/build-preview/SKILL.md` already serves every domain from a
-single `python3 -m http.server --directory BUILD/DOC` process, with each
-domain as a subpath (`BUILD/DOC/<domain>/...`). No per-domain servers, no
+single `python3 -m http.server --directory TEPPAN_BUILD/DOC` process, with each
+domain as a subpath (`TEPPAN_BUILD/DOC/<domain>/...`). No per-domain servers, no
 `/etc/hosts` tweak needed today.
 
 ### The actual unsolved problem: two places hardcode production scheme+host
@@ -88,7 +88,7 @@ explicitly-invoked build mode — never change default `make build` output.
 ### Fix surface is small — no tree restructure needed
 
 Keep domain subdirectories as-is in the preview root (`PREVIEW/<domain>/...`,
-mirroring today's `BUILD/DOC/<domain>/...`) — flattening them would collide
+mirroring today's `TEPPAN_BUILD/DOC/<domain>/...`) — flattening them would collide
 `index.html`/`favicon.ico` across `www.tekii.com.ar`, `tekii.us`,
 `tekii.ar`. The only things that need a preview-mode branch:
 
