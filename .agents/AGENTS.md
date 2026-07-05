@@ -24,8 +24,8 @@ Before performing any code modifications, agents **MUST** read and familiarize t
 
 ### B. Coding and Compilation Standards
 - **Keep macros clean**: Avoid introducing custom javascript or node libraries. Keep layout structures focused entirely on the GNU `m4` generator design.
-- **AMP Compliance**: Since the site uses Accelerated Mobile Pages (AMP) standards, ensure that any HTML/CSS alterations comply strictly with AMP validation rules. No arbitrary `<script>` tags are permitted unless they are authorized AMP components.
-- **CSS Modularity**: All style changes must be planned via `css/` files or updating `amp-custom.css`.
+- **No AMP**: The site no longer uses AMP (removed in the Water.css migration); HTML/CSS is plain WHATWG-standard markup, and stylesheets are delivered via external `<link>` (Water.css + `custom.css`). Flag any new `<amp-*>` element/attribute or `<style amp-custom>` block as a regression. JavaScript is still avoided — no longer for AMP compliance, but by the project's static m4-generator design (see "Keep macros clean" above).
+- **CSS Modularity**: Style changes go in `custom.css` (renamed from `amp-custom.css`).
 
 ### C. Testing and Safety
 - Always run `make test` after modifying `generator.m4` or route files.

@@ -72,11 +72,12 @@ container-specific gotchas, all detailed in
 - `file://` needs `--allow-unrestricted-file-access` — already baked into
   `postcreate.sh`, but only takes effect from the *next* session after that
   flag was added (mid-session, `file://` may still be blocked).
-- The generated pages still carry AMP boilerplate CSS that hides `<body>`
-  for up to 8 seconds regardless of whether the AMP runtime loads (it never
-  does here — no network egress to `cdn.ampproject.org`) — a screenshot
-  taken immediately after navigation comes back blank white. Call
-  `browser_wait_for({time: 9})` before screenshotting.
+- AMP has been removed (the Water.css migration), so pages no longer carry the
+  `<style amp-boilerplate>` rule that used to hide `<body>` for up to 8 seconds
+  — screenshots taken right after navigation are no longer blank white, and the
+  old `browser_wait_for({time: 9})` workaround is unnecessary. A brief
+  `browser_wait_for` for fonts/late layout is still fine if a shot looks
+  unsettled.
 - `browser_take_screenshot`'s `filename` parameter bypasses `--output-dir`
   entirely and resolves relative to the workspace root instead — omit
   `filename` (auto-generated name, lands correctly in

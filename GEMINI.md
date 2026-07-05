@@ -44,9 +44,14 @@ When editing or creating files in this project, you **MUST** follow these specif
 - **Comment Style**: Use `dnl` (delete through newline) or `m4_dnl` for standard m4-only comments. Avoid leaving raw m4 macros or unbalanced parentheses in normal HTML comments, as it can break parsing.
 - **Conditional Formatting**: Format m4 conditionals (`m4_if`, `m4_ifdef`, etc.) cleanly with consistent indentation. Keep bracket pairings `[` and `]` balanced to prevent macro expansion issues.
 
-### B. CSS & HTML (including AMP)
-- The site uses AMP (Accelerated Mobile Pages) conventions. Make sure any CSS updates are compatible with AMP constraints (e.g., inlining CSS in `<style amp-custom>` and keeping size under 75KB, avoiding disallowed JS).
-- Custom styles are maintaned in `css/` and consolidated in `amp-custom.css`.
+### B. CSS & HTML
+- The site no longer uses AMP (removed in the Water.css migration). Stylesheets
+  are delivered as ordinary external `<link rel="stylesheet">` — Water.css
+  (classless base) plus a linked `custom.css` — so the old inline
+  `<style amp-custom>` / 75KB-cap constraint no longer applies. Flag any *new*
+  AMP-only markup (`<amp-*>`, the `⚡` attribute, `<style amp-custom>`) as a
+  regression.
+- Custom styles are maintained in `custom.css` (renamed from `amp-custom.css`).
 
 ### C. Git Commit Messages
 - Ensure commit messages have proper attribution where required by project guidelines. See `knowledge/conventions/git-commit-attribution.md` for specific formatting details.
