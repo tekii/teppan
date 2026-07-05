@@ -6,7 +6,7 @@ This file contains workspace-scoped rules and style guidelines for Antigravity a
 
 ## 1. Local Workspace Overview
 
-The TEKii codebase is a static site generator utilizing GNU `m4` (with `m4sugar`) and GNU `make`. There is no node/npm build process; everything is processed via local macros and the Makefile into `BUILD/DOC`.
+The TEKii codebase is a static site generator utilizing GNU `m4` (with `m4sugar`) and GNU `make`. There is no node/npm build process; everything is processed via local macros and the Makefile into `TEPPAN_BUILD/DOC`.
 
 Before performing any code modifications, agents **MUST** read and familiarize themselves with:
 - **[CLAUDE.md](../CLAUDE.md)**: Entry point for knowledge base index references.

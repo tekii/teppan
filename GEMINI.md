@@ -6,7 +6,7 @@ Welcome to the TEKii Static Site codebase! This project is a multi-domain, multi
 
 ## 1. Project Overview & Architecture
 
-TEKii is built without an application server or complex JS build tools. Instead, it uses GNU `m4` with autoconf's `m4sugar.m4f` macro library (standalone) to render pages ahead of time into standard, highly optimized HTML, CSS, and assets under `BUILD/DOC`.
+TEKii is built without an application server or complex JS build tools. Instead, it uses GNU `m4` with autoconf's `m4sugar.m4f` macro library (standalone) to render pages ahead of time into standard, highly optimized HTML, CSS, and assets under `TEPPAN_BUILD/DOC`.
 
 ### Key Components:
 - **`generator.m4`**: The core template and macro processor that handles routing, layout inclusion, diversions, asset mapping, and localization.
@@ -21,7 +21,7 @@ TEKii is built without an application server or complex JS build tools. Instead,
 Always use these standard GNU `make` commands to build, test, and clean the codebase:
 
 ```bash
-# Generate the full static site into BUILD/DOC
+# Generate the full static site into TEPPAN_BUILD/DOC
 make build
 
 # Run the m4 generator assertions (fails if __ASSERT_EQ outputs FAIL)
@@ -32,7 +32,7 @@ make clean
 ```
 
 > [!TIP]
-> Use the `build-preview` skill to serve the contents of `BUILD/DOC` locally in a browser for manual testing and visual layout inspections.
+> Use the `build-preview` skill to serve the contents of `TEPPAN_BUILD/DOC` locally in a browser for manual testing and visual layout inspections.
 
 ---
 
