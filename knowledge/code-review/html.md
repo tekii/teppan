@@ -70,17 +70,19 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
   correct BCP 47 tag is `pt-BR` (or `pt`). This affects every page rendered
   for the `__BR__` locale and its `<link rel="alternate">`/`hreflang`
   entries.
-- **AMP-only markup left behind during AMP removal** (tracked separately as
-  a future AMP-removal effort — no tracking document exists yet):
-  `<amp-img>`, `<amp-sidebar>`, the `⚡`
-  attribute on `<html>` (`layout.html:4`), `<style amp-custom>`/
-  `<style amp-boilerplate>`, and `<script async src="https://cdn.ampproject.org/...">`.
-  Flag any *new* AMP-only element/attribute as a regression, and flag
-  standard-HTML replacements that still carry leftover AMP-only attributes
-  (`layout="..."`, `on="tap:..."`).
-- Once AMP's `<style amp-custom>`/`<style amp-boilerplate>` are gone,
-  consolidate page styles into a single `<style>` block or
-  `<link rel="stylesheet">` — don't leave multiple ad-hoc `<style>` tags.
+- **AMP has been removed** — the Water.css migration (commit `c9621d8`) plus a
+  follow-up markup cleanup stripped `<amp-img>`, `<amp-sidebar>`, the `⚡`
+  attribute on `<html>`, `<style amp-custom>`/`<style amp-boilerplate>`, and the
+  `<script async src="https://cdn.ampproject.org/...">` runtime from the live
+  sources. Stylesheet delivery is now an external `<link rel="stylesheet">`
+  (Water.css + `custom.css`), not inline `<style amp-custom>`. **Flag any *new*
+  AMP-only element/attribute as a regression**, and flag standard-HTML that
+  still carries leftover AMP-only attributes (`layout="..."`, `on="tap:..."`).
+  One deliberate exception: an `amp-sidebar` *explanatory comment* in
+  `layout.html` is kept — it documents why `#desktop-sidebar` now emits the nav
+  list directly (AMP's runtime used to clone it).
+- Page styles are delivered via external `<link rel="stylesheet">`; don't
+  reintroduce ad-hoc inline `<style>` blocks.
 
 See also: [CSS code review guidelines](css.md),
 [Page source conventions](../architecture/page-source-conventions.md).

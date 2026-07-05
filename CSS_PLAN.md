@@ -1,5 +1,14 @@
 # CSS Cleanup Plan
 
+> **Status (2026-07-05): partially implemented.** The AMP-removal + Water.css /
+> `custom.css` external-stylesheet migration this plan calls for has landed
+> (commit `c9621d8` + a follow-up markup cleanup): `amp-custom.css` is now
+> `custom.css`, delivered via `<link>` alongside Water.css, and the `<amp-*>`
+> markup/runtime is gone. The broader "discard and rebuild all CSS" goal
+> remains open. For the current review guidance see
+> [knowledge/code-review/css.md](knowledge/code-review/css.md); this file is
+> kept as the historical planning record.
+
 Branch: `css-cleanup`. Scope: discard all current CSS (AMP-related or not —
 see "Component inventory" below, it's a rebranded template, not a design
 system worth keeping) and rebuild it, while preserving the *mechanism* that
