@@ -155,6 +155,19 @@ over `/workspaces/teppan/TEPPAN_BUILD`** gives the container its own private,
 gitignored build tree (also faster than bind-mount I/O). It mounts root-owned,
 so `postcreate.sh` `chown`s it to `vscode`.
 
+**Caveat — declared ≠ mounted (verify before trusting the isolation).** The
+volume only takes effect in a container **built after** the mount was
+declared (and a volume *rename* — the `source` name embeds
+`${devcontainerId}` — likewise lands only on rebuild, as a fresh empty
+volume): an older running container silently keeps using the host's
+bind-mounted `TEPPAN_BUILD`. Verify with `findmnt -R /workspaces/teppan` — a
+separate volume mount must appear on `TEPPAN_BUILD`. Observed missing on
+2026-07-05: host and container were sharing one build tree and
+cross-poisoning each other's generated `DEP/*.mk` (each side baking its own
+absolute source root). Failure signature and recovery: see
+[the baked-root trap](realclean-recursive.md). Rebuild the container to
+activate the mount.
+
 ### Node provenance
 Node is installed from the canonical `nodejs.org` tarball (pinned +
 `SHASUMS256.txt`-verified), matching the provenance of the project's existing

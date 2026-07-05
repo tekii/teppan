@@ -71,6 +71,11 @@ to Flag").
   Visible) violation regardless of AMP. Cross-reference the
   [HTML role's note](html.md) on `role="button"`/`tabindex` SVG icons in
   `layout.html`: any focusable element needs *some* visible focus style.
+  Related, post-AMP-removal: the drawer toggles' checkboxes
+  (`.drawer-toggle`, `custom.css:61` — `position: absolute; opacity: 0`) are
+  correctly focusable-but-invisible, so keyboard focus on them shows nothing
+  at all; give the *visible* part a focus style, e.g.
+  `body:has(#sidebar-toggle:focus-visible) label[for="sidebar-toggle"] svg { outline: 2px solid; }`.
 - **AMP has been removed** (the Water.css migration, commit `c9621d8`):
   - The former `amp-sidebar`-coupled selectors (`amp-sidebar ul`,
     `amp-sidebar svg`) and the orphaned

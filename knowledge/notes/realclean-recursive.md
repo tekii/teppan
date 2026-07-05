@@ -38,6 +38,49 @@ arbitrary directory tree. Using the project-namespaced literal
 name is unique enough that `rm -rf TEPPAN_BUILD` is a no-op if Make is
 accidentally invoked from a directory where `TEPPAN_BUILD/` doesn't exist.
 
+## The baked-root trap — stale `.mk` files can poison `realclean` itself
+
+The generated per-stem `TEPPAN_BUILD/DEP/*.mk` files bake **absolute** source
+paths (`$(PWD)` plus m4 `realpath`, captured at generation time). Whenever
+`make` runs against a `TEPPAN_BUILD` whose `.mk` files were generated under a
+**different absolute source root**, those baked prerequisites dangle. Two
+ways to get there — one historical, one live:
+
+- **The checkout moved or was renamed** (e.g. the 2026-07-04 `www` → `teppan`
+  repo rename): the sources' mtimes never changed, so the stale `.mk` files
+  look up to date and are `-include`d as-is — the same mtime-blindness the
+  "BUILD MODE STAMP" block in `Makefile` fixes for `build`↔`preview`, but for
+  the tree's *location* rather than its mode.
+- **Two environments with different roots share one `TEPPAN_BUILD`**: the
+  host (`/home/<user>/teppan`) and the container (`/workspaces/teppan`) share
+  the bind-mounted tree whenever the container-private `TEPPAN_BUILD` volume
+  declared in `devcontainer.json` is **not actually mounted** in the running
+  container (see the "declared ≠ mounted" caveat in
+  [dev container setup](devcontainer-setup.md)). Then every `make` on one
+  side re-bakes that side's root into `DEP/*.mk` and traps the other —
+  cross-poisoning, observed live in *both* directions on 2026-07-05.
+
+The failure is worse than a broken `build`: GNU Make reads and remakes all
+`-include`d makefiles **before running any goal**, so one dangling
+prerequisite (`No rule to make target '/other/root/<page>.in.html'`) aborts
+**every** invocation — `build`, `test`, `clean`, and `realclean` alike. The
+recovery target is poisoned by exactly the state it exists to clear.
+
+**Recovery:** delete the build tree by hand — `rm -rf TEPPAN_BUILD` from the
+checkout root (the same well-known literal `realclean` itself uses; never a
+variable) — then rebuild. In the shared-tree case this is only a **stopgap**:
+the next `make` from the other side re-poisons it (even `make test` — the
+makefile-remake phase regenerates `DEP/*.mk` with the invoking side's root).
+The real fix is restoring the volume isolation (rebuild the container so the
+declared volume actually mounts), or strict temporal separation until then.
+
+**Possible hardening (unimplemented):** stamp the generation-time source root
+the way build/preview mode is stamped, and force `DEP` regeneration when
+`$(PWD)` no longer matches the stamp — same blindness, same cure. Note it
+would also soften the shared-tree case from a hard abort into silently
+alternating full rebuilds; better, but the volume isolation remains the
+intended design.
+
 See also: [Build & test commands](../build/commands.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md),
 [Domains](../architecture/domains.md).
