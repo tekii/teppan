@@ -39,7 +39,8 @@ a directory of markdown files with YAML frontmatter.
   [M4 conditional formatting](conventions/m4-conditional-formatting.md),
   [M4 comment style](conventions/m4-comment-style.md),
   [Make vs m4 variable naming](conventions/make-m4-variable-naming.md),
-  [no user-specific or hardcoded absolute paths](conventions/no-user-specific-paths.md).
+  [no user-specific or hardcoded absolute paths](conventions/no-user-specific-paths.md),
+  [trace notes on removal](conventions/trace-notes-on-removal.md).
 - Design notes & known issues — [`file://`-relative preview](notes/file-relative-preview.md),
   [`chrome-devtools` MCP setup (project-local Node/Chrome profile)](notes/chrome-devtools-mcp-setup.md),
   [dev container — Claude Code + Playwright MCP (three-scenario setup)](notes/devcontainer-setup.md),
