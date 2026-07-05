@@ -311,6 +311,18 @@ opposite of what worktrees/B2 give. The clash condition is **agent-agnostic**:
 it's any two git-active sessions on one shared tree+HEAD (agent-agent,
 user-agent, user-user alike).
 
+**Division of labor keeps the host out of the shared tree (by convention).**
+On this project the **host / outer session is reserved for infrastructure** —
+the container itself, VS Code, and tokens/credentials — while **all
+deliverable / repo-content work (the site, the generator, and even docs) is
+done inside the container** by the user, Claude, and any spawned agent. Because
+the host is not normally git-active on the shared checkout, the two-sessions
+clash above is *unlikely by convention*; the guards and worktree discipline
+remain the backstop for when it isn't. (The 2026-07-03 incident below was
+precisely a host session reaching into the shared checkout to commit a
+`knowledge/` doc — the case this convention now steers away from: make even
+doc/repo changes *in-container*, via a worktree, not from the host.)
+
 **Real incident (2026-07-03, resolved benign).** A host-side session ran
 `git checkout master` (to commit an unrelated `knowledge/` doc) while a
 container session was live on `css-water-migration`. Because HEAD is shared, the
