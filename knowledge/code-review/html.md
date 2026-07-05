@@ -42,13 +42,18 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
   than reinventing layout structure.
 - Heading levels (`<h1>`-`<h6>`) within `MAIN`/fragment content should be
   sequential and not skip levels.
-- Interactive controls built from non-interactive elements (e.g.
-  `<svg role="button" tabindex="0">` for sidebar/menu toggles in
-  `layout.html`) need a `keydown` handler for `Enter`/`Space` to be
+- Interactive controls built from non-interactive elements need to be
   keyboard-operable per WAI-ARIA Authoring Practices (which the HTML spec
-  defers to for ARIA semantics) — or should be a real `<button>` wrapping
-  the icon, which gets this for free. Flag new `role="button"` usages
-  without one.
+  defers to for ARIA semantics): an element given `role="button"` needs
+  `tabindex` **and** a `keydown` handler for `Enter`/`Space` — or should be
+  a real `<button>`, or (as `layout.html`'s drawer toggles now do,
+  post-AMP-removal) a `<label>` paired with a visually-hidden-but-focusable
+  checkbox, both of which get keyboard operation for free. Flag new
+  `role="button"` usages without a keydown handler. The one surviving
+  `role="button"` in `layout.html` is the `.lang-dd` hover-dropdown `<div>`
+  — it has no keydown handler **and** a *positive* `tabindex="1"`, which
+  yanks it to the front of the page's tab order (an antipattern: use
+  `tabindex="0"` and let DOM order decide).
 - `alt=""` is correct for purely decorative images, but flag it on images
   that *are* the content (flag icons identifying a language, customer/sponsor
   logos in `fragment-customers.html`) — those need a descriptive `alt`.
