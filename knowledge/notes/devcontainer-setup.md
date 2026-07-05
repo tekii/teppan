@@ -222,6 +222,39 @@ history). Do **not** mount host `~/.config/gh` or `~/.ssh`. For HTTPS `git push`
 run `gh auth setup-git` once. Web/Codespaces uses the same contract via a
 Codespaces secret named `GH_TOKEN`; the host keeps its own `gh auth login`.
 
+### `GH_TOKEN` is the single push chokepoint — a user-held kill-switch
+Push is **credential-gated, not firewall-gated**: `init-firewall.sh` allowlists
+GitHub's `(.web + .api + .git)` CIDR ranges, so `git push` to `origin`
+(`https://github.com/…`) reaches the network fine (`github.com:443` is reachable
+while a non-allowlisted host like `example.com:443` is not). What actually gates
+push is the token — and, verified 2026-07-05, it is the *only* gate:
+
+- For `github.com`, git's effective credential helper is **only** `gh`
+  (`!/usr/bin/gh auth git-credential`). The global VS Code remote-containers
+  proxy helper is **cleared** for github.com by an empty-string helper value
+  (git resets the helper list on `""`), so it offers no independent path.
+- `gh` has **no stored fallback** — there is no `~/.config/gh/hosts.yml`, so it
+  authenticates *solely* from the `GH_TOKEN` env var.
+- No other store: no `~/.git-credentials`, no `store`/`cache` helper, no token
+  embedded in the `origin` URL.
+
+Since `GH_TOKEN` is injected purely via `${localEnv:GH_TOKEN}`, **launching VS
+Code without `GH_TOKEN` in the host env leaves the container with no push
+credential at all** — `git push` (and every `gh`/token-dependent op) then fails
+for *everyone* in the container, including any spawned agent. This is a feature,
+not a fault: the token is present for the human driver's use, and the human
+holds an external kill-switch (their host env) that no in-container actor can
+grant itself. It backstops the behavioral rule (agents don't push without
+authorization) with a technical one.
+
+**Caveat — the chokepoint is config-dependent (keep it that way).** The
+single-path property holds *only* while the three facts above do. Each of these
+adds a `GH_TOKEN`-independent path and silently defeats the kill-switch: running
+`gh auth login` in the container (persists a token to `hosts.yml`); adding a
+`store`/`cache` credential helper; or embedding a token in a remote URL. Treat
+"`GH_TOKEN` remains the sole github.com credential" as an invariant to re-check
+whenever container credential config changes.
+
 ## Memory is not shared across scenarios
 Host-Claude and container-Claude do **not** share auto-memory: the container's
 `~/.claude` is a separate named volume, and the project-path key differs
