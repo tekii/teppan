@@ -258,9 +258,12 @@ push is the token — and, verified 2026-07-05, it is the *only* gate:
 - No other store: no `~/.git-credentials`, no `store`/`cache` helper, no token
   embedded in the `origin` URL.
 
-Since `GH_TOKEN` is injected purely via `${localEnv:GH_TOKEN}`, **launching VS
-Code without `GH_TOKEN` in the host env leaves the container with no push
-credential at all** — `git push` (and every `gh`/token-dependent op) then fails
+Since `GH_TOKEN` is injected purely via `${localEnv:GH_TOKEN}` — read **once,
+at container creation/rebuild** (`containerEnv` is frozen into the instance;
+a later plain *or* wrapper VS Code launch changes nothing, because
+`docker start` re-reads no environment) — **a container created without
+`GH_TOKEN` in the host env has no push credential at all** — `git push` (and
+every `gh`/token-dependent op) then fails
 for *everyone* in the container, including any spawned agent. This is a feature,
 not a fault: the token is present for the human driver's use, and the human
 holds an external kill-switch (their host env) that no in-container actor can
@@ -274,6 +277,21 @@ adds a `GH_TOKEN`-independent path and silently defeats the kill-switch: running
 `store`/`cache` credential helper; or embedding a token in a remote URL. Treat
 "`GH_TOKEN` remains the sole github.com credential" as an invariant to re-check
 whenever container credential config changes.
+
+**Side effect — the recurring "configuration changed → Rebuild?" prompt.**
+The Dev Containers extension compares the devcontainer configuration **as
+resolved at launch** (`${localEnv:...}` substituted) against the resolved
+configuration recorded at container creation. `"GH_TOKEN":
+"${localEnv:GH_TOKEN}"` therefore makes the *same file* resolve differently
+on wrapper vs. plain launches — a container created via the wrapper prompts
+for a rebuild on **every** plain launch (and vice versa), with git showing
+no change (observed 2026-07-05). The prompt is safe to dismiss; env is
+frozen at creation (see above), so it is meaningful only when you *want* to
+flip the container's push capability — which requires a rebuild anyway.
+After one rebuild from a plain launch, the prompt disappears for plain
+launches and fires **only** on wrapper launches, turning it from noise into
+a signal ("this launch's config would grant push"). Operator decision rule:
+see the [B3 fleet runbook](b3-fleet-runbook.md).
 
 ## Memory is not shared across scenarios
 Host-Claude and container-Claude do **not** share auto-memory: the container's

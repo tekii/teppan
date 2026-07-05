@@ -410,6 +410,13 @@ multi-repo collaboration tax is why, for *cooperating* agents, the default stays
 **B3 + a guard** (next section) and B2 is reserved for the untrusted/compromised
 case.
 
+**Cloud sessions are B2 actors.** A Claude Code web session or a GitHub
+Codespace is topologically a B2 agent — its own clone, its own object
+store, origin-mediated integration — so this section's cost model applies
+to them wholesale (stale base, remote-mediated merge, credentials in the
+environment). The concrete workflow options for integrating their work are
+in [cloud environments](cloud-environments.md).
+
 ## Guarding the shared main checkout against *accidental* HEAD moves
 
 If you keep the bind-mount (B3-style) instead of isolating the tree (B2), you

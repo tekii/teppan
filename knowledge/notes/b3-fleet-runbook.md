@@ -49,6 +49,13 @@ timestamp: 2026-07-04
   via a worktree, never committed from the host, which keeps the host out of
   the shared checkout (see
   [Parallel development — the shared-HEAD trap](parallel-agent-worktrees.md)).
+- **VS Code's "configuration changed — Rebuild?" prompt at launch is usually
+  not a config edit.** It's the `${localEnv:GH_TOKEN}` substitution resolving
+  differently from the container's creation-time value (wrapper vs. plain
+  launch). Dismiss freely when you launched plain on a tokenless container;
+  rebuild *deliberately* only to flip push capability — the container's env
+  is frozen at creation, so flipping requires a rebuild regardless.
+  Mechanism: see [dev container setup](devcontainer-setup.md).
 - **Worktrees are where work happens** — one per task, at
   `/workspaces/wt-<task>`, *outside* `/workspaces/teppan` (container-local,
   ephemeral working tree; commits still land in the host-persisted `.git`).

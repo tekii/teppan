@@ -44,6 +44,7 @@ a directory of markdown files with YAML frontmatter.
 - Design notes & known issues — [`file://`-relative preview](notes/file-relative-preview.md),
   [`chrome-devtools` MCP setup (project-local Node/Chrome profile)](notes/chrome-devtools-mcp-setup.md),
   [dev container — Claude Code + Playwright MCP (three-scenario setup)](notes/devcontainer-setup.md),
+  [cloud environments — Claude Code web & Codespaces (readiness, auth, integration workflow)](notes/cloud-environments.md),
   [asset-copy mechanisms (non-deferred vs deferred)](notes/asset-copy-mechanisms.md),
   [`__ASSET` rule duplication](notes/asset-rule-duplication.md),
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
