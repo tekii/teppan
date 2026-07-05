@@ -143,6 +143,35 @@ Escape hatch for a sanctioned trunk move: prefix `TEPPAN_MAIN_HEAD_OK=1`
 
 ## D. Recovery / housekeeping
 
+- **`integrate <task>` failed — triage by its last message:**
+  - *`worktree tests FAILED -- not merging`* — `master` untouched; nothing to
+    recover. Fix in the worktree, re-run `integrate`.
+  - *`merge failed (conflict?) -- resolve manually; nothing torn down`* —
+    `master` is **mid-merge** (`git -C /workspaces/teppan status` shows
+    unmerged paths / `MERGE_HEAD`). Preferred recovery keeps conflict
+    resolution **off** the protected checkout: abort the merge
+    (`TEPPAN_MAIN_HEAD_OK=1 git -C /workspaces/teppan merge --abort`), then in
+    the **worktree** merge `master` into `agent/<task>` and resolve there
+    (your own HEAD — no guards, no override needed), then re-run `integrate`,
+    which now merges clean. Resolving directly on `master` also works, but the
+    concluding commit needs the `TEPPAN_MAIN_HEAD_OK=1` override and — more
+    importantly — it **skips the script's post-merge gate**, so run
+    `make test` on `master` yourself before moving on.
+  - *`post-merge tests FAILED -- rolling back the merge` / `integration of …
+    reverted`* — the script already reset `master` to `ORIG_HEAD`; there is
+    **nothing to undo**. This is the semantic-drift case (a textually clean
+    merge that breaks — see the design note): reproduce it in the worktree by
+    merging the current `master` into `agent/<task>` there, fix, re-run
+    `integrate`.
+  - *`main checkout is on '<x>', expected 'master'`* — someone moved the
+    shared HEAD (the exact thing the guards exist to prevent); put it back
+    (`TEPPAN_MAIN_HEAD_OK=1 git -C /workspaces/teppan switch master`) and
+    investigate how it moved before integrating anything.
+  - *Killed mid-way / unclear state* — `git -C /workspaces/teppan status`; if
+    mid-merge, abort as above. In every case the worktree and `agent/<task>`
+    branch are still intact (`integrate` never tears down), and
+    `teardown <task>` is **idempotent** (each step tolerates absence), so it
+    is always safe to run once the branch's work is merged or abandoned.
 - **Leftover branch after a failed provision** (`fatal: a branch named
   'agent/<task>' already exists`): `git -C /workspaces/teppan branch -D agent/<task> && git -C /workspaces/teppan worktree prune`.
 - **Rebuild the container anytime** — committed work is safe (host `.git` +

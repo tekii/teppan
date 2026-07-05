@@ -48,3 +48,4 @@ browsable, OKF-formatted source.)*
 @knowledge/conventions/m4-comment-style.md
 @knowledge/conventions/make-m4-variable-naming.md
 @knowledge/conventions/no-user-specific-paths.md
+@knowledge/conventions/trace-notes-on-removal.md

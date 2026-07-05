@@ -202,6 +202,21 @@ Everything that makes the container a trust boundary is **reused unchanged**
    `merge --no-ff` (never `checkout`), so it stays clear of the HEAD-move guards
    below (using the inline `TEPPAN_MAIN_HEAD_OK=1` override for the merge itself).
 
+   `integrate` is not fire-and-forget — it has three failure modes, each
+   leaving a different state behind: a *pre-merge* test failure in the
+   worktree aborts before `master` is touched at all; a *merge conflict*
+   stops mid-merge with nothing torn down (resolve or abort manually); and a
+   *post-merge* test failure **self-heals** — the script rolls the merge back
+   (`TEPPAN_MAIN_HEAD_OK=1 git reset --hard ORIG_HEAD`) and aborts, leaving
+   `master` clean at its pre-merge commit with the worktree and branch intact
+   for diagnosis. That last case is the semantic-drift scenario this note's
+   "clean merge that no longer builds" warning describes — the gate catching
+   it is the design working as intended. Remember the gate is `make test`
+   only (macro-level, no HTML/CSS render): changes touching build inputs need
+   a manual `make build` in the worktree first. Operator steps for each
+   failure mode are in the
+   [runbook's recovery section](b3-fleet-runbook.md).
+
 Gotchas: N Playwright MCP = N headless Chromium (all `--isolated`, so no
 `SingletonLock` clash — see [chrome-devtools MCP setup](chrome-devtools-mcp-setup.md));
 the firewall is fleet-wide (can't loosen it per agent — that's the B2 signal);
@@ -252,8 +267,9 @@ orchestrator seat. Three models:
   → collect → merge. No GUI, no human in the loop.
 
 The integrator is always the orchestrator (human/parent-session/script), on
-`master`, gated on `make test` — and it is where the "one agent owns the
-framework seam" partition rule is enforced. **Recommendation:** Model B inside
+`master`, gated on `make test` (with automatic rollback if the post-merge run
+fails — see the failure modes in the B3-delta list above) — and it is where the
+"one agent owns the framework seam" partition rule is enforced. **Recommendation:** Model B inside
 Claude Code (least to build); Model C (`devcontainer exec` + `claude -p` +
 `tmux`) only for an unattended, GUI-less fleet; Model A as the two-agent
 manual fallback.
