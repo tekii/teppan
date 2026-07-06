@@ -90,5 +90,5 @@ should name what the value *is*:
 See also: [M4 code review guidelines](../code-review/m4.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md),
 [Diversion/phase model](../architecture/diversion-phase-model.md),
-[no user-specific or hardcoded absolute paths](no-user-specific-paths.md)
+[no user-specific or hardcoded absolute paths](../../knowledge-infra/conventions/no-user-specific-paths.md)
 (where `WORKSPACE_ROOT` is the de-hardcoded workspace path).

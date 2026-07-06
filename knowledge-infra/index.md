@@ -19,17 +19,17 @@ This tree is authored in the [Open Knowledge Format](okf.md).
 ## Sections
 
 - Conventions — [commit message attribution](conventions/git-commit-attribution.md),
-  [trace notes on removal](conventions/trace-notes-on-removal.md).
+  [trace notes on removal](conventions/trace-notes-on-removal.md),
+  [no user-specific or hardcoded absolute paths](conventions/no-user-specific-paths.md),
+  [outer↔inner session handoff — the `.handoff/` constitution](conventions/session-handoff.md).
 - Environment — [dev container (Claude Code + Playwright MCP)](notes/devcontainer-setup.md),
   [`chrome-devtools` MCP on the host](notes/chrome-devtools-mcp-setup.md),
   [cloud environments (Claude Code web & Codespaces)](notes/cloud-environments.md).
 - Multi-agent workflow — [parallel development: topology, worktrees & guards](notes/parallel-agent-worktrees.md),
   [B3 fleet runbook (FOR OPERATORS)](notes/b3-fleet-runbook.md).
+- Registers — [deferred / open work (infra & process)](notes/deferred-work.md).
 
-## Pending Stage 2 (still living in `knowledge/`)
-
-The both-sided files await their seam-splits:
-[session handoff](../knowledge/conventions/session-handoff.md) (constitution →
-here; project integration profile → stays),
-[no user-specific paths](../knowledge/conventions/no-user-specific-paths.md),
-[deferred-work register](../knowledge/notes/deferred-work.md).
+The Teppan-specific half of the handoff convention — the concrete gate,
+hygiene preconditions, and sanctioned flow the constitution delegates to —
+lives project-side in
+[knowledge/conventions/handoff-integration-profile.md](../knowledge/conventions/handoff-integration-profile.md).

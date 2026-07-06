@@ -41,8 +41,8 @@ workflow, handoff) lives in [knowledge-infra/](../knowledge-infra/index.md).
 - Conventions — [M4 conditional formatting](conventions/m4-conditional-formatting.md),
   [M4 comment style](conventions/m4-comment-style.md),
   [Make vs m4 variable naming](conventions/make-m4-variable-naming.md),
-  [no user-specific or hardcoded absolute paths](conventions/no-user-specific-paths.md),
-  [outer↔inner session handoff (the `.handoff/` channel)](conventions/session-handoff.md).
+  [no user-specific or hardcoded absolute paths](../knowledge-infra/conventions/no-user-specific-paths.md),
+  [handoff integration profile (Teppan's half of the session-handoff convention)](conventions/handoff-integration-profile.md).
 - Design notes & known issues — [`file://`-relative preview](notes/file-relative-preview.md),
   [asset-copy mechanisms (non-deferred vs deferred)](notes/asset-copy-mechanisms.md),
   [`__ASSET` rule duplication](notes/asset-rule-duplication.md),
@@ -52,5 +52,5 @@ workflow, handoff) lives in [knowledge-infra/](../knowledge-infra/index.md).
   [`make realclean` — recursive `TEPPAN_BUILD` deletion](notes/realclean-recursive.md),
   [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
-  [deferred / open work register](notes/deferred-work.md),
+  [deferred / open work register (project; infra/process items in `knowledge-infra/`)](notes/deferred-work.md),
   [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md).
