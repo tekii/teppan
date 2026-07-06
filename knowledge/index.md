@@ -54,6 +54,7 @@ a directory of markdown files with YAML frontmatter.
   [`make realclean` — recursive `TEPPAN_BUILD` deletion](notes/realclean-recursive.md),
   [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
+  [deferred / open work register](notes/deferred-work.md),
   [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md),
   [parallel development — branch workflow, worktrees & multi-agent setup](notes/parallel-agent-worktrees.md).
 - Runbooks (operator-facing) — [B3 fleet runbook — working in the container &
