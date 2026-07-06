@@ -125,6 +125,8 @@ the route makes it auditable:
   (pending, or retained by explicit user instruction — ask the user if it isn't
   obvious which). This scheduled check replaces the incidental noticing the
   visible folder used to provide.
+  The `/sitrep` skill packages this check inside the wider state probe —
+  running it at session start satisfies this ritual.
 
 ## Artifact lifecycle, naming & provenance
 
