@@ -11,8 +11,14 @@ turn not initiated by a user-typed message. When the current turn was triggered
 by anything other than a user-typed prompt (e.g. a background agent finished),
 skip this check entirely — emit no `IQC:` line, run no grammar/spelling or
 ambiguity check on that text, and proceed. (The `UserPromptSubmit` hook that
-forces the `IQC:` line fires only on user-typed prompts, so on those turns
-there is no injected `IQC:` requirement to satisfy anyway.)
+injects the `IQC:` requirement is gated by `scripts/iqc-gate.sh`, which
+suppresses the mandate on slash-command and synthetic `<`-prefixed turns, so
+ordinarily only genuine user-typed prose carries an injected `IQC:` requirement.
+Hooks load at session start, so a session started before this change — or a
+prose prompt the heuristic cannot classify — may still receive the mandate on a
+turn this check does not apply to; when that happens, emit a bare `IQC: pass`
+line to satisfy the mandate and skip the grammar/ambiguity check itself, per the
+scope rules above.)
 
 Before processing the user's prompt, detect the language of that prompt.
 
