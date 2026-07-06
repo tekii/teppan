@@ -74,12 +74,36 @@ makefile-remake phase regenerates `DEP/*.mk` with the invoking side's root).
 The real fix is restoring the volume isolation (rebuild the container so the
 declared volume actually mounts), or strict temporal separation until then.
 
-**Possible hardening (unimplemented):** stamp the generation-time source root
-the way build/preview mode is stamped, and force `DEP` regeneration when
-`$(PWD)` no longer matches the stamp — same blindness, same cure. Note it
-would also soften the shared-tree case from a hard abort into silently
-alternating full rebuilds; better, but the volume isolation remains the
-intended design.
+**Possible hardening (unimplemented; deferred 2026-07-05, user decision —
+inner-lane task when picked up):** stamp the generation-time source root the
+way build/preview mode is stamped, and force `DEP` regeneration when `$(PWD)`
+no longer matches the stamp — same blindness, same cure. Design analysis
+(outer session, 2026-07-05):
+
+- **Implement as a parse-time guard at the top of `Makefile`, *before* the
+  `-include`** — e.g. `ifneq ($(strip $(file <TEPPAN_BUILD/.source-root)),$(PWD))`
+  → `$(warning source root changed -- dropping stale generated makefiles)` +
+  `$(shell rm -rf TEPPAN_BUILD/DEP)` + rewrite the stamp. Deleting the
+  poisoned files before Make reads them sidesteps the remake phase entirely.
+- **Not as a `.source-root` prerequisite on `DEP/%.mk` rules** (the
+  mode-stamp style): GNU Make loads all `-include`d makefiles *before* its
+  makefile-remake phase, so stale in-memory rules can still abort before a
+  stamp-triggered regeneration wins — the observed failure fired in exactly
+  that phase.
+- **`rm -rf` on the literal path only** (`TEPPAN_BUILD/DEP`), never a
+  variable — per this repo's own
+  [Makefile review guideline](../code-review/makefile.md).
+- **Keep the `$(warning ...)`:** in a shared-tree scenario the guard would
+  otherwise mask a broken volume isolation as silent alternating full
+  rebuilds; the loud line preserves the symptom.
+- **Testing is fully in-container:** worktrees provide distinct source roots
+  (share one `TEPPAN_BUILD` between two, or `mv` a worktree) — no host
+  involvement. Gate with a manual `make build`, not just `make test` (it's a
+  build-input change).
+
+Note the guard would also soften the shared-tree case from a hard abort into
+silently alternating full rebuilds; better, but the volume isolation remains
+the intended design.
 
 See also: [Build & test commands](../build/commands.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md),
