@@ -80,10 +80,9 @@ the route makes it auditable:
   executes** — instruction injection, not mere messaging. Only
   `scripts/install-git-hooks.sh` (from tracked sources) may write hooks; any
   `.git/config` change requires a user trigger.
-- **C-5 Shared working tree outside `.handoff/`** — scratch at repo root, and
-  **`wip/`**, which is hereby **demoted to intra-session scratch only**
-  (it historically carried interchange; grandfathered). Cross-session content in
-  `wip/` is a violation.
+- **C-5 Shared working tree outside `.handoff/`** — any scratch in the shared
+  bind-mounted tree outside `.handoff/` (at the repo root or in any other
+  folder) is a violation if it carries cross-session content.
 - **C-6 Config the other session auto-loads** — `CLAUDE.md` `@include`s,
   `.claude/settings.json` hooks, skills. Editing these is repo-content
   (inner-lane), but their content is injected into both sessions' contexts, so a
