@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"MANDATORY: Your response MUST begin with the exact line 'IQC:' followed immediately by the result of the Input Quality Check. Any tool call or response text before that 'IQC:' line is a violation. Run the Input Quality Check now: detect language; if English, check grammar/spelling and flag ambiguous references. If no errors: write 'IQC: pass' and proceed. If errors found: write 'IQC: errors found' then list them and ask the user to confirm before doing anything else.\"}}'"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/scripts/iqc-gate.sh"
           }
         ]
       }
