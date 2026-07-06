@@ -8,11 +8,13 @@ timestamp: 2026-07-06
 
 # Deferred / open work register
 
-Per the [session-memory-hygiene rules](../conventions/session-handoff.md),
+Per the [session-memory-hygiene rules](../../knowledge-infra/conventions/session-handoff.md),
 pending work lives **here** — visible to every session and the user, auditable
 and re-prioritizable — not in a session's private auto-memory. Add items as they
-are deferred; remove them when done. (Feature-specific deferrals may instead live
-in their own note — e.g. [`make publish`](publish-target.md),
+are deferred; remove them when done. This register holds the
+**project-deliverable side**; process/infra items live in
+[the infra register](../../knowledge-infra/notes/deferred-work.md). (Feature-specific
+deferrals may instead live in their own note — e.g. [`make publish`](publish-target.md),
 [`sitemap.xml`](sitemap-target.md); this register is for cross-cutting or
 otherwise unhomed items.)
 
@@ -35,16 +37,6 @@ The fragment was de-AMP'd (`<amp-img>`→`<img>`, `__ASSET`→`__DASSET`, alt te
 but is `__INCL`'d by no page, so the change is **latent / not build-exercised**.
 When the customers section is wanted, include it in a page and confirm the
 `img/logo-*.png` assets exist.
-
-## Revise the integration gate for change type (decision needed)
-
-`scripts/b3-fleet.sh integrate` gates every merge on `make test` only, which
-exercises `generator.m4` macros — **unnecessary for doc-only changes** and
-**insufficient for build-input changes** (it doesn't cover `make build`, which
-catches HTML/CSS breakage). Consider a **change-type-aware gate**: docs →
-light/none; code or build inputs → `make test` **and** `make build`. Related: the
-`$(PWD)`-stamp hardening's design analysis lives in
-[realclean-recursive.md](realclean-recursive.md).
 
 ## `generator.m4` review leftovers (parked, low priority)
 
@@ -74,17 +66,6 @@ the file's least obvious dependency edge; it needs an explanatory comment
 non-obvious dependency edges"). **Parked by the user (2026-06-14) until the
 navigation mechanism itself is worked on — don't pick it up standalone.**
 
-## Wayland display-forwarding decision (host/infra lane — decision needed)
-
-VS Code auto-bind-mounts the host Wayland socket into the dev container
-(`/run/user/1000/wayland-0` → `/tmp/vscode-wayland-*.sock`; not declared in
-`devcontainer.json`; re-verified present 2026-07-05). Unused in this
-workflow (Playwright is headless) and low-risk (Wayland isolates clients),
-but a hole in the hardened-container posture. There is **no clean
-`devcontainer.json` opt-out** — it's VS Code client behavior. Decide:
-find/disable the client setting, or accept and document. This is
-**outer/user-lane** (infrastructure); it sits in this register for
-visibility, per the memory-hygiene rules.
-
-See also: [handoff convention](../conventions/session-handoff.md),
+See also: [handoff convention](../../knowledge-infra/conventions/session-handoff.md),
+[infra/process register](../../knowledge-infra/notes/deferred-work.md),
 [Knowledge base index](../index.md).

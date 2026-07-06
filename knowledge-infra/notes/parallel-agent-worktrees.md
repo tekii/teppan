@@ -506,7 +506,7 @@ via `containerEnv`), and the two git hooks discriminate purely via
 `git rev-parse --absolute-git-dir == --git-common-dir`. So the concrete
 `/workspaces/teppan` path throughout this note is just *the current example* — rename
 the repo/folder to anything and the guards, launcher, and build work unchanged.
-See [no user-specific or hardcoded absolute paths](../../knowledge/conventions/no-user-specific-paths.md).
+See [no user-specific or hardcoded absolute paths](../conventions/no-user-specific-paths.md).
 
 **Installation.** `PreToolUse` lives in the repo's shared `.claude/settings.json`.
 The two git hooks are **copied** (`scripts/install-git-hooks.sh`, run from

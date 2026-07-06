@@ -16,12 +16,12 @@ happens to be checked out.
 No tracked file may contain a **user-specific absolute path** — a real login
 name or a `/home/<login>/…` (or `/Users/<login>/…`, `C:\Users\…`) path.
 
-- **Docs/links:** use **repo-relative** paths — `[CLAUDE.md](../CLAUDE.md)`,
+- **Docs/links:** use **repo-relative** paths — `[CLAUDE.md](../../CLAUDE.md)`,
   `[knowledge/](knowledge)` — never `file:///home/<login>/teppan/CLAUDE.md`.
 - **Prose that must illustrate a home path:** use the `<user>` placeholder
   (`/home/<user>/…`), never a real login. The docs already do this
   consistently (e.g. the isolation matrix in
-  [parallel development](../../knowledge-infra/notes/parallel-agent-worktrees.md)).
+  [parallel development](../notes/parallel-agent-worktrees.md)).
 - **Applies even to `dnl`/comment/disabled scratch code.** A committed username
   changes *no behavior* there, but it still ships in every clone and is
   `git grep`-visible — a privacy leak and a needless personalization of the
@@ -40,7 +40,7 @@ name or a `/home/<login>/…` (or `/Users/<login>/…`, `C:\Users\…`) path.
 
 The location and folder name of the checkout must not be baked into tracked
 files. Two facets, mirroring the
-[Make vs m4 variable-naming split](make-m4-variable-naming.md):
+[Make vs m4 variable-naming split](../../knowledge/conventions/make-m4-variable-naming.md):
 
 - **Build (Make):** already correct — `SRC`/`BUILD_ROOT`/`VENDOR` are
   `$(PWD)/…` plus `realpath`, so `make build`/`test` run from **any** path
@@ -65,6 +65,6 @@ files. Two facets, mirroring the
 - **Privacy:** no contributor's login ships to everyone who clones.
 - **Reproducibility:** no hidden dependency on one machine's directory layout.
 
-See also: [Make vs m4 variable naming](make-m4-variable-naming.md),
-[parallel development — B3 guards read `WORKSPACE_ROOT`](../../knowledge-infra/notes/parallel-agent-worktrees.md),
-[glossary](../glossary.md).
+See also: [Make vs m4 variable naming](../../knowledge/conventions/make-m4-variable-naming.md),
+[parallel development — B3 guards read `WORKSPACE_ROOT`](../notes/parallel-agent-worktrees.md),
+[glossary](../../knowledge/glossary.md).

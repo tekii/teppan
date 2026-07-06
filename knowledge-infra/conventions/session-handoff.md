@@ -10,7 +10,7 @@ timestamp: 2026-07-06
 
 The **host/outer** Claude session and the **container/inner** session split
 repo work by the [host = infrastructure, container = deliverable
-convention](../../knowledge-infra/notes/parallel-agent-worktrees.md): the outer can *research and
+convention](../notes/parallel-agent-worktrees.md): the outer can *research and
 draft* but cannot commit repo-content (its tooling and guards don't apply — see
 "Why not just let the outer commit?" below); the inner *verifies, applies, and
 commits*. The **`.handoff/` folder** is the channel between them.
@@ -101,10 +101,10 @@ the route makes it auditable:
 - **C-10 Future remote surfaces** — PR descriptions, issue comments, Actions
   logs (once cloud sessions land). **Deferred:** the deletion test extends to
   them; legislate specifics with the pending workflow decision — see
-  [cloud environments](../../knowledge-infra/notes/cloud-environments.md).
+  [cloud environments](../notes/cloud-environments.md).
 - **C-11 Unintentional channels exist too** — cautionary: the formerly shared
   `TEPPAN_BUILD` broadcast who-built-last via baked `DEP/*.mk` paths until the
-  volume isolation closed it (see [baked-root trap](../notes/realclean-recursive.md)).
+  volume isolation closed it (see [baked-root trap](../../knowledge/notes/realclean-recursive.md)).
   Channels can arise by accident; audit for them, don't only avoid them.
 
 ## The channel: `.handoff/`
@@ -163,19 +163,18 @@ the route makes it auditable:
    `grep`; read the region.
 3. **Verify checkable claims** against the tree/code; keep "unverified /
    confirm-later" labels intact — never silently upgrade them.
-4. **Hygiene precondition:** `findmnt -R /workspaces/teppan` must show the
-   `TEPPAN_BUILD` volume mount before any `make` on the main checkout, or the
-   [baked-root trap](../notes/realclean-recursive.md) aborts/re-poisons. If
-   missing, **STOP and hand back**.
-5. **Apply via the sanctioned flow:** `scripts/b3-fleet.sh provision` → edits in
-   the worktree → `make test` gate (30 PASS / 0 FAIL) → `integrate` →
-   `teardown`.
+4. **Hygiene preconditions:** run every precondition listed in the host
+   project's [integration profile](../../knowledge/conventions/handoff-integration-profile.md)
+   before any build/test on the main checkout. If one fails, **STOP and
+   hand back.**
+5. **Apply via the host project's sanctioned flow** (worktree → gate →
+   integrate → teardown), as defined in the integration profile.
 6. **Attribution:** dual `Assisted-By` lines — the **drafting** model *and* the
    **applying** model; never `Co-Authored-By` (see
-   [git commit attribution](../../knowledge-infra/conventions/git-commit-attribution.md)).
+   [git commit attribution](git-commit-attribution.md)).
 7. **Push is user-authorized:** never `git push` without an explicit ask — even
    after `integrate`. Whether to push-after-integrate is itself an open workflow
-   question (see [cloud environments](../../knowledge-infra/notes/cloud-environments.md)).
+   question (see [cloud environments](../notes/cloud-environments.md)).
 
 ## Precedence & refusal
 
@@ -212,18 +211,16 @@ invisible to each other and to the user. Two rules keep it honest:
   private lessons about *how* to do it); it must never be the only place a
   to-do exists. An invisible queue rots (rule above) and tempts
   self-initiated work (Rule 1). This is
-  [trace-notes](../../knowledge-infra/conventions/trace-notes-on-removal.md) logic applied to the future
+  [trace-notes](trace-notes-on-removal.md) logic applied to the future
   instead of the past: the shared record is what makes private notes safe.
 
 ## Why not just let the outer commit?
 
-The outer/host **cannot** use the sanctioned path: `scripts/b3-fleet.sh` is
-container-gated (`require_container` dies unless `TEPPAN_IN_CONTAINER=1`), and
-the accidental-HEAD-move guards **fail open on the host** — a host commit to
-`master` has no rails and risks the shared-HEAD trap. So repo-content lands
-**only** through the inner. See
-[parallel development](../../knowledge-infra/notes/parallel-agent-worktrees.md),
-[dev container setup](../../knowledge-infra/notes/devcontainer-setup.md).
+The outer lacks the host project's rails: the sanctioned flow is
+container-gated and the accidental-HEAD-move guards fail open on the
+host — the concrete mechanisms are in the host project's
+[integration profile](../../knowledge/conventions/handoff-integration-profile.md).
+Repo-content lands **only** through the inner.
 
 See also: [Knowledge base index](../index.md),
-[trace notes on removal](../../knowledge-infra/conventions/trace-notes-on-removal.md).
+[trace notes on removal](trace-notes-on-removal.md).
