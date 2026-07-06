@@ -46,5 +46,45 @@ light/none; code or build inputs → `make test` **and** `make build`. Related: 
 `$(PWD)`-stamp hardening's design analysis lives in
 [realclean-recursive.md](realclean-recursive.md).
 
+## `generator.m4` review leftovers (parked, low priority)
+
+From the 2026-06-14 M4 code review (items done then are in git history);
+migrated out of the outer session's private memory 2026-07-06, each
+re-verified live that day:
+
+- **Quote-everything pass:** `__LOOKUP_LANG_NAME`'s `m4_if($1,$2,$3,…)`
+  still has unquoted `$1,$2,$3` (`generator.m4:43`); the same pass should
+  sweep `__UP`, `__FNAME`, and `m4_set_add([__ROOTS__],…)` — per the
+  [M4 review role](../code-review/m4.md)'s "quote everything".
+- **`__MAKE_PAGE` decomposition:** the macro does many unrelated things in
+  one ~70-line body — candidate for smaller named macros (re-measure at
+  pick-up; the count predates the AMP removal).
+- **TODO sweep:** 4 `TODO`/leftover-exploration comments remain in
+  `generator.m4` — resolve or convert each into either a register entry or
+  a trace note.
+
+## `NAVIGATION.m4`'s non-obvious dependency edge (parked until navigation work)
+
+`$(BUILD_ROOT)/NAV/%/NAVIGATION.m4 : | $$(@D)/` (`Makefile:115`) has a
+`cat $^ > $@` recipe but only an order-only prerequisite, so `$^` is empty
+in isolation — it works because generated per-stem `.mk` files add
+prerequisite-only rules for the same target and Make merges them. This is
+the file's least obvious dependency edge; it needs an explanatory comment
+(per the [Makefile review role](../code-review/makefile.md)'s "comment
+non-obvious dependency edges"). **Parked by the user (2026-06-14) until the
+navigation mechanism itself is worked on — don't pick it up standalone.**
+
+## Wayland display-forwarding decision (host/infra lane — decision needed)
+
+VS Code auto-bind-mounts the host Wayland socket into the dev container
+(`/run/user/1000/wayland-0` → `/tmp/vscode-wayland-*.sock`; not declared in
+`devcontainer.json`; re-verified present 2026-07-05). Unused in this
+workflow (Playwright is headless) and low-risk (Wayland isolates clients),
+but a hole in the hardened-container posture. There is **no clean
+`devcontainer.json` opt-out** — it's VS Code client behavior. Decide:
+find/disable the client setting, or accept and document. This is
+**outer/user-lane** (infrastructure); it sits in this register for
+visibility, per the memory-hygiene rules.
+
 See also: [handoff convention](../conventions/session-handoff.md),
 [Knowledge base index](../index.md).
