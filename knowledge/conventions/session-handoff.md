@@ -192,6 +192,27 @@ These rules bind each session's **spawned agents** (worktree agents, Agent-tool
 children) exactly as they bind the session — a session cannot launder an
 interchange through a subagent.
 
+## Session memory hygiene
+
+Both sessions keep private auto-memory (host `~/.claude`, container volume) —
+invisible to each other and to the user. Two rules keep it honest:
+
+- **Transient repo state expires.** A memory describing a *state* — a
+  deferral, a retention, a pending decision, "X is not yet done" — is a
+  **claim to re-verify** against `master` (and `.handoff/`) before acting on
+  it, never a fact to recall as current. When re-verification shows the
+  state has moved, update or delete the memory in the same turn. *(Live
+  example: a "wip/ deferred" memory outlived `wip/` itself.)*
+- **Memory is not a task ledger.** Pending or deferred work lives **in the
+  repo** — a `knowledge/` note marked "unimplemented" / "decision needed" —
+  where every session *and the user* can see, audit, and re-prioritize it. A
+  session memory may hold at most a *pointer* to repo-documented work (plus
+  private lessons about *how* to do it); it must never be the only place a
+  to-do exists. An invisible queue rots (rule above) and tempts
+  self-initiated work (Rule 1). This is
+  [trace-notes](trace-notes-on-removal.md) logic applied to the future
+  instead of the past: the shared record is what makes private notes safe.
+
 ## Why not just let the outer commit?
 
 The outer/host **cannot** use the sanctioned path: `scripts/b3-fleet.sh` is
