@@ -97,8 +97,8 @@ build bakes **absolute** paths (`BUILD_ROOT := $(PWD)/TEPPAN_BUILD` plus m4
 has a distinct `$(PWD)` → its **own** `TEPPAN_BUILD` → zero build-tree/stamp
 collision. So a worktree per branch lets you build two branches concurrently
 with no `make realclean` churn between switches — see
-[`file://`-relative preview](file-relative-preview.md) and
-[Build & test commands](../build/commands.md) for the stamp mechanism.
+[`file://`-relative preview](../../knowledge/notes/file-relative-preview.md) and
+[Build & test commands](../../knowledge/build/commands.md) for the stamp mechanism.
 
 **Caveat — browser MCP only, not build/test.** A fresh worktree is a new path,
 so it does **not** inherit the gitignored per-project tooling (`.claude/node/`,
@@ -506,7 +506,7 @@ via `containerEnv`), and the two git hooks discriminate purely via
 `git rev-parse --absolute-git-dir == --git-common-dir`. So the concrete
 `/workspaces/teppan` path throughout this note is just *the current example* — rename
 the repo/folder to anything and the guards, launcher, and build work unchanged.
-See [no user-specific or hardcoded absolute paths](../conventions/no-user-specific-paths.md).
+See [no user-specific or hardcoded absolute paths](../../knowledge/conventions/no-user-specific-paths.md).
 
 **Installation.** `PreToolUse` lives in the repo's shared `.claude/settings.json`.
 The two git hooks are **copied** (`scripts/install-git-hooks.sh`, run from
@@ -568,6 +568,6 @@ See also: [B3 fleet runbook — working in the container & launching agents
 (operator-facing)](b3-fleet-runbook.md) (the operational checklist on top of
 this design note), [dev container setup](devcontainer-setup.md),
 [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
-[`file://`-relative preview](file-relative-preview.md),
-[Build & test commands](../build/commands.md),
-[Make vs m4 variable naming](../conventions/make-m4-variable-naming.md).
+[`file://`-relative preview](../../knowledge/notes/file-relative-preview.md),
+[Build & test commands](../../knowledge/build/commands.md),
+[Make vs m4 variable naming](../../knowledge/conventions/make-m4-variable-naming.md).

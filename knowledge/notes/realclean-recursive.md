@@ -56,7 +56,7 @@ ways to get there — one historical, one live:
   the bind-mounted tree whenever the container-private `TEPPAN_BUILD` volume
   declared in `devcontainer.json` is **not actually mounted** in the running
   container (see the "declared ≠ mounted" caveat in
-  [dev container setup](devcontainer-setup.md)). Then every `make` on one
+  [dev container setup](../../knowledge-infra/notes/devcontainer-setup.md)). Then every `make` on one
   side re-bakes that side's root into `DEP/*.mk` and traps the other —
   cross-poisoning, observed live in *both* directions on 2026-07-05.
 

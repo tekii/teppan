@@ -33,6 +33,7 @@ Do not silently fix and proceed — always surface errors explicitly so the user
 browsable, OKF-formatted source.)*
 
 @knowledge/index.md
+@knowledge-infra/index.md
 @knowledge/architecture/overview.md
 @knowledge/architecture/diversion-phase-model.md
 @knowledge/architecture/domains.md
@@ -43,10 +44,10 @@ browsable, OKF-formatted source.)*
 @knowledge/code-review/makefile.md
 @knowledge/code-review/html.md
 @knowledge/code-review/css.md
-@knowledge/conventions/git-commit-attribution.md
+@knowledge-infra/conventions/git-commit-attribution.md
 @knowledge/conventions/m4-conditional-formatting.md
 @knowledge/conventions/m4-comment-style.md
 @knowledge/conventions/make-m4-variable-naming.md
 @knowledge/conventions/no-user-specific-paths.md
-@knowledge/conventions/trace-notes-on-removal.md
+@knowledge-infra/conventions/trace-notes-on-removal.md
 @knowledge/conventions/session-handoff.md

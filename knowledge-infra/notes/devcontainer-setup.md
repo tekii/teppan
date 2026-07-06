@@ -82,7 +82,7 @@ Playwright MCP **refuses to navigate to `file://` URLs** out of the box
 (`Error: Access to "file:" protocol is blocked`), unlike the host's
 `chrome-devtools` MCP which allowed them. This directly collides with this
 project's `file://`-based `make preview` (see
-[`file://`-relative preview](file-relative-preview.md)): there is no HTTP
+[`file://`-relative preview](../../knowledge/notes/file-relative-preview.md)): there is no HTTP
 server to point a browser at — the whole design is "open the generated file
 off disk." So to screenshot/inspect the preview in the container, the server
 must be registered with **`--allow-unrestricted-file-access`** (the *only*
@@ -150,7 +150,7 @@ plus m4 `realpath`), the container's paths (`/workspaces/teppan/…`) differ fro
 host's (`$HOME/teppan/…`). Since `TEPPAN_BUILD/` is inside the workspace, host and
 container would otherwise share one tree with conflicting absolute paths and
 `.mode-<domain>` stamps → rebuild churn and wrong `file://` links (see
-[`file://`-relative preview](file-relative-preview.md)). Fix: a **named volume
+[`file://`-relative preview](../../knowledge/notes/file-relative-preview.md)). Fix: a **named volume
 over `/workspaces/teppan/TEPPAN_BUILD`** gives the container its own private,
 gitignored build tree (also faster than bind-mount I/O). It mounts root-owned,
 so `postcreate.sh` `chown`s it to `vscode`.
@@ -171,7 +171,7 @@ show a volume mounted on `TEPPAN_BUILD` — and treat a full container
 that day: the rebuild *did* activate the mount and clear the trap, and
 `${devcontainerId}` stayed stable across it — so the sibling `~/.claude`
 volume (and Claude's memory) persisted. Failure signature and recovery: see
-[the baked-root trap](realclean-recursive.md). (A volume *rename* — the
+[the baked-root trap](../../knowledge/notes/realclean-recursive.md). (A volume *rename* — the
 `source` embeds `${devcontainerId}` — likewise lands only on rebuild, as a
 fresh empty volume.)
 
@@ -393,5 +393,5 @@ only: driving `claude` from the integrated **terminal** needs no extension at
 all.
 
 See also: [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
-[`file://`-relative preview](file-relative-preview.md),
-[Build & test commands](../build/commands.md).
+[`file://`-relative preview](../../knowledge/notes/file-relative-preview.md),
+[Build & test commands](../../knowledge/build/commands.md).

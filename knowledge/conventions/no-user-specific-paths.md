@@ -21,7 +21,7 @@ name or a `/home/<login>/…` (or `/Users/<login>/…`, `C:\Users\…`) path.
 - **Prose that must illustrate a home path:** use the `<user>` placeholder
   (`/home/<user>/…`), never a real login. The docs already do this
   consistently (e.g. the isolation matrix in
-  [parallel development](../notes/parallel-agent-worktrees.md)).
+  [parallel development](../../knowledge-infra/notes/parallel-agent-worktrees.md)).
 - **Applies even to `dnl`/comment/disabled scratch code.** A committed username
   changes *no behavior* there, but it still ships in every clone and is
   `git grep`-visible — a privacy leak and a needless personalization of the
@@ -66,5 +66,5 @@ files. Two facets, mirroring the
 - **Reproducibility:** no hidden dependency on one machine's directory layout.
 
 See also: [Make vs m4 variable naming](make-m4-variable-naming.md),
-[parallel development — B3 guards read `WORKSPACE_ROOT`](../notes/parallel-agent-worktrees.md),
+[parallel development — B3 guards read `WORKSPACE_ROOT`](../../knowledge-infra/notes/parallel-agent-worktrees.md),
 [glossary](../glossary.md).

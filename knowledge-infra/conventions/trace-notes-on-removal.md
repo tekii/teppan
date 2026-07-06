@@ -49,13 +49,13 @@ near-duplicate file.
 ## Why
 
 This convention is what makes "just delete it — git history already preserves
-it" [review guidance](../code-review/css.md) actually safe: deletion is cheap
+it" [review guidance](../../knowledge/code-review/css.md) actually safe: deletion is cheap
 only when the rationale survives somewhere findable. Models to follow:
-[asset-copy mechanisms](../notes/asset-copy-mechanisms.md) (the exemplar —
+[asset-copy mechanisms](../../knowledge/notes/asset-copy-mechanisms.md) (the exemplar —
 explicitly "the surviving trace of that code's existence and rationale"),
-[`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md),
-[`make publish`](../notes/publish-target.md),
-[`sitemap.xml` generation](../notes/sitemap-target.md).
+[`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../../knowledge/notes/css-remap-helper.md),
+[`make publish`](../../knowledge/notes/publish-target.md),
+[`sitemap.xml` generation](../../knowledge/notes/sitemap-target.md).
 
-See also: [Knowledge base index](../index.md),
-[CSS code review guidelines](../code-review/css.md).
+See also: [Knowledge base index](../../knowledge/index.md),
+[CSS code review guidelines](../../knowledge/code-review/css.md).
