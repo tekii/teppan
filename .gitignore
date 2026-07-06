@@ -16,3 +16,4 @@ notas.txt
 .claude/node/
 .claude/settings.local.json
 .playwright-mcp/
+handoff/
