@@ -18,8 +18,11 @@ server — everything is rendered ahead of time into plain HTML/CSS/assets under
 `TEPPAN_BUILD/DOC`. See the [glossary](glossary.md) for the
 company / project / repo / deliverable distinction.
 
-This knowledge base is authored in the [Open Knowledge Format (OKF)](okf.md) —
+This knowledge base is authored in the [Open Knowledge Format (OKF)](../knowledge-infra/okf.md) —
 a directory of markdown files with YAML frontmatter.
+
+Infrastructure & collaboration knowledge (dev container, multi-agent
+workflow, handoff) lives in [knowledge-infra/](../knowledge-infra/index.md).
 
 ## Sections
 
@@ -35,17 +38,12 @@ a directory of markdown files with YAML frontmatter.
 - [Testing conventions](testing/conventions.md) — `generator_test.m4` and `__ASSERT_EQ`.
 - [Code review guidelines](code-review/index.md) — M4, GNU Makefile, HTML,
   and CSS review checklists.
-- Conventions — [commit message attribution](conventions/git-commit-attribution.md),
-  [M4 conditional formatting](conventions/m4-conditional-formatting.md),
+- Conventions — [M4 conditional formatting](conventions/m4-conditional-formatting.md),
   [M4 comment style](conventions/m4-comment-style.md),
   [Make vs m4 variable naming](conventions/make-m4-variable-naming.md),
   [no user-specific or hardcoded absolute paths](conventions/no-user-specific-paths.md),
-  [trace notes on removal](conventions/trace-notes-on-removal.md),
   [outer↔inner session handoff (the `.handoff/` channel)](conventions/session-handoff.md).
 - Design notes & known issues — [`file://`-relative preview](notes/file-relative-preview.md),
-  [`chrome-devtools` MCP setup (project-local Node/Chrome profile)](notes/chrome-devtools-mcp-setup.md),
-  [dev container — Claude Code + Playwright MCP (three-scenario setup)](notes/devcontainer-setup.md),
-  [cloud environments — Claude Code web & Codespaces (readiness, auth, integration workflow)](notes/cloud-environments.md),
   [asset-copy mechanisms (non-deferred vs deferred)](notes/asset-copy-mechanisms.md),
   [`__ASSET` rule duplication](notes/asset-rule-duplication.md),
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
@@ -55,8 +53,4 @@ a directory of markdown files with YAML frontmatter.
   [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
   [deferred / open work register](notes/deferred-work.md),
-  [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md),
-  [parallel development — branch workflow, worktrees & multi-agent setup](notes/parallel-agent-worktrees.md).
-- Runbooks (operator-facing) — [B3 fleet runbook — working in the container &
-  launching agents](notes/b3-fleet-runbook.md) **(FOR OPERATORS; agents don't
-  need it)**.
+  [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md).

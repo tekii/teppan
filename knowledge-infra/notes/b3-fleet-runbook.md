@@ -197,5 +197,5 @@ Escape hatch for a sanctioned trunk move: prefix `TEPPAN_MAIN_HEAD_OK=1`
 
 See also: [Parallel development — branch workflow, worktrees & multi-agent
 setup](parallel-agent-worktrees.md) (the design rationale + the guard coverage
-table), [Build & test commands](../build/commands.md),
+table), [Build & test commands](../../knowledge/build/commands.md),
 [dev container setup](devcontainer-setup.md).

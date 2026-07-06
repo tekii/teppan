@@ -58,7 +58,7 @@ should encode the dependency, not just the two settings.)
 **Gap 2 — no named volumes** *(same confirm-on-first-launch caveat)*: the
 `mounts:` volumes likely don't apply. `TEPPAN_BUILD` falling back to the
 workspace directory is harmless — a codespace is a single environment with
-one absolute root, so the [baked-root trap](realclean-recursive.md) has no
+one absolute root, so the [baked-root trap](../../knowledge/notes/realclean-recursive.md) has no
 second environment to cross-poison with. But `~/.claude` not being a volume
 means the codespace Claude's **memory and login live on the container
 filesystem**: they survive stop/start but are wiped by a rebuild inside the
@@ -142,5 +142,5 @@ accident — the GitHub-side analog of the HEAD-move guards.
 
 See also: [dev container setup](devcontainer-setup.md),
 [parallel development — B2 cost model](parallel-agent-worktrees.md),
-[baked-root trap](realclean-recursive.md),
-[Build & test commands](../build/commands.md).
+[baked-root trap](../../knowledge/notes/realclean-recursive.md),
+[Build & test commands](../../knowledge/build/commands.md).

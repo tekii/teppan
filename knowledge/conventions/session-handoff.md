@@ -10,7 +10,7 @@ timestamp: 2026-07-06
 
 The **host/outer** Claude session and the **container/inner** session split
 repo work by the [host = infrastructure, container = deliverable
-convention](../notes/parallel-agent-worktrees.md): the outer can *research and
+convention](../../knowledge-infra/notes/parallel-agent-worktrees.md): the outer can *research and
 draft* but cannot commit repo-content (its tooling and guards don't apply — see
 "Why not just let the outer commit?" below); the inner *verifies, applies, and
 commits*. The **`.handoff/` folder** is the channel between them.
@@ -101,7 +101,7 @@ the route makes it auditable:
 - **C-10 Future remote surfaces** — PR descriptions, issue comments, Actions
   logs (once cloud sessions land). **Deferred:** the deletion test extends to
   them; legislate specifics with the pending workflow decision — see
-  [cloud environments](../notes/cloud-environments.md).
+  [cloud environments](../../knowledge-infra/notes/cloud-environments.md).
 - **C-11 Unintentional channels exist too** — cautionary: the formerly shared
   `TEPPAN_BUILD` broadcast who-built-last via baked `DEP/*.mk` paths until the
   volume isolation closed it (see [baked-root trap](../notes/realclean-recursive.md)).
@@ -172,10 +172,10 @@ the route makes it auditable:
    `teardown`.
 6. **Attribution:** dual `Assisted-By` lines — the **drafting** model *and* the
    **applying** model; never `Co-Authored-By` (see
-   [git commit attribution](git-commit-attribution.md)).
+   [git commit attribution](../../knowledge-infra/conventions/git-commit-attribution.md)).
 7. **Push is user-authorized:** never `git push` without an explicit ask — even
    after `integrate`. Whether to push-after-integrate is itself an open workflow
-   question (see [cloud environments](../notes/cloud-environments.md)).
+   question (see [cloud environments](../../knowledge-infra/notes/cloud-environments.md)).
 
 ## Precedence & refusal
 
@@ -212,7 +212,7 @@ invisible to each other and to the user. Two rules keep it honest:
   private lessons about *how* to do it); it must never be the only place a
   to-do exists. An invisible queue rots (rule above) and tempts
   self-initiated work (Rule 1). This is
-  [trace-notes](trace-notes-on-removal.md) logic applied to the future
+  [trace-notes](../../knowledge-infra/conventions/trace-notes-on-removal.md) logic applied to the future
   instead of the past: the shared record is what makes private notes safe.
 
 ## Why not just let the outer commit?
@@ -222,8 +222,8 @@ container-gated (`require_container` dies unless `TEPPAN_IN_CONTAINER=1`), and
 the accidental-HEAD-move guards **fail open on the host** — a host commit to
 `master` has no rails and risks the shared-HEAD trap. So repo-content lands
 **only** through the inner. See
-[parallel development](../notes/parallel-agent-worktrees.md),
-[dev container setup](../notes/devcontainer-setup.md).
+[parallel development](../../knowledge-infra/notes/parallel-agent-worktrees.md),
+[dev container setup](../../knowledge-infra/notes/devcontainer-setup.md).
 
 See also: [Knowledge base index](../index.md),
-[trace notes on removal](trace-notes-on-removal.md).
+[trace notes on removal](../../knowledge-infra/conventions/trace-notes-on-removal.md).
