@@ -38,6 +38,21 @@ find/disable the client setting, or accept and document. This is
 **outer/user-lane** (infrastructure); it sits in this register for
 visibility, per the memory-hygiene rules.
 
+## Conceit names for worktrees & cloud environments (to be revisited)
+
+"Desks" (worktrees) and "branch offices" (cloud environments) were
+proposed in the 2026-07-06 naming session and parked — Devon unsure.
+Until decided they stay out of the
+[severance-conceit](severance-conceit.md) declaration line; working
+terms remain "worktree" / "cloud session".
+
+## Learnings-register backfill (task)
+
+Archaeology pass per [learnings.md](learnings.md): mine git history +
+both knowledge trees, propose a dated step/lesson timeline for Devon's
+correction and comprehension interviews (see the
+[learnings-register convention](../conventions/learnings-register.md)).
+
 See also: [handoff constitution](../conventions/session-handoff.md),
 [Teppan integration profile](../../knowledge/conventions/handoff-integration-profile.md),
 [infrastructure knowledge index](../index.md).

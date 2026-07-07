@@ -21,12 +21,15 @@ This tree is authored in the [Open Knowledge Format](okf.md).
 - Conventions — [commit message attribution](conventions/git-commit-attribution.md),
   [trace notes on removal](conventions/trace-notes-on-removal.md),
   [no user-specific or hardcoded absolute paths](conventions/no-user-specific-paths.md),
-  [outer↔inner session handoff — the `.handoff/` constitution](conventions/session-handoff.md).
+  [outer↔inner session handoff — the `.handoff/` constitution](conventions/session-handoff.md),
+  [learnings register — record what each step taught](conventions/learnings-register.md).
 - Environment — [dev container (Claude Code + Playwright MCP)](notes/devcontainer-setup.md),
   [`chrome-devtools` MCP on the host](notes/chrome-devtools-mcp-setup.md),
   [cloud environments (Claude Code web & Codespaces)](notes/cloud-environments.md).
 - Multi-agent workflow — [parallel development: topology, worktrees & guards](notes/parallel-agent-worktrees.md),
   [B3 fleet runbook (FOR OPERATORS)](notes/b3-fleet-runbook.md).
+- The experiment — [the Severance conceit (workflow name, cast & naming tiers)](notes/severance-conceit.md),
+  [learnings register (what each step taught)](notes/learnings.md).
 - Registers — [deferred / open work (infra & process)](notes/deferred-work.md).
 
 The Teppan-specific half of the handoff convention — the concrete gate,
