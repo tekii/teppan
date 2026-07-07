@@ -55,6 +55,31 @@ there). Newest entries last.
   Claude finding for the audit details (no prior norm existed; the split
   lost nothing — verified against the split commits' diffs).
 
+## 2026-07-07 — Entry 3: the audit of the formerly-public history
+
+- **Step:** Devon disclosed that the repo (as `tekii/www`) was once
+  public; the Outie swept all 526 `master` commits for secrets, identity
+  leaks, and content liabilities (read-only, `master` scope per Rule 3).
+- **Fact:** two Google Maps API keys were found — one still in HEAD
+  inside a commented-out iframe on the contact page, removed by the same
+  change that adds this entry; committed user-home paths appeared in
+  three historical eras (SVG export metadata 2015/2018, m4 comments
+  2020, doc links 2026 — the last already purged when the
+  no-user-paths convention was created); a 2014 commit imported a
+  third-party marketing site wholesale as a design base and was cleaned
+  up weeks later; no other secret patterns, sensitive filenames, or
+  personal data surfaced.
+- **Interpretation:** *public once is public forever* — privatization is
+  not retraction (forks, archives, caches), so the audit's value was
+  knowing the exposure, not preventing it. "Nothing embarrassing on it
+  (I hope)" and a verified inventory are different artifacts, and the
+  sweep cost minutes of model time; the human's irreplaceable
+  contribution was disclosing the fact that made it necessary. For the
+  planned infra extraction, everything found strengthens a fresh-start
+  founding commit over carried-over history.
+- **Attribution:** user-originated (Devon disclosed the prior publicity
+  and triggered the audit); Claude finding for the inventory itself.
+
 ## Backfill (pending)
 
 A reconstruction pass over git history and both knowledge trees —
