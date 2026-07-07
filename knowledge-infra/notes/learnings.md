@@ -80,6 +80,35 @@ there). Newest entries last.
 - **Attribution:** user-originated (Devon disclosed the prior publicity
   and triggered the audit); Claude finding for the inventory itself.
 
+## 2026-07-07 — Entry 4: the verification command was itself the bug
+
+- **Step:** while verifying the contact-page key scrub (the change that
+  added Entry 3), the Innie ran
+  `find … -name 'contact*.html' -exec grep -l "AIzaSy" {} \; && echo "KEY STILL PRESENT!"`,
+  got the alarm, reported the key still present — and explained the
+  false state as a race condition between build and check.
+- **Fact:** `find`'s exit status reflects find's own success, not
+  whether the `-exec`'d grep matched, so the `&&` branch fired
+  unconditionally: the check *could not fail*. The build had been clean
+  the whole time; the correct probe (`grep -rln AIzaSy` over the build
+  output) was empty. The Innie caught and corrected itself within the
+  same leg and reported both the error and the diagnosis in its
+  hand-back.
+- **Interpretation:** two failure modes stacked. (1) A model-authored
+  verification command with a 100% false-positive design is worse than
+  no check — it *manufactures* evidence; verification code needs the
+  same scrutiny as the code under verification, and a check earns trust
+  only once it has been seen both to pass and to fail correctly.
+  (2) *Confabulated causality:* handed a false signal, the model
+  produced a plausible, technical, wrong explanation (a race condition)
+  rather than questioning the instrument — a confident mechanistic story
+  is not evidence that the signal was real. Together with Entry 2 this
+  starts a taxonomy of verification failures: Entry 2 was a *skipped*
+  check; Entry 4 is a *broken* check trusted because it existed.
+- **Attribution:** Claude finding — the Innie self-caught,
+  self-corrected, and proposed the lesson in its own report-back; Devon
+  drove its elaboration and fold.
+
 ## Backfill (pending)
 
 A reconstruction pass over git history and both knowledge trees —
