@@ -145,6 +145,16 @@ the route makes it auditable:
 
 ## Draft anatomy (outer authors)
 
+- **Prove the tree authoritative before anchoring — anchor-time is
+  verify-time:** immediately before reading target files to extract
+  anchors, run `git status -sb` (tree clean) and note the HEAD commit;
+  re-run the check if time passes between extraction and writing the
+  draft. A disk read is only a `master` read once proven so, and a
+  session-start snapshot does **not** count — it is stale by anchor time.
+  (Hard-won on the authoring side, 2026-07-06: the first draft of that
+  day's fold was anchored against disk reads whose currency had not been
+  re-proven; no drift had occurred, but only luck and inner apply rule 2
+  stood behind that. Caught by the user, not by either session.)
 - Provenance header + a **package map** (`PKG1..N`).
 - Each package: the **target file**, the **verbatim anchor**, and the exact
   replacement/insert text.
