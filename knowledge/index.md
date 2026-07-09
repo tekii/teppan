@@ -41,8 +41,8 @@ workflow, handoff) lives in [knowledge-infra/](../knowledge-infra/index.md).
 - Conventions — [M4 conditional formatting](conventions/m4-conditional-formatting.md),
   [M4 comment style](conventions/m4-comment-style.md),
   [Make vs m4 variable naming](conventions/make-m4-variable-naming.md),
-  [no user-specific or hardcoded absolute paths](../knowledge-infra/conventions/no-user-specific-paths.md),
-  [handoff integration profile (Teppan's half of the session-handoff convention)](conventions/handoff-integration-profile.md).
+  [no user-specific or hardcoded absolute paths (Severance SPEC)](severance/SEVERANCE.md),
+  [Severance consumer profile (Teppan's half of the workflow contract)](severance/profile.md).
 - Design notes & known issues — [`file://`-relative preview](notes/file-relative-preview.md),
   [asset-copy mechanisms (non-deferred vs deferred)](notes/asset-copy-mechanisms.md),
   [`__ASSET` rule duplication](notes/asset-rule-duplication.md),

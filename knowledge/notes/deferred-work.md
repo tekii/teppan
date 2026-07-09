@@ -8,7 +8,7 @@ timestamp: 2026-07-06
 
 # Deferred / open work register
 
-Per the [session-memory-hygiene rules](../../knowledge-infra/conventions/session-handoff.md),
+Per the [session-memory-hygiene rules (Severance SPEC)](../severance/SEVERANCE.md),
 pending work lives **here** — visible to every session and the user, auditable
 and re-prioritizable — not in a session's private auto-memory. Add items as they
 are deferred; remove them when done. This register holds the
@@ -66,6 +66,6 @@ the file's least obvious dependency edge; it needs an explanatory comment
 non-obvious dependency edges"). **Parked by the user (2026-06-14) until the
 navigation mechanism itself is worked on — don't pick it up standalone.**
 
-See also: [handoff convention](../../knowledge-infra/conventions/session-handoff.md),
+See also: [handoff convention (Severance SPEC)](../severance/SEVERANCE.md),
 [infra/process register](../../knowledge-infra/notes/deferred-work.md),
 [Knowledge base index](../index.md).
