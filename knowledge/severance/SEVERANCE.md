@@ -1,8 +1,11 @@
 ---
+type: Convention
 title: SEVERANCE — the severed multi-session workflow (SPEC)
-version: 0.1.0
-built-from: v0.1.0
-date: 2026-07-09
+description: The Severance workflow's binding law — constitution, conventions, profile contract — amalgamated at v0.1.1. Vendored copy: do not edit; update by re-vendoring a release.
+tags: [severance, spec, workflow, vendored]
+timestamp: 2026-07-09
+version: 0.1.1
+built-from: v0.1.1
 ---
 
 <!-- ═══ source: preamble.md ═══ -->
