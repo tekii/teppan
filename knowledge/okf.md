@@ -27,9 +27,9 @@ Specification overview / announcement:
   `resource` (used in this file's frontmatter) is the OKF field for an
   external URL.
 - **Reserved `index.md`.** Per-directory overview / progressive disclosure —
-  see [`index.md`](index.md) (this tree's own index) and — cross-tree in the
-  project knowledge base — [`code-review/index.md`](../knowledge/code-review/index.md).
+  see [`index.md`](index.md) (this tree's own index) and a nested one,
+  [`code-review/index.md`](code-review/index.md).
 - **Standard markdown links** between files form the concept graph — e.g. the
   "See also" footers throughout this tree.
 
-See also: [infrastructure knowledge index](index.md).
+See also: [infrastructure knowledge index](infra/index.md).

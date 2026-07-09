@@ -10,9 +10,9 @@ timestamp: 2026-07-09
 
 On 2026-07-09 the multi-session workflow ("Severance") was extracted to
 its own repo — `github.com/tekii/severance` — and returns to Teppan
-**vendored**: [knowledge/severance/SEVERANCE.md](../../knowledge/severance/SEVERANCE.md)
+**vendored**: [knowledge/severance/SEVERANCE.md](../severance/SEVERANCE.md)
 (the SPEC, version-pinned by its own frontmatter) plus Teppan's
-[profile](../../knowledge/severance/profile.md).
+[profile](../severance/profile.md).
 
 ## What moved where (at severance v0.1.0)
 
@@ -38,6 +38,10 @@ repo's formerly-public history was audited but never vetted for
 re-publication (see the learnings register's Entry 3, upstream RECORD).
 Full history remains in this repo; the register's backfill is the
 curated substitute.
+
+Later the same day, the residual `knowledge-infra/` tree was folded
+into `knowledge/infra/` — the split's rationale (fencing the
+extractable generic knowledge) was consumed by the extraction itself.
 
 ## Update mechanism / revisit triggers
 

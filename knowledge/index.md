@@ -18,11 +18,11 @@ server — everything is rendered ahead of time into plain HTML/CSS/assets under
 `TEPPAN_BUILD/DOC`. See the [glossary](glossary.md) for the
 company / project / repo / deliverable distinction.
 
-This knowledge base is authored in the [Open Knowledge Format (OKF)](../knowledge-infra/okf.md) —
+This knowledge base is authored in the [Open Knowledge Format (OKF)](okf.md) —
 a directory of markdown files with YAML frontmatter.
 
 Infrastructure & collaboration knowledge (dev container, multi-agent
-workflow, handoff) lives in [knowledge-infra/](../knowledge-infra/index.md).
+workflow, handoff) lives in [infra/](infra/index.md).
 
 ## Sections
 
@@ -52,5 +52,5 @@ workflow, handoff) lives in [knowledge-infra/](../knowledge-infra/index.md).
   [`make realclean` — recursive `TEPPAN_BUILD` deletion](notes/realclean-recursive.md),
   [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
-  [deferred / open work register (project; infra/process items in `knowledge-infra/`)](notes/deferred-work.md),
+  [deferred / open work register (project; infra/process items in `infra/`)](notes/deferred-work.md),
   [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md).

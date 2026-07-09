@@ -12,7 +12,7 @@ This project has Google's official [`chrome-devtools-mcp`](https://github.com/Ch
 server registered, giving Claude direct browser tools (`navigate_page`,
 `take_screenshot`, `take_snapshot`, `list_console_messages`,
 `list_network_requests`, `evaluate_script`, etc. — 30 tools total) for
-inspecting real rendered output. Per [`file://`-relative preview](../../knowledge/notes/file-relative-preview.md)
+inspecting real rendered output. Per [`file://`-relative preview](../notes/file-relative-preview.md)
 and the `build-preview` skill, this is reserved for genuinely visual/runtime
 checks (rendering, CSS, screenshots, console/network) — content/structure
 questions (does a link point where it should, is the title text correct)
@@ -99,5 +99,5 @@ ps -p "$LOCK_PID" || rm -f .claude/chrome-profile/SingletonLock \
 Only remove the lock files if the referenced PID is confirmed dead — never
 remove a lock for a still-running process.
 
-See also: [`file://`-relative preview](../../knowledge/notes/file-relative-preview.md),
-[`make publish` — post-publish verification with the browser](../../knowledge/notes/publish-target.md).
+See also: [`file://`-relative preview](../notes/file-relative-preview.md),
+[`make publish` — post-publish verification with the browser](../notes/publish-target.md).
