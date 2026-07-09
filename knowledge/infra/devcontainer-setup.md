@@ -291,7 +291,7 @@ flip the container's push capability — which requires a rebuild anyway.
 After one rebuild from a plain launch, the prompt disappears for plain
 launches and fires **only** on wrapper launches, turning it from noise into
 a signal ("this launch's config would grant push"). Operator decision rule:
-see the [B3 fleet runbook](b3-fleet-runbook.md).
+see the [MDR runbook](mdr-runbook.md).
 
 ## Memory is not shared across scenarios
 Host-Claude and container-Claude do **not** share auto-memory: the container's

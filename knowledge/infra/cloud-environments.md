@@ -116,7 +116,7 @@ remote-mediated merges, stale bases, everything through `origin`. The
 PR-to-merge workflow these platforms promote collides with two local
 habits: `master` is kept **local and long-unpushed** (a web session would
 fork from a stale base; a remote merge would diverge from the local
-authority), and the **merge gate lives in `b3-fleet.sh integrate`**
+authority), and the **merge gate lives in `mdr.sh integrate`**
 (`make test` + auto-rollback) — GitHub's merge button has no equivalent and
 the repo has **no CI** (no `.github/workflows/`).
 

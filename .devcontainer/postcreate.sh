@@ -19,8 +19,8 @@ WORKSPACE="${WORKSPACE_ROOT:?WORKSPACE_ROOT not set (define it in devcontainer.j
 #      registered (the symptom that first bit us).
 sudo chown -R vscode:vscode "${WORKSPACE}/TEPPAN_BUILD" "${HOME}/.claude"
 
-# 1b. Make /workspaces itself writable by the workspace user so the B3 launcher
-#     (scripts/b3-fleet.sh) can create sibling worktrees next to the main
+# 1b. Make /workspaces itself writable by the workspace user so the MDR launcher
+#     (scripts/mdr.sh) can create sibling worktrees next to the main
 #     checkout -- OUTSIDE the "$WORKSPACE" bind-mount, so they are container-local
 #     and ephemeral. The runtime creates /workspaces root-owned; chown just the
 #     dir (not -R -- the workspace bind-mount is separate and stays as-is).
@@ -52,11 +52,11 @@ claude mcp add playwright --scope local -- \
     --allow-unrestricted-file-access \
     --output-dir "${WORKSPACE}/TEPPAN_BUILD/ARTIFACTS"
 
-# 3. Install the B3 accidental-HEAD-move git hooks into the shared common
+# 3. Install the MDR accidental-HEAD-move git hooks into the shared common
 #    .git/hooks (reference-transaction + post-checkout). Idempotent; copies the
 #    tracked sources from scripts/git-hooks. The hooks self-gate to the container
 #    via TEPPAN_IN_CONTAINER, so they fail open when the same .git is used on the
 #    host. See knowledge/notes/parallel-agent-worktrees.md (the guard section).
 "${WORKSPACE}/scripts/install-git-hooks.sh"
 
-echo "postcreate: TEPPAN_BUILD owned by vscode; Playwright MCP registered (local scope); B3 git hooks installed."
+echo "postcreate: TEPPAN_BUILD owned by vscode; Playwright MCP registered (local scope); MDR git hooks installed."

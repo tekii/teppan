@@ -16,7 +16,7 @@ holds the **infra/process side**; project-deliverable items live in
 
 ## Revise the integration gate for change type (decision needed)
 
-`scripts/b3-fleet.sh integrate` gates every merge on `make test` only, which
+`scripts/mdr.sh integrate` gates every merge on `make test` only, which
 exercises `generator.m4` macros — **unnecessary for doc-only changes** and
 **insufficient for build-input changes** (it doesn't cover `make build`, which
 catches HTML/CSS breakage). Consider a **change-type-aware gate**: docs →

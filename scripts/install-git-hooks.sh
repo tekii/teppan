@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install-git-hooks.sh -- copy the tracked B3 guard hooks into this repo's shared
+# install-git-hooks.sh -- copy the tracked MDR guard hooks into this repo's shared
 # hooks dir (the common .git/hooks, which the host, the container, and every
 # linked worktree all resolve hooks from).
 #

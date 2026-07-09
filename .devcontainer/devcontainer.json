@@ -33,7 +33,7 @@
   "containerEnv": {
     // Absolute path of the main checkout inside the container, derived from the
     // folder basename (NOT hardcoded) so nothing is coupled to the repo being
-    // named "www"/"teppan"/anything. The B3 launcher + guards read this instead
+    // named "www"/"teppan"/anything. The MDR launcher + guards read this instead
     // of a literal path. See knowledge/conventions/no-user-specific-paths.md.
     "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
