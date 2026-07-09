@@ -50,12 +50,8 @@ browsable, OKF-formatted source.)*
 @knowledge/code-review/makefile.md
 @knowledge/code-review/html.md
 @knowledge/code-review/css.md
-@knowledge-infra/conventions/git-commit-attribution.md
 @knowledge/conventions/m4-conditional-formatting.md
 @knowledge/conventions/m4-comment-style.md
 @knowledge/conventions/make-m4-variable-naming.md
-@knowledge-infra/conventions/no-user-specific-paths.md
-@knowledge-infra/conventions/trace-notes-on-removal.md
-@knowledge-infra/conventions/session-handoff.md
-@knowledge/conventions/handoff-integration-profile.md
 @knowledge/severance/SEVERANCE.md
+@knowledge/severance/profile.md

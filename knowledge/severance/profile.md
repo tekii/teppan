@@ -1,33 +1,45 @@
 ---
 type: Convention
-title: Severance consumer profile — Teppan (STUB, mock phase)
-description: Placeholder for Teppan's answers to the SEVERANCE.md profile contract (gate, hygiene preconditions, sanctioned flow). During the mock phase the real answers remain in knowledge/conventions/handoff-integration-profile.md; this stub proves the spec+profile co-location mechanism only.
-tags: [conventions, severance, profile, stub]
+title: Severance consumer profile — Teppan
+description: Teppan's answers to the vendored SEVERANCE.md profile contract — gate, hygiene preconditions, sanctioned flow, implementation docs. Successor of knowledge/conventions/handoff-integration-profile.md (retired by the same change).
+tags: [conventions, severance, profile, handoff]
 timestamp: 2026-07-09
 ---
 
-# Severance consumer profile — Teppan (STUB)
+# Severance consumer profile — Teppan
 
-> **STUB — mock phase.** The vendored [`SEVERANCE.md`](SEVERANCE.md)
-> beside this file is a v0.0.x mock, so this profile is a placeholder
-> proving the spec+profile co-location. Teppan's real answers live, for
-> now, in the
-> [integration profile](../conventions/handoff-integration-profile.md)
-> and move here as a named migration step.
+Teppan's answers to the profile contract in the vendored
+[Severance SPEC](SEVERANCE.md).
 
 ## Gate
 
-See the [integration profile](../conventions/handoff-integration-profile.md):
-`make test` — 30 `__ASSERT_EQ` assertions, 0 FAIL.
+`make test` — currently 30 `__ASSERT_EQ` assertions, 0 FAIL required.
+Note the gate's known limits and the pending change-type revision in the
+[infra deferred-work register](../../knowledge-infra/notes/deferred-work.md).
 
 ## Hygiene preconditions
 
-See the [integration profile](../conventions/handoff-integration-profile.md):
-`findmnt` must show the `TEPPAN_BUILD` volume mount before any `make`
-on the main checkout.
+`findmnt -R /workspaces/teppan` must show the `TEPPAN_BUILD` volume
+mount before any `make` on the main checkout, or the
+[baked-root trap](../notes/realclean-recursive.md) aborts/re-poisons.
+If missing, **STOP and hand back**.
 
 ## Sanctioned flow
 
-See the [integration profile](../conventions/handoff-integration-profile.md):
-`scripts/b3-fleet.sh provision` → edits in the worktree → gate →
-`integrate` → `teardown`.
+`scripts/b3-fleet.sh provision` → edits in the worktree → `make test`
+gate (30 PASS / 0 FAIL) → `integrate` → `teardown`.
+
+Why the outer cannot commit here: `scripts/b3-fleet.sh` is
+container-gated (`require_container` dies unless
+`TEPPAN_IN_CONTAINER=1`), and the accidental-HEAD-move guards **fail
+open on the host** — a host commit to `master` has no rails and risks
+the shared-HEAD trap. So repo-content lands **only** through the inner
+session.
+
+## Implementation docs
+
+[Dev container](../../knowledge-infra/notes/devcontainer-setup.md),
+[parallel development: topology, worktrees & guards](../../knowledge-infra/notes/parallel-agent-worktrees.md),
+[B3 fleet runbook](../../knowledge-infra/notes/b3-fleet-runbook.md),
+[cloud environments](../../knowledge-infra/notes/cloud-environments.md),
+[chrome-devtools MCP on the host](../../knowledge-infra/notes/chrome-devtools-mcp-setup.md).

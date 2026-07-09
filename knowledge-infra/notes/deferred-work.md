@@ -8,7 +8,7 @@ timestamp: 2026-07-06
 
 # Deferred / open work register (infrastructure & process)
 
-Per the [session-memory-hygiene rules](../conventions/session-handoff.md),
+Per the [session-memory-hygiene rules (Severance SPEC)](../../knowledge/severance/SEVERANCE.md),
 pending work lives **here** — visible to every session and the user, auditable
 and re-prioritizable — not in a session's private auto-memory. This register
 holds the **infra/process side**; project-deliverable items live in
@@ -23,8 +23,8 @@ catches HTML/CSS breakage). Consider a **change-type-aware gate**: docs →
 light/none; code or build inputs → `make test` **and** `make build`. Related: the
 `$(PWD)`-stamp hardening's design analysis lives in
 [realclean-recursive.md](../../knowledge/notes/realclean-recursive.md), and the
-gate this would revise is documented in the [Teppan integration profile's Gate
-section](../../knowledge/conventions/handoff-integration-profile.md).
+gate this would revise is documented in the [Teppan Severance
+profile](../../knowledge/severance/profile.md).
 
 ## Wayland display-forwarding decision (host/infra lane — decision needed)
 
@@ -42,17 +42,18 @@ visibility, per the memory-hygiene rules.
 
 "Desks" (worktrees) and "branch offices" (cloud environments) were
 proposed in the 2026-07-06 naming session and parked — Devon unsure.
-Until decided they stay out of the
-[severance-conceit](severance-conceit.md) declaration line; working
+Until decided they stay out of the Severance conceit's declaration line
+(upstream RECORD); working
 terms remain "worktree" / "cloud session".
 
 ## Learnings-register backfill (task)
 
-Archaeology pass per [learnings.md](learnings.md): mine git history +
+Archaeology pass per the learnings register (upstream RECORD): mine git
+history +
 both knowledge trees, propose a dated step/lesson timeline for Devon's
-correction and comprehension interviews (see the
-[learnings-register convention](../conventions/learnings-register.md)).
+correction and comprehension interviews (see the learnings-register
+convention (Severance SPEC)).
 
-See also: [handoff constitution](../conventions/session-handoff.md),
-[Teppan integration profile](../../knowledge/conventions/handoff-integration-profile.md),
+See also: [handoff constitution (Severance SPEC)](../../knowledge/severance/SEVERANCE.md),
+[Teppan Severance profile](../../knowledge/severance/profile.md),
 [infrastructure knowledge index](../index.md).
