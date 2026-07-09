@@ -39,7 +39,7 @@ Do not silently fix and proceed — always surface errors explicitly so the user
 browsable, OKF-formatted source.)*
 
 @knowledge/index.md
-@knowledge-infra/index.md
+@knowledge/infra/index.md
 @knowledge/architecture/overview.md
 @knowledge/architecture/diversion-phase-model.md
 @knowledge/architecture/domains.md

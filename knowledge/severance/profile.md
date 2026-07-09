@@ -15,7 +15,7 @@ Teppan's answers to the profile contract in the vendored
 
 `make test` — currently 30 `__ASSERT_EQ` assertions, 0 FAIL required.
 Note the gate's known limits and the pending change-type revision in the
-[infra deferred-work register](../../knowledge-infra/notes/deferred-work.md).
+[infra deferred-work register](../infra/deferred-work.md).
 
 ## Hygiene preconditions
 
@@ -36,10 +36,39 @@ open on the host** — a host commit to `master` has no rails and risks
 the shared-HEAD trap. So repo-content lands **only** through the inner
 session.
 
+## Subagents (Refiners): bound by accountability, not knowledge
+
+On this harness (Claude Code), a spawned agent does **not** reliably
+have the vendored law in context: general-purpose subagents inherit
+the *parent's* loaded snapshot (stale if the law changed mid-session
+— they may cite deleted files as their law), and Explore-class agents
+load no `CLAUDE.md` at all. Nothing hard-blocks a law-violating
+action except the agent's tool profile. The SPEC's "Subagents
+inherit" clause therefore binds the **parent**; the child's awareness
+must be engineered, not assumed. Practices (threat model: accidental
+mistakes, not adversarial agents — Devon's scoping, 2026-07-09):
+
+1. **Law-bearing steps stay in-session** — anchor verification,
+   Trigger authorship, apply/commit decisions are never delegated.
+2. **Inject what the agent needs** — the relevant rules travel in the
+   spawn prompt; they will not auto-load.
+3. **Gate the output** — treat agent replies as raw data, verified
+   against the law before anything acts on them.
+4. **Read-only spawns for hard prevention** — an agent without
+   `Write`/`Edit` cannot write a tape; the tool profile is the only
+   hard lever.
+
+The same snapshot caveat applies to **long-lived sessions**: a session
+spanning a law change carries its session-start law; after any change
+to the vendored SPEC, re-read it from disk or restart the session.
+(The B3 fleet's Refiners are additionally constrained by structure:
+the fleet script runs the gate mechanically, so their compliance is
+enforced by the flow, not their knowledge.)
+
 ## Implementation docs
 
-[Dev container](../../knowledge-infra/notes/devcontainer-setup.md),
-[parallel development: topology, worktrees & guards](../../knowledge-infra/notes/parallel-agent-worktrees.md),
-[B3 fleet runbook](../../knowledge-infra/notes/b3-fleet-runbook.md),
-[cloud environments](../../knowledge-infra/notes/cloud-environments.md),
-[chrome-devtools MCP on the host](../../knowledge-infra/notes/chrome-devtools-mcp-setup.md).
+[Dev container](../infra/devcontainer-setup.md),
+[parallel development: topology, worktrees & guards](../infra/parallel-agent-worktrees.md),
+[B3 fleet runbook](../infra/b3-fleet-runbook.md),
+[cloud environments](../infra/cloud-environments.md),
+[chrome-devtools MCP on the host](../infra/chrome-devtools-mcp-setup.md).

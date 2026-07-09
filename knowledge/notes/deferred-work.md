@@ -13,7 +13,7 @@ pending work lives **here** — visible to every session and the user, auditable
 and re-prioritizable — not in a session's private auto-memory. Add items as they
 are deferred; remove them when done. This register holds the
 **project-deliverable side**; process/infra items live in
-[the infra register](../../knowledge-infra/notes/deferred-work.md). (Feature-specific
+[the infra register](../infra/deferred-work.md). (Feature-specific
 deferrals may instead live in their own note — e.g. [`make publish`](publish-target.md),
 [`sitemap.xml`](sitemap-target.md); this register is for cross-cutting or
 otherwise unhomed items.)
@@ -67,5 +67,5 @@ non-obvious dependency edges"). **Parked by the user (2026-06-14) until the
 navigation mechanism itself is worked on — don't pick it up standalone.**
 
 See also: [handoff convention (Severance SPEC)](../severance/SEVERANCE.md),
-[infra/process register](../../knowledge-infra/notes/deferred-work.md),
+[infra/process register](../infra/deferred-work.md),
 [Knowledge base index](../index.md).

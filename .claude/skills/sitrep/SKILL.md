@@ -15,7 +15,7 @@ conversation memory — every fact in layer 1 comes from a probe run **now**.
     git rev-list --count origin/master..master       # unpushed commits
     git log -5 --oneline                             # recent movement
     ls -A .handoff/                                  # channel (session-start ritual)
-    grep '^## ' knowledge/notes/deferred-work.md knowledge-infra/notes/deferred-work.md  # open-work register digest (both trees)
+    grep '^## ' knowledge/notes/deferred-work.md knowledge/infra/deferred-work.md  # open-work register digest (both trees)
 
 ## 2. Report in two labeled layers
 
