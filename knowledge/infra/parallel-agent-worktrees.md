@@ -12,7 +12,7 @@ This note records a design discussion. The conclusions are
 decisions-of-record; the **manual worktree flow is empirically validated**
 (smoke-tested 2026-07-03 — see [Validation](#validation-smoke-tested)). The
 **B3 launcher + the three accidental-HEAD-move guards are now implemented** on
-`feat/b3-multi-agent` (`scripts/b3-fleet.sh`, `scripts/git-hooks/`,
+`feat/b3-multi-agent` (`scripts/mdr.sh`, `scripts/git-hooks/`,
 `scripts/guard-main-head.sh`) and empirically validated end-to-end in the
 rebuilt container (2026-07-04, git 2.55 — provision → 30-PASS `make test` in a
 fresh worktree → teardown, plus every guard path) — see
@@ -197,7 +197,7 @@ Everything that makes the container a trust boundary is **reused unchanged**
 4. **Launcher + integration** — `git worktree add` per task → `claude` per
    worktree (under `tmux`) → merge each `agent/<task>` to `master` on the main
    worktree, gated on `make test` → `git worktree remove`. Implemented as
-   `scripts/b3-fleet.sh` (`provision`/`spawn`/`up`/`integrate`/`teardown`/`list`);
+   `scripts/mdr.sh` (`provision`/`spawn`/`up`/`integrate`/`teardown`/`list`);
    `integrate` keeps the main checkout *on* `master` and only advances it via
    `merge --no-ff` (never `checkout`), so it stays clear of the HEAD-move guards
    below (using the inline `TEPPAN_MAIN_HEAD_OK=1` override for the merge itself).
@@ -215,7 +215,7 @@ Everything that makes the container a trust boundary is **reused unchanged**
    only (macro-level, no HTML/CSS render): changes touching build inputs need
    a manual `make build` in the worktree first. Operator steps for each
    failure mode are in the
-   [runbook's recovery section](b3-fleet-runbook.md).
+   [runbook's recovery section](mdr-runbook.md).
 
 Gotchas: N Playwright MCP = N headless Chromium (all `--isolated`, so no
 `SingletonLock` clash — see [chrome-devtools MCP setup](chrome-devtools-mcp-setup.md));
@@ -500,7 +500,7 @@ integrator's `git merge` on master *is* a `refs/heads/master` update the
 ref-transaction guard would otherwise block.
 
 **Name-agnostic — no hardcoded path.** None of the guards bake in `/workspaces/teppan`:
-`guard-main-head.sh`'s `cwd` check and the launcher (`scripts/b3-fleet.sh`) read
+`guard-main-head.sh`'s `cwd` check and the launcher (`scripts/mdr.sh`) read
 **`$WORKSPACE_ROOT`** (= the devcontainer's `${containerWorkspaceFolder}`, exported
 via `containerEnv`), and the two git hooks discriminate purely via
 `git rev-parse --absolute-git-dir == --git-common-dir`. So the concrete
@@ -564,8 +564,8 @@ The **only** way a test run leaves residue is if you deliberately merge a
 throwaway branch into a keeper branch — which the partition/integration
 discipline says you don't.
 
-See also: [B3 fleet runbook — working in the container & launching agents
-(operator-facing)](b3-fleet-runbook.md) (the operational checklist on top of
+See also: [MDR runbook — working in the container & launching agents
+(operator-facing)](mdr-runbook.md) (the operational checklist on top of
 this design note), [dev container setup](devcontainer-setup.md),
 [`chrome-devtools` MCP setup](chrome-devtools-mcp-setup.md),
 [`file://`-relative preview](../notes/file-relative-preview.md),

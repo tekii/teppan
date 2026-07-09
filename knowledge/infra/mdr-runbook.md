@@ -1,17 +1,17 @@
 ---
 type: Runbook
 audience: operator
-title: B3 fleet runbook — working in the container and launching agents (FOR OPERATORS)
-description: Operator how-to for the B3 multi-agent setup — whether to work in /workspaces/teppan vs. a per-task worktree, the exact scripts/b3-fleet.sh provision/spawn/up/integrate/teardown/list commands, what the accidental-HEAD-move guards block and the TEPPAN_MAIN_HEAD_OK override, and who launches the agents. Consumed by a human operator, not by spawned agents (agents work only inside their own worktree; the guards self-inject the rules they need).
-tags: [runbook, operator, b3, agents, worktree, devcontainer, workflow]
-timestamp: 2026-07-04
+title: MDR runbook — working in the container and launching Refiners (FOR OPERATORS)
+description: Operator how-to for the MDR fleet (B3 topology) — whether to work in /workspaces/teppan vs. a per-task worktree, the exact scripts/mdr.sh provision/spawn/up/integrate/teardown/list commands, what the accidental-HEAD-move guards block and the TEPPAN_MAIN_HEAD_OK override, and who launches the agents. Consumed by a human operator, not by spawned agents (agents work only inside their own worktree; the guards self-inject the rules they need).
+tags: [runbook, operator, mdr, agents, worktree, devcontainer, workflow]
+timestamp: 2026-07-09
 ---
 
-# B3 fleet runbook — working in the container & launching agents
+# MDR runbook — working in the container & launching Refiners
 
 > **FOR OPERATORS / HUMAN CONSUMPTION.** This is an orchestration runbook: how
 > *you* (the human at the keyboard, or a parent orchestrating session) launch
-> and integrate a fleet. A *spawned* agent does not need this — it works only
+> and integrate MDR — the Refiner fleet (B3 bind-mount topology). A *spawned* agent does not need this — it works only
 > inside its own worktree, and the guards self-inject the one rule it must
 > follow ("don't move the shared `/workspaces/teppan` HEAD"). The design rationale
 > lives in [Parallel development](parallel-agent-worktrees.md); this file is the
@@ -31,7 +31,7 @@ timestamp: 2026-07-04
 > **or** open a *separate* VS Code window attached to the same container.
 >
 > **And always run Claude/agents under `tmux`** — `tmux new -s work 'claude'`,
-> or just `scripts/b3-fleet.sh up <task>` (which does it for you). Then *any*
+> or just `scripts/mdr.sh up <task>` (which does it for you). Then *any*
 > reload/reconnect/detach is survivable: `tmux attach -t <session>` brings the
 > live session straight back. A bare integrated-terminal session survives only
 > by VS Code's fragile terminal-persistence and dies on a full window close.
@@ -89,12 +89,12 @@ no guards on your own HEAD):
 
 ```bash
 # from /workspaces/teppan:
-scripts/b3-fleet.sh provision mywork       # -> /workspaces/wt-mywork on agent/mywork
+scripts/mdr.sh provision mywork       # -> /workspaces/wt-mywork on agent/mywork
 cd /workspaces/wt-mywork
 #   ... edit, git commit, git switch, git reset freely -- your OWN HEAD ...
 cd /workspaces/teppan
-scripts/b3-fleet.sh integrate mywork       # make test -> merge --no-ff -> master
-scripts/b3-fleet.sh teardown mywork        # remove worktree + branch + tmux
+scripts/mdr.sh integrate mywork       # make test -> merge --no-ff -> master
+scripts/mdr.sh teardown mywork        # remove worktree + branch + tmux
 ```
 
 **One-off commit straight on the trunk** (when a worktree is overkill): prefix
@@ -107,11 +107,11 @@ TEPPAN_MAIN_HEAD_OK=1 git -C /workspaces/teppan commit -am "quick trunk fix"
 ## B. Launching agents (you are the orchestrator — "Model A")
 
 ```bash
-scripts/b3-fleet.sh up <task>          # provision a worktree + spawn `claude` in it under tmux
+scripts/mdr.sh up <task>          # provision a worktree + spawn `claude` in it under tmux
 tmux attach -t agent-<task>            # jump into that agent (detach: Ctrl-b d)
-scripts/b3-fleet.sh list               # worktrees + agent tmux sessions
-scripts/b3-fleet.sh integrate <task>   # gate on make test, then merge --no-ff to master
-scripts/b3-fleet.sh teardown <task>    # tmux kill + worktree remove + branch delete
+scripts/mdr.sh list               # worktrees + agent tmux sessions
+scripts/mdr.sh integrate <task>   # gate on make test, then merge --no-ff to master
+scripts/mdr.sh teardown <task>    # tmux kill + worktree remove + branch delete
 ```
 
 Every launch is four roles — **partition** (pick N tasks; ≤1 touches the
@@ -120,7 +120,7 @@ on `make test`). Keep `/workspaces/teppan` on `master` throughout; `integrate`
 only *advances* master (it never `checkout`s), using the override internally.
 
 > **Two `integrate` nuances not visible from its one-line description** (both in
-> `scripts/b3-fleet.sh`, worth knowing before you trust the gate):
+> `scripts/mdr.sh`, worth knowing before you trust the gate):
 >
 > - **It self-heals a bad merge.** If the *post-merge* `make test` on `master`
 >   fails, `integrate` rolls the merge back automatically
@@ -193,7 +193,7 @@ Escape hatch for a sanctioned trunk move: prefix `TEPPAN_MAIN_HEAD_OK=1`
   often. `postcreate.sh` re-installs the guard hooks and re-chowns `/workspaces`
   idempotently.
 - **Verify guards after a rebuild:** re-run the checks in *Prerequisites* plus
-  `scripts/b3-fleet.sh provision smoke && scripts/b3-fleet.sh teardown smoke`.
+  `scripts/mdr.sh provision smoke && scripts/mdr.sh teardown smoke`.
 
 See also: [Parallel development — branch workflow, worktrees & multi-agent
 setup](parallel-agent-worktrees.md) (the design rationale + the guard coverage

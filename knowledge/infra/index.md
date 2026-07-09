@@ -21,7 +21,7 @@ generic workflow knowledge; the law was extracted to the Severance repo on
   [`chrome-devtools` MCP on the host](chrome-devtools-mcp-setup.md),
   [cloud environments (Claude Code web & Codespaces)](cloud-environments.md).
 - Multi-agent workflow — [parallel development: topology, worktrees & guards](parallel-agent-worktrees.md),
-  [B3 fleet runbook (FOR OPERATORS)](b3-fleet-runbook.md).
+  [MDR runbook (FOR OPERATORS)](mdr-runbook.md).
 - The extraction — [Severance extraction trace note](severance-extraction.md).
 - Registers — [deferred / open work (infra & process)](deferred-work.md).
 

@@ -26,7 +26,7 @@ its own repo — `github.com/tekii/severance` — and returns to Teppan
   → superseded by `knowledge/severance/profile.md` (same content,
   contract-shaped).
 - **Stayed here (Teppan's implementation, not law):** devcontainer
-  setup, parallel-worktrees topology & guards, B3 fleet runbook, cloud
+  setup, parallel-worktrees topology & guards, MDR runbook, cloud
   environments, chrome-devtools MCP notes, both deferred-work registers.
 
 ## Why (and why fresh-start)

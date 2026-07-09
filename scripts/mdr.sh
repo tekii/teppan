@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# b3-fleet.sh -- B3 multi-agent launcher/integrator.
-# See knowledge/notes/parallel-agent-worktrees.md ("The B3 delta", "Who launches
+# mdr.sh -- MDR (Refiner fleet) launcher/integrator.
+# See knowledge/infra/parallel-agent-worktrees.md ("The B3 delta", "Who launches
 # the agents").
 #
 # One hardened container, N git worktrees, N `claude` processes under tmux.
@@ -25,7 +25,7 @@ MAIN="${WORKSPACE_ROOT:?WORKSPACE_ROOT not set (define it in devcontainer.json c
 WT_DIR="$(dirname "$MAIN")"        # worktrees at $WT_DIR/wt-<task>, OUTSIDE $MAIN
 BASE_BRANCH=${BASE_BRANCH:-master}
 
-die(){ echo "b3-fleet: $*" >&2; exit 1; }
+die(){ echo "mdr: $*" >&2; exit 1; }
 wt_path(){ echo "$WT_DIR/wt-$1"; }
 br(){ echo "agent/$1"; }
 

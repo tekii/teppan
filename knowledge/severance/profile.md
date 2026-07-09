@@ -26,10 +26,10 @@ If missing, **STOP and hand back**.
 
 ## Sanctioned flow
 
-`scripts/b3-fleet.sh provision` → edits in the worktree → `make test`
+`scripts/mdr.sh provision` → edits in the worktree → `make test`
 gate (30 PASS / 0 FAIL) → `integrate` → `teardown`.
 
-Why the outer cannot commit here: `scripts/b3-fleet.sh` is
+Why the outer cannot commit here: `scripts/mdr.sh` is
 container-gated (`require_container` dies unless
 `TEPPAN_IN_CONTAINER=1`), and the accidental-HEAD-move guards **fail
 open on the host** — a host commit to `master` has no rails and risks
@@ -61,7 +61,7 @@ mistakes, not adversarial agents — Devon's scoping, 2026-07-09):
 The same snapshot caveat applies to **long-lived sessions**: a session
 spanning a law change carries its session-start law; after any change
 to the vendored SPEC, re-read it from disk or restart the session.
-(The B3 fleet's Refiners are additionally constrained by structure:
+(MDR's Refiners are additionally constrained by structure:
 the fleet script runs the gate mechanically, so their compliance is
 enforced by the flow, not their knowledge.)
 
@@ -69,6 +69,6 @@ enforced by the flow, not their knowledge.)
 
 [Dev container](../infra/devcontainer-setup.md),
 [parallel development: topology, worktrees & guards](../infra/parallel-agent-worktrees.md),
-[B3 fleet runbook](../infra/b3-fleet-runbook.md),
+[MDR runbook](../infra/mdr-runbook.md),
 [cloud environments](../infra/cloud-environments.md),
 [chrome-devtools MCP on the host](../infra/chrome-devtools-mcp-setup.md).

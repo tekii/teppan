@@ -43,7 +43,7 @@ case "$cmd" in *"$WORKSPACE_ROOT"*) aimed=1 ;; esac
 
 # Name-agnostic message (single quotes, not backticks, so the string is inert);
 # $WORKSPACE_ROOT interpolates the real path.
-reason="B3 guard: do not run git checkout/switch/reset in the SHARED main checkout ${WORKSPACE_ROOT} -- it moves the one shared HEAD and reverts files under any other session on this checkout (the shared-HEAD trap). Work in your OWN sibling worktree, never in ${WORKSPACE_ROOT}; use 'git restore <file>' for file restores. Sanctioned integrator override: prefix the command with TEPPAN_MAIN_HEAD_OK=1."
+reason="MDR guard: do not run git checkout/switch/reset in the SHARED main checkout ${WORKSPACE_ROOT} -- it moves the one shared HEAD and reverts files under any other session on this checkout (the shared-HEAD trap). Work in your OWN sibling worktree, never in ${WORKSPACE_ROOT}; use 'git restore <file>' for file restores. Sanctioned integrator override: prefix the command with TEPPAN_MAIN_HEAD_OK=1."
 jq -n --arg r "$reason" \
   '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
 exit 0
