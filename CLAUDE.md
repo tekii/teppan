@@ -58,3 +58,4 @@ browsable, OKF-formatted source.)*
 @knowledge-infra/conventions/trace-notes-on-removal.md
 @knowledge-infra/conventions/session-handoff.md
 @knowledge/conventions/handoff-integration-profile.md
+@knowledge/severance/SEVERANCE.md
