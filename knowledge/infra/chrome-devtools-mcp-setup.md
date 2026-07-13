@@ -22,8 +22,11 @@ the browser is comparatively slow and heavyweight.
 **None of this configuration lives in the repo** — it's registered at
 Claude Code's `local` MCP scope (`~/.claude.json`, keyed to this project's
 path, never committed) specifically so it stays private to whoever set it
-up and isn't inherited by anyone who clones this repo. The only in-repo
-trace is two gitignored directories.
+up and isn't inherited by anyone who clones this repo. Because that scope is
+the **host** session's, the chrome-devtools MCP is available **only to Outie**
+(the outer/host session); **Innie** (the inner/container session) never sees it
+and uses the **Playwright** MCP (see [dev container](devcontainer-setup.md)) for
+browser checks instead. The only in-repo trace is two gitignored directories.
 
 ## Why project-local Node.js and Chrome profile, not system-wide
 
