@@ -3,7 +3,7 @@ type: Convention
 title: Severance consumer profile — Teppan
 description: Teppan's answers to the vendored SEVERANCE.md profile contract — gate, hygiene preconditions, sanctioned flow, implementation docs. Successor of knowledge/conventions/handoff-integration-profile.md (retired by the same change).
 tags: [conventions, severance, profile, handoff]
-timestamp: 2026-07-09
+timestamp: 2026-07-13
 ---
 
 # Severance consumer profile — Teppan
@@ -29,12 +29,30 @@ If missing, **STOP and hand back**.
 `scripts/mdr.sh provision` → edits in the worktree → `make test`
 gate (30 PASS / 0 FAIL) → `integrate` → `teardown`.
 
+**The main checkout is never hand-edited.** Every repo-content change
+starts with `scripts/mdr.sh provision` (a sibling worktree) and reaches
+`master` only through `integrate` — an uncommitted in-place edit is
+already off-process, even though no guard fires (working-tree edits
+move no HEAD). Learn the flow from the
+[MDR runbook](../infra/mdr-runbook.md); the script source is read to
+*verify* behavior, never to discover it.
+
 Why the outer cannot commit here: `scripts/mdr.sh` is
 container-gated (`require_container` dies unless
 `TEPPAN_IN_CONTAINER=1`), and the accidental-HEAD-move guards **fail
 open on the host** — a host commit to `master` has no rails and risks
 the shared-HEAD trap. So repo-content lands **only** through the inner
 session.
+
+## Which session am I? (self-locate before acting)
+
+Probe, don't assume. `TEPPAN_IN_CONTAINER=1` (and a Playwright MCP) →
+you are **Innie**: repo-content is your lane, *via the sanctioned flow
+above — never by editing the main checkout in place*. No such variable
+(and a chrome-devtools MCP) → you are **Outie**: research and drafts;
+repo-content lands only through tapes the Innie applies. The lane names
+the **route**, not just the right: "the inner applies" always means
+"through provision → gate → integrate."
 
 ## Subagents (Refiners): bound by accountability, not knowledge
 
