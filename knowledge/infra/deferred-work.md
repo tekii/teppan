@@ -54,6 +54,18 @@ both knowledge trees, propose a dated step/lesson timeline for Devon's
 correction and comprehension interviews (see the learnings-register
 convention (Severance SPEC)).
 
+## Dirty-main-checkout guard (decision needed)
+
+2026-07-13: the Innie edited a tracked file in the main checkout in
+place — off-process; caught by Devon (no guard fires on working-tree
+edits: nothing moves HEAD), reverted, then re-applied via the
+sanctioned flow. Backstop options surfaced in the Innie's
+self-diagnosis (handed back by tape the same day): a hook/probe that
+flags a **dirty tracked-file working tree in the main checkout**
+(legitimate edits live in worktrees), and/or a session-start reminder
+that repo modifications start with `mdr.sh provision`. Decide:
+implement one, both, or accept discipline-only.
+
 See also: [handoff constitution (Severance SPEC)](../severance/SEVERANCE.md),
 [Teppan Severance profile](../severance/profile.md),
 [infrastructure knowledge index](index.md).
