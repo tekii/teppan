@@ -3,7 +3,7 @@ type: Convention
 title: Severance consumer profile — Teppan
 description: Teppan's answers to the vendored SEVERANCE.md profile contract — gate, hygiene preconditions, sanctioned flow, implementation docs. Successor of knowledge/conventions/handoff-integration-profile.md (retired by the same change).
 tags: [conventions, severance, profile, handoff]
-timestamp: 2026-07-13
+timestamp: 2026-07-14
 ---
 
 # Severance consumer profile — Teppan
@@ -76,9 +76,21 @@ mistakes, not adversarial agents — Devon's scoping, 2026-07-09):
    `Write`/`Edit` cannot write a tape; the tool profile is the only
    hard lever.
 
-The same snapshot caveat applies to **long-lived sessions**: a session
-spanning a law change carries its session-start law; after any change
-to the vendored SPEC, re-read it from disk or restart the session.
+The same snapshot caveat applies to **long-lived sessions** — and to
+the session that *itself lands* a change: integration writes to disk,
+not to anyone's running context. **The auto-load ritual:** after
+integrating a change to any auto-loaded `knowledge/` file (the
+`@`-include list in `CLAUDE.md` — the specific 17-line set, not all of
+`knowledge/`), the change is NOT yet in force for the current session
+— restart the session, or at minimum re-read the changed file(s) from
+disk before relying on them.
+
+That same auto-loaded set is also the constitution's **C-6 surface**:
+its content is injected into both sessions' contexts, so every edit to
+it must pass the deletion test *and* be named to Devon before
+integration. The hazard (stale snapshots) and the channel (prompt
+injection) share one root: these files are executed as context by
+both sessions.
 (MDR's Refiners are additionally constrained by structure:
 the fleet script runs the gate mechanically, so their compliance is
 enforced by the flow, not their knowledge.)

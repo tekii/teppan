@@ -38,3 +38,7 @@ conversation memory — every fact in layer 1 comes from a probe run **now**.
 - Do **not** run `make` — a status probe needs no gate.
 - If a probe **contradicts** conversation memory, say so explicitly — that
   contradiction is the report's most valuable line.
+- If recent commits touched any auto-loaded `knowledge/` file (the
+  `@`-include list in `CLAUDE.md`), remind the user: running sessions
+  still carry their start-of-session snapshot — restart or re-read
+  those files before relying on them (the profile's auto-load ritual).
