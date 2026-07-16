@@ -40,16 +40,35 @@ iptables -A OUTPUT -o lo -j ACCEPT
 # Create ipset with CIDR support
 ipset create allowed-domains hash:net
 
-# Fetch GitHub meta information and aggregate + add their IP ranges
+# Fetch GitHub meta information and aggregate + add their IP ranges.
+# api.github.com/meta is rate-limited (60 req/h unauthenticated, shared
+# per source IP -- a VPN exit shares the budget with strangers), so a
+# transient 403 must not kill container start: retry with backoff, then
+# fail with guidance. The `|| true` is required under `set -e`: a bare
+# curl network failure would kill the script at this assignment, before
+# any retry logic. (Cache-fallback / authenticated fetch: registered
+# future options -- see the infra deferred-work register.)
 echo "Fetching GitHub IP ranges..."
-gh_ranges=$(curl -s https://api.github.com/meta)
+gh_ranges=""
+for attempt in 1 2 3 4 5; do
+    gh_ranges=$(curl -s https://api.github.com/meta || true)
+    if [ -n "$gh_ranges" ] && echo "$gh_ranges" | jq -e '.web and .api and .git' >/dev/null 2>&1; then
+        break
+    fi
+    gh_ranges=""
+    if [ "$attempt" -lt 5 ]; then
+        echo "WARN: GitHub /meta fetch attempt ${attempt}/5 failed or incomplete; retrying in $((attempt * 5))s..."
+        sleep $((attempt * 5))
+    fi
+done
 if [ -z "$gh_ranges" ]; then
-    echo "ERROR: Failed to fetch GitHub IP ranges"
-    exit 1
-fi
-
-if ! echo "$gh_ranges" | jq -e '.web and .api and .git' >/dev/null; then
-    echo "ERROR: GitHub API response missing required fields"
+    echo "ERROR: could not fetch usable GitHub IP ranges from https://api.github.com/meta after 5 attempts."
+    echo "  Most likely cause: the unauthenticated API rate limit (60 requests/hour, shared per"
+    echo "  source IP -- a VPN exit shares it with strangers). Diagnose from the host:"
+    echo "      curl -sI https://api.github.com/meta | grep -i ratelimit"
+    echo "  Then either wait until x-ratelimit-reset and retry the container start ONCE, or switch"
+    echo "  to a different VPN exit / network for a fresh IP. (Incident of 2026-07-15: see the"
+    echo "  infra deferred-work register.)"
     exit 1
 fi
 

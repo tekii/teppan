@@ -66,6 +66,21 @@ flags a **dirty tracked-file working tree in the main checkout**
 that repo modifications start with `mdr.sh provision`. Decide:
 implement one, both, or accept discipline-only.
 
+## Firewall `/meta` fetch resilience (retry landed; options remain)
+
+2026-07-15: container start and rebuild failed for an evening — root
+cause a GitHub unauthenticated rate limit (403 on `api.github.com/meta`
+from a shared VPN exit IP), which `init-firewall.sh` treated as fatal
+("missing required fields"); a latent second fragility (bare `curl`
+under `set -e` dying before any error handling) was found in the same
+read. Landed: retry with backoff (5 attempts) plus a diagnostic final
+failure message (Devon's chosen option). **Remaining options if
+recurrence proves retry insufficient:** cache the last-good `/meta`
+ranges as a fallback (keeps the fail-closed posture without making
+GitHub's rate limiter a single point of failure for container start),
+and/or an authenticated fetch (5,000 req/h; needs a token-placement
+decision).
+
 See also: [handoff constitution (Severance SPEC)](../severance/SEVERANCE.md),
 [Teppan Severance profile](../severance/profile.md),
 [infrastructure knowledge index](index.md).
