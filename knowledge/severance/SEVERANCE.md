@@ -1,11 +1,11 @@
 ---
 type: Convention
 title: SEVERANCE — the severed multi-session workflow (SPEC)
-description: The Severance workflow's binding law — constitution, conventions, profile contract — amalgamated at v0.1.1. Vendored copy: do not edit; update by re-vendoring a release.
+description: The Severance workflow's binding law — constitution, conventions, profile contract — amalgamated at v0.2.0. Vendored copy: do not edit; update by re-vendoring a release.
 tags: [severance, spec, workflow, vendored]
-timestamp: 2026-07-09
-version: 0.1.1
-built-from: v0.1.1
+timestamp: 2026-07-15
+version: 0.2.0
+built-from: v0.2.0
 ---
 
 <!-- ═══ source: preamble.md ═══ -->
@@ -267,7 +267,23 @@ naming the route makes it auditable:
 
 These rules bind each session's **spawned agents** (Refiners) exactly as
 they bind the session — a session cannot launder an interchange through a
-subagent.
+subagent. But **do not assume a spawned agent has this law in its
+context** — a child may load none of it, or only a stale snapshot;
+verify or inject the rules it needs before relying on its output, and
+see your profile for the harness-specific mechanics.
+
+## State is probed, not assumed
+
+Before proposing or authoring any change, a session **probes the
+authoritative state contemporaneously with the act** — the current tree,
+the refs that ship, and any pending channel artifacts — and **names what
+it checked** so the proposal is verifiable. Beliefs about state carried
+from memory, prior instructions, training reflex, or narrative are
+**claims to re-verify, never facts to act on**; a session's own memory
+is a relay from its past self and can be stale. This binds every session
+in every lane. Its named instances elsewhere in this law: the author's
+"prove the tree authoritative before anchoring" (Draft anatomy) and the
+session-memory rule that transient repo state expires (below).
 
 ## Session memory hygiene
 
