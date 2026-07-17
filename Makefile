@@ -112,8 +112,12 @@ define do-generate-landing
 	generator.m4 > $@
 endef
 
+# dedup the per-stem nav fragments while PRESERVING their original order:
+# awk '!seen[$0]++' keeps each distinct line's first occurrence (unlike
+# `sort -u`, which also reordered the m4_set_add lines and made the nav menu
+# alphabetical by label). $$0 is awk's $0 escaped for Make.
 $(BUILD_ROOT)/NAV/%/NAVIGATION.m4 : | $$(@D)/
-	sort -u $^ | grep -v '^$$' > $@
+	awk '!seen[$$0]++' $^ | grep -v '^$$' > $@
 
 # DOC-level aggregate of just the domains' landing pages (one stem-fragment
 # per domain that opted in via __MAKE_PAGE([LinkType],[landing])), so any
