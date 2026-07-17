@@ -88,6 +88,28 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
   list directly (AMP's runtime used to clone it).
 - Page styles are delivered via external `<link rel="stylesheet">`; don't
   reintroduce ad-hoc inline `<style>` blocks.
+- **Cross-domain references must go through `__ABSOLUTE`, never bare
+  `__HREF`** — `__HREF` (`generator.m4:68`) produces a reference relative to
+  the current document's origin (per RFC 3986, a relative ref cannot name a
+  different scheme/host). A bare `__HREF` whose target spells *another*
+  domain as a path segment (e.g. `../../tekii.ar/index.html`) only "means"
+  cross-domain inside the artificially colocated build/preview tree; in
+  production each domain ships to its own GCS bucket/origin
+  (`Makefile` `do-publish` → `gs://$@`), so that path 404s against the
+  *current* domain's bucket. `__ABSOLUTE` (`generator.m4:76`) is the sole
+  cross-domain chokepoint and the only macro that is build-mode-aware
+  (production: literal `http://` + domain-as-directory; preview, under
+  `__PREVIEW__`: bare `__HREF` so the link stays valid off disk — see
+  [`file://`-relative preview](../notes/file-relative-preview.md)).
+  **Flag any cross-domain reference — an explicit cross-domain link,
+  a `hreflang`/canonical alternate (`layout.html:9,11`), or a redirect
+  target — that does not resolve through `__ABSOLUTE`**, and flag any bare
+  `__HREF` call whose target crosses a domain boundary. Redirects reach
+  `__ABSOLUTE` via `__REDIRECT_URL` (`generator.m4:86`, used by
+  `layout-redirect.html`); a page/template that hardcodes its own
+  `http://<domain>` instead of routing through `__ABSOLUTE`/`__REDIRECT_URL`
+  is the exact regression this rule exists to catch.
 
 See also: [CSS code review guidelines](css.md),
-[Page source conventions](../architecture/page-source-conventions.md).
+[Page source conventions](../architecture/page-source-conventions.md),
+[`file://`-relative preview](../notes/file-relative-preview.md).
