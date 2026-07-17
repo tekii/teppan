@@ -81,11 +81,23 @@ m4_define([__ABSOLUTE],[m4_ifdef([__PREVIEW__],
 # REDIRECT_URL(DOMAIN) MACRO
 # resolves DOMAIN's registered landing page (__LANDING_<DOMAIN>_URL__, as
 # aggregated into NAVIGATION-LANDING.m4 -- see __MAKE_PAGE's [landing] arg)
-# if one is registered, otherwise falls back to DOMAIN's bare root.
+# and routes it through __ABSOLUTE, the sole build-mode-aware cross-domain
+# chokepoint, so the redirect is correct under both `build` (http://host/...)
+# and `preview` (relative, browsable off disk).
+#
+# DOMAIN must be a TEKii domain that registers a landing page. Every redirect
+# target in this project is internal (see knowledge/architecture/domains.md);
+# there is no external-redirect use case. A missing registration is therefore
+# always an authoring mistake -- a typo'd target, or a new site whose default
+# page was not wrapped in __AS_LANDING -- so it is a hard m4_fatal, not a
+# silent `http://DOMAIN` that would bypass __ABSOLUTE (escaping to the live
+# host even under `make preview`) and hide the error. Should an external
+# redirect ever be needed, grow a deliberate preview-exempt path here -- do
+# not relax the guard.
 #
 m4_define([__REDIRECT_URL],[m4_ifdef([__LANDING_]__UP([$1])[_URL__],dnl
 [__ABSOLUTE(__LANDING_]__UP([$1])[_URL__)],dnl
-[http://$1])])dnl
+[m4_fatal([__REDIRECT_URL: no landing page registered for redirect target ']$1[' (expected __LANDING_]__UP([$1])[_URL__) -- wrap its default page's __MAKE_PAGE in __AS_LANDING or fix the target; external redirects are unsupported])])])dnl
 
 #
 # CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR) MACRO
