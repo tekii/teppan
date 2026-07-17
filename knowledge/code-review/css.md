@@ -90,6 +90,15 @@ to Flag").
     browser-cached `<link rel="stylesheet">` (Water.css + `custom.css`). **Flag
     any change that goes back to emitting per-page inline `<style>` blocks**
     instead of the shared external stylesheet.
+- **`__CSS_REMAP_URLS`'s `__HREF` is same-origin by design — don't misapply
+  the cross-domain rule to it.** The cross-domain-reference rule in the
+  [HTML role](html.md) (cross-domain refs must go through `__ABSOLUTE`, not
+  bare `__HREF`) does **not** touch `url(...)` rewriting: a stylesheet's
+  asset URLs (fonts, background images, icons) are always same-origin, so
+  `__CSS_REMAP_URLS` (`generator.m4:102`) rewriting them to `__TDIR__`-relative
+  paths via bare `__HREF` is correct, not a violation. Flag a `url(...)` that
+  reaches *across* domains (there should be none), but never "upgrade" a
+  legitimately same-origin CSS asset path to `__ABSOLUTE`.
 
 See also: [HTML code review guidelines](html.md),
 [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md).
