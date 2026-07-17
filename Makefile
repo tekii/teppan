@@ -90,8 +90,20 @@ $(BUILD_ROOT)/.mode-% : FORCE | $(BUILD_ROOT)/
 #
 # VENDOR
 #
+# `water.css` is committed at the repo root (a tracked source asset delivered
+# via __DASSET, like custom.css) so builds are fully offline -- the jsDelivr
+# CDN is firewalled in-container. `vendor` is only an optional REFRESH helper
+# to bump the pinned copy; it is NOT a build prerequisite. Pin + integrity:
+# water.css@2.1.1, sha256
+# 47073611dda0977c57c95d5bbda291084a589e5c7af197fa4d09822657249a0e.
 .PHONY: vendor
 vendor:
+	@tmp=$$(mktemp -d) \
+	  && ( cd "$$tmp" && npm pack water.css@2.1.1 >/dev/null && tar xzf water.css-2.1.1.tgz ) \
+	  && cp "$$tmp/package/out/water.css" $(SRC)/water.css \
+	  && cp "$$tmp/package/LICENSE.md" $(SRC)/water.css.LICENSE \
+	  && rm -rf "$$tmp" \
+	  && echo "refreshed water.css -> sha256 $$(sha256sum $(SRC)/water.css | cut -d' ' -f1)"
 
 #
 # NAVIGATION MAP
