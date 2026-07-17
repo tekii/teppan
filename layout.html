@@ -74,7 +74,7 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
 __RENDER_SET([__NAV__ITEMS__],[dnl
 m4_if($1,__LANG__,[dnl
                 <li class="nav-item">
-                    <a class="link" href="__HREF([$3])[#]$4">$2</a>
+                    <a class="link" href="__NAV_HREF([$3],[$4])">$2</a>
                 </li>
 ])dnl
 ])dnl
@@ -130,7 +130,7 @@ __RENDER_SET([__ALTERNATES__],[dnl
 __RENDER_SET([__NAV__ITEMS__],[dnl
 m4_if($1,__LANG__,[dnl
                 <li class="nav-item">
-                    <a class="link" href="__HREF([$3])[#]$4">$2</a>
+                    <a class="link" href="__NAV_HREF([$3],[$4])">$2</a>
                 </li>
 ])dnl
 ])dnl

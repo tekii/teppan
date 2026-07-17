@@ -376,7 +376,29 @@ $(BUILD_ROOT)/DOC/m4_unquote(m4_cdr(__I__)) : $1
 m4_text_box($1 INCLUDE ENDS  ,[-])
 ])[]m4_include([$1])])
 
-# NAV_ITEM(TEXT,URL,FRAGMENT)
+#
+# NAV_TARGET_DOMAIN(URL) MACRO
+# $1 a nav URL (a URL-id macro or a __BUILD_ROOT__/DOC-relative/absolute path)
+# expands to URL's domain: the first path component of URL taken relative to
+# __BUILD_ROOT__/DOC (e.g. tekii.llc/index.html -> tekii.llc). Used by
+# __NAV_HREF to decide same-origin vs cross-domain.
+#
+m4_define([__NAV_TARGET_DOMAIN__],[m4_bpatsubst(__HREF([$1],__BUILD_ROOT__/DOC),[/.*],[])])
+
+#
+# NAV_HREF(URL,FRAGMENT) MACRO
+# $1 nav target URL, $2 optional #fragment (same-origin only)
+# renders a nav-menu href. If URL's domain differs from the current page's
+# __DOMAIN__ the reference crosses a domain boundary and MUST route through
+# __ABSOLUTE -- the sole build-mode-aware cross-domain chokepoint (relative
+# under __PREVIEW__, http:// in build); otherwise it is same-origin and uses
+# a plain __HREF + optional #FRAGMENT. This makes the cross-domain review
+# rule structural: a nav item cannot bypass __ABSOLUTE across a domain,
+# whatever the caller passes.
+#
+m4_define([__NAV_HREF],[m4_if(__NAV_TARGET_DOMAIN__([$1]),__DOMAIN__,[__HREF([$1])[#]$2],[__ABSOLUTE([$1])])])
+
+# NAV_ITEM(LANG,TEXT,URL,FRAGMENT)
 m4_define([__NAV_ITEM],[dnl
 m4_divert_text([NAVIGATION],m4_dquote([m4_set_add](m4_dquote(__NAV__ITEMS__),m4_dquote(m4_dquote(__LANG__,$2,$3,$4)))))dnl
 $2[]dnl

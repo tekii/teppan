@@ -4,6 +4,11 @@ __WITH_DOMAIN([tekii.us],[
             __AS_LANDING([
                 __MAKE_PAGE([__LOCALIZE_URL_NULL])
             ])
+dnl         cross-domain menu link to the TEKii LLC landing site. Registered
+dnl         here in KILL context (outside the MAIN push below) so it lands in
+dnl         the nav menu without emitting a body heading; __NAV_HREF routes it
+dnl         through __ABSOLUTE since tekii.llc != this page's __DOMAIN__.
+            __NAV_ITEM(__LANG__,[TEKii LLC],[__LANDING_TEKII_LLC_URL__],[])dnl
         ])
     ])
 ])
