@@ -13,7 +13,7 @@ Teppan's answers to the profile contract in the vendored
 
 ## Gate
 
-`make test` — currently 30 `__ASSERT_EQ` assertions, 0 FAIL required.
+`make test` — currently 31 `__ASSERT_EQ` assertions, 0 FAIL required.
 Note the gate's known limits and the pending change-type revision in the
 [infra deferred-work register](../infra/deferred-work.md).
 

@@ -67,6 +67,16 @@ __ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__BUILD_ROOT__/DOC/index.html]),[htt
 m4_divert_pop([TESTS])dnl
 
 #
+# __NAV_TARGET_DOMAIN__ extracts a nav URL's domain -- the first path segment
+# of the URL taken relative to __BUILD_ROOT__/DOC. This is what __NAV_HREF
+# compares against __DOMAIN__ to route cross-domain nav links through
+# __ABSOLUTE. Derived independently: the segment after DOC/ is the domain.
+#
+m4_divert_push([TESTS])dnl
+__ASSERT_EQ([NAV_TARGET_DOMAIN first path segment],__NAV_TARGET_DOMAIN__([__BUILD_ROOT__/DOC/tekii.llc/index.html]),[tekii.llc])
+m4_divert_pop([TESTS])dnl
+
+#
 # __REDIRECT_URL(DOMAIN) resolves to DOMAIN's registered landing page
 # (__LANDING_<UP(DOMAIN)>_URL__, as __MAKE_PAGE's [landing] arg would define
 # it once NAVIGATION-LANDING.m4 is sincluded), routed through __ABSOLUTE.
