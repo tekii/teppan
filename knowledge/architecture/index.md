@@ -19,3 +19,7 @@ HTML/CSS/assets — there's no application server.
   redirect-only.
 - [Page source conventions](page-source-conventions.md) — conventions a
   `*.in.html` source follows.
+- [Navigation mechanics](navigation.md) — how the nav menu is built
+  end-to-end: `__NAV_ITEM` registration, the diversion → per-stem fragment →
+  per-domain `NAVIGATION.m4` → `__NAV__ITEMS__` → render pipeline, menu
+  ordering, and cross-domain `__NAV_HREF` resolution.

@@ -13,7 +13,9 @@ A `*.in.html` source typically:
 - Pushes content into the `HEAD` diversion via `m4_divert_text([HEAD], [...])`
   for `<title>`/`<meta>` tags.
 - Pushes body content into `MAIN` via `m4_divert_push([MAIN]) ... m4_divert_pop([MAIN])`,
-  starting with a `__NAV_ITEM(...)` call to register the page in the nav menu.
+  starting with a `__NAV_ITEM(...)` call to register the page in the nav menu
+  (see [Navigation mechanics](navigation.md) for the full registration →
+  aggregate → render pipeline, menu ordering, and cross-domain links).
 - Pulls in reusable sections with `__INCL([fragment-*.html])` (see
   `fragment-home.html`, `fragment-services.html`, `fragment-customers.html`).
 - Uses `__ENES([English text],[Spanish text])` / `__ESEN([Spanish],[English])`
