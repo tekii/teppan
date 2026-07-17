@@ -74,22 +74,25 @@ main checkout's `tekii.ar`/`tekii.us` landing fragments predated the
 worktree that `realclean`s first was unaffected). The guard surfacing this
 loudly is working as intended; the underlying gap is landing-fragment
 staleness on the incremental path — likely the same class as the
-[`NAVIGATION.m4` dependency edge](#navigationm4s-non-obvious-dependency-edge-parked-until-navigation-work)
+[`NAVIGATION.m4` dependency edge](#navigationm4s-non-obvious-dependency-edge)
 item below. **Hypothesis to confirm at pickup:** `NAV/%.landing.m4`'s
 prerequisite on `generator.m4` isn't forcing regeneration when the declaring
 DEP `.mk` is itself being regenerated in the same run (Make include-remake
 ordering). A proper fix removes the need for the `realclean` workaround.
 
-## `NAVIGATION.m4`'s non-obvious dependency edge (parked until navigation work)
+## `NAVIGATION.m4`'s non-obvious dependency edge
 
-`$(BUILD_ROOT)/NAV/%/NAVIGATION.m4 : | $$(@D)/` (`Makefile:115`) has a
-`cat $^ > $@` recipe but only an order-only prerequisite, so `$^` is empty
-in isolation — it works because generated per-stem `.mk` files add
-prerequisite-only rules for the same target and Make merges them. This is
-the file's least obvious dependency edge; it needs an explanatory comment
-(per the [Makefile review role](../code-review/makefile.md)'s "comment
-non-obvious dependency edges"). **Parked by the user (2026-06-14) until the
-navigation mechanism itself is worked on — don't pick it up standalone.**
+The order-only-prerequisite edge behind
+`$(BUILD_ROOT)/NAV/%/NAVIGATION.m4 : | $$(@D)/` (`Makefile:119`) — `$^` looks
+empty in isolation but each page's generated `.mk` adds prerequisite-only
+rules for the same target, which Make merges — is now documented in
+[Navigation mechanics](../architecture/navigation.md#the-aggregations-non-obvious-dependency-edge)
+(the navigation work that was parked on landed 2026-07-17). **Residual
+(optional, low priority):** a one-line inline `Makefile` comment on that
+specific edge per the [Makefile review role](../code-review/makefile.md)'s
+"comment non-obvious dependency edges" — the recipe currently carries a
+comment about the `awk` dedup/ordering, but not about the order-only
+prerequisite itself.
 
 See also: [handoff convention (Severance SPEC)](../severance/SEVERANCE.md),
 [infra/process register](../infra/deferred-work.md),
