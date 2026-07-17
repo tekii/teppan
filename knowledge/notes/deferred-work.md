@@ -18,38 +18,6 @@ deferrals may instead live in their own note — e.g. [`make publish`](publish-t
 [`sitemap.xml`](sitemap-target.md); this register is for cross-cutting or
 otherwise unhomed items.)
 
-## Self-host water.css (deferred — inner-lane)
-
-The site loads Water.css from the jsDelivr CDN (`layout.html:27`), which
-**breaks the `file://` offline preview** (`custom.css` is `__DASSET`'d and
-renders offline; water.css does not) and **fails in the firewalled
-container**. Verified 2026-07-17: `cdn.jsdelivr.net:443` → connection refused
-(blocked), while `registry.npmjs.org` returns 200 and
-`npm pack water.css@2.1.1` fetches a complete 32 KB `out/water.css`
-(sha256 `47073611dda0977c57c95d5bbda291084a589e5c7af197fa4d09822657249a0e`,
-MIT-licensed).
-
-**Decision: commit the vendored file — do not generate it.** Extract
-`out/water.css` from `npm pack water.css@2.1.1` and commit it to the repo root
-as `water.css` (a tracked source asset, sibling to the already-committed
-`custom.css`), delivered via `__DASSET(water.css)` — swap the CDN `<link>`.
-That yields a **fully offline / zero-build-network** styled build and removes
-all vendoring machinery. Keep `make vendor` only as an optional *refresh*
-helper (`npm pack` → overwrite `water.css`, checked against the sha256 above),
-**never** a build prerequisite. Pin: **water.css@2.1.1**.
-
-Why commit rather than the earlier gitignore-`VENDOR` + `make vendor` plan:
-`__DASSET` copies from `$(SRC)`, not `VENDOR` (`generator.m4:360`), so generate
-would need an extract-into-`$(SRC)` step plus a `build`→`vendor` order
-dependency anyway, and it keeps a build-time dependency on
-`registry.npmjs.org` (reachable, but still a network dep) — a committed file
-needs zero network. water.css 2.x is one self-contained file (no `url()`), so
-neither path needs the FontAwesome `__CSS_REMAP_URLS`/VENDOR-copy machinery;
-the register previously said "follow the `custom.css` precedent," and
-`custom.css` is **committed**, so committing water.css is the faithful reading.
-The only cost is ~32 KB of MIT third-party bytes in history (carry the MIT
-notice) — trivial for a rarely-changing single file.
-
 ## Wire `fragment-customers.html` into a page (deferred)
 
 The fragment was de-AMP'd (`<amp-img>`→`<img>`, `__ASSET`→`__DASSET`, alt text)
