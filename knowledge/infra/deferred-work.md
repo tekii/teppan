@@ -81,6 +81,25 @@ GitHub's rate limiter a single point of failure for container start),
 and/or an authenticated fetch (5,000 req/h; needs a token-placement
 decision).
 
+## Probe-before-report mechanism (pinned by Devon — decision deferred)
+
+2026-07-17: the Innie asserted a deleted file was still present —
+recited from conversation memory instead of running a one-command
+probe; the SPEC's "state is probed, not assumed" and private memory
+were both in context and neither prevented it. The Innie handed back a
+proposal (findings tape, consumed the same day): a protocol rule —
+state claims in reports must be verbatim same-turn probe output ("if I
+can't show it, I don't claim it") — enforced by a new `Stop` hook.
+Outie review (verified against the Claude Code hooks docs, 2026-07-17):
+a Stop hook can block-and-remind but cannot semantically verify
+probe-vs-prose, and a blocking design adds a recompose pass to every
+turn; recommendation was to piggyback a one-line reminder onto the
+existing `UserPromptSubmit` gate (`scripts/iqc-gate.sh` injected
+context) — no new hook, fires at turn start, one ceremony surface.
+**Devon pinned the decision (2026-07-17): no implementation for now.**
+Reopen triggers: the next recited-instead-of-probed incident, or
+Devon's ask.
+
 See also: [handoff constitution (Severance SPEC)](../severance/SEVERANCE.md),
 [Teppan Severance profile](../severance/profile.md),
 [infrastructure knowledge index](index.md).
