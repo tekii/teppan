@@ -97,6 +97,18 @@ scripts/mdr.sh integrate mywork       # make test -> merge --no-ff -> master
 scripts/mdr.sh teardown mywork        # remove worktree + branch + tmux
 ```
 
+> **Run `integrate`/`teardown` from `/workspaces/teppan`, never from inside the
+> worktree — that `cd /workspaces/teppan` above is load-bearing.** `teardown`
+> does `git worktree remove --force /workspaces/wt-<task>`; a shell still
+> `cd`'d into that directory keeps running but its next prompt errors with
+> `pwd: error retrieving current directory: getcwd: cannot access parent
+> directories` — the cwd was deleted out from under it (harmless, but noisy,
+> and it makes the command look like it failed when it didn't). A child
+> process can't move the parent shell's cwd, so **`mdr.sh` cannot fix this** —
+> it's caller-side discipline. Don't collapse the flow into one
+> worktree-resident one-liner (`cd wt-… && … && teardown`); commit with
+> `git -C /workspaces/wt-<task> …` if you'd rather not `cd` in at all.
+
 **One-off commit straight on the trunk** (when a worktree is overkill): prefix
 the single git command with the sanctioned override:
 
