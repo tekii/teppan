@@ -1,11 +1,11 @@
 ---
 type: Convention
 title: SEVERANCE — the severed multi-session workflow (SPEC)
-description: The Severance workflow's binding law — constitution, conventions, profile contract — amalgamated at v0.2.0. Vendored copy: do not edit; update by re-vendoring a release.
+description: The Severance workflow's binding law — constitution, conventions, profile contract — amalgamated at v0.3.0. Vendored copy: do not edit; update by re-vendoring a release.
 tags: [severance, spec, workflow, vendored]
-timestamp: 2026-07-15
-version: 0.2.0
-built-from: v0.2.0
+timestamp: 2026-07-17
+version: 0.3.0
+built-from: v0.3.0
 ---
 
 <!-- ═══ source: preamble.md ═══ -->
@@ -222,6 +222,17 @@ naming the route makes it auditable:
 - Provenance header + a **package map** (`PKG1..N`).
 - Each package: the **target file**, the **verbatim anchor**, and the
   exact replacement/insert text.
+- **Executable steps must resist collapse.** Assume the reader
+  optimizes: a multi-step command sequence will be collapsed, reordered,
+  or trimmed unless told why not. A step is **load-bearing** when
+  collapsing, merging, reordering, or dropping it would change the end
+  state or side effects (files, refs, cwd, timing) — not merely
+  verbosity. Mark such a step at the point of use ("load-bearing — do
+  not collapse") and name the concrete failure the ordering prevents;
+  where feasible, prefer a form that stays correct under collapse
+  (cwd-robust, idempotent) over relying on the marker. A
+  behavior-identical collapse needs no marker — over-annotation buries
+  the real ones.
 - **Label unverified claims** explicitly (e.g. "confirm on first launch")
   and keep those labels through application.
 - An **"out of scope"** list (surface to the user, don't do unasked) and,
@@ -251,6 +262,9 @@ naming the route makes it auditable:
    commit-attribution convention in this SPEC).
 7. **Push is user-authorized:** never `git push` without an explicit ask
    — even after a clean integrate.
+8. **Execute prescribed sequences verbatim.** Never collapse, reorder,
+   or drop steps in a tape's command sequence. A step that looks
+   redundant is a hand-back question, not an optimization opportunity.
 
 ## Precedence & refusal
 
@@ -270,7 +284,11 @@ they bind the session — a session cannot launder an interchange through a
 subagent. But **do not assume a spawned agent has this law in its
 context** — a child may load none of it, or only a stale snapshot;
 verify or inject the rules it needs before relying on its output, and
-see your profile for the harness-specific mechanics.
+see your profile for the harness-specific mechanics. And when injecting
+rules or command sequences into a spawned agent's prompt, pass
+load-bearing steps **verbatim, markers and failure rationale intact** —
+a paraphrased protocol is a collapsed protocol, and the child cannot
+know what the summary dropped.
 
 ## State is probed, not assumed
 
