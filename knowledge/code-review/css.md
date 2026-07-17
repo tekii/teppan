@@ -20,6 +20,12 @@ removed, so its former constraints (inline-only delivery, the 75KB
 standards, and flag any leftover AMP artifact for removal (see "Common Bugs
 to Flag").
 
+**Out of scope: `third_party/`.** Real third-party artifacts (Water.css:
+`third_party/water.css` + its license file) are vendored — pinned by the
+`vendor` refresh helper, reviewed upstream, never hand-edited. Do not review
+their style; instead flag any diff that hand-edits a file under
+`third_party/` (the fix belongs upstream, or in a pin bump).
+
 ## General CSS
 
 - **Custom properties (`var(--name)`) for themed values are the right

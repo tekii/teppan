@@ -340,13 +340,17 @@ m4_popdef([__LOCAL_URL_ID__])
 ])
 
 #
-# DASSET(ASSET) MACRO
-# Declares ASSET to be copied into this page's own local root and returns its
-# href. The asset is always page-local: there is deliberately no ROOT-override
-# argument -- a cross-domain destination was the original asset-misplacement
-# bug. __ROOT__ (the page's DOC/<domain> root) is supplied via -D in the HTML
-# and DEFERRED_MK phases, the only phases whose output is kept; it is undefined
-# in the NAVIGATION/LANDING phases, but there __HREF's result is discarded.
+# DASSET(ASSET, [SRC]) MACRO
+# Declares an asset to be copied into this page's own local root and returns
+# its href. $1 is the page-local destination and the published href; $2, when
+# given, is the source path under __SRC__ (default: $1), so a source file can
+# live in a repo-organization folder (e.g. third_party/) without that folder
+# leaking into the published tree. The asset is always page-local: there is
+# deliberately no ROOT-override argument -- a cross-domain destination was the
+# original asset-misplacement bug. __ROOT__ (the page's DOC/<domain> root) is
+# supplied via -D in the HTML and DEFERRED_MK phases, the only phases whose
+# output is kept; it is undefined in the NAVIGATION/LANDING phases, but there
+# __HREF's result is discarded.
 #
 m4_define([__DASSET],[dnl
 __HREF([__ROOT__/$1])[]dnl
@@ -357,7 +361,7 @@ dnl but the emitted rules use the $(BUILD_ROOT) make variable -- like the
 dnl MAKEFILE diversion -- so the deferred .mk carries a variable reference, not
 dnl an absolute path. The recursive sub-make is passed BUILD_ROOT (see the
 dnl assets-copy/assets-clean recipes) so the variable resolves there.
-$(BUILD_ROOT)/DOC/__DOMAIN__/$1 : __SRC__/$1 | [$$](@D)/ ; cp [$]< [$]@
+$(BUILD_ROOT)/DOC/__DOMAIN__/$1 : __SRC__/m4_default([$2],[$1]) | [$$](@D)/ ; cp [$]< [$]@
 assets-copy : $(BUILD_ROOT)/DOC/__DOMAIN__/$1
 assets-clean :: ; @test -f $(BUILD_ROOT)/DOC/__DOMAIN__/$1 && rm $(BUILD_ROOT)/DOC/__DOMAIN__/$1 || true
 m4_text_box($1 DASSET ENDS  ,[-])
