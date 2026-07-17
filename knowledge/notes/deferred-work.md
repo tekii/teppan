@@ -55,6 +55,31 @@ re-verified live that day:
   `generator.m4` — resolve or convert each into either a register entry or
   a trace note.
 
+## Stale landing fragments after a `generator.m4` change need `make realclean` (build hygiene)
+
+An incremental `make build` after a `generator.m4` change that alters the
+`*.landing.m4` fragment format does **not** reliably regenerate *existing*
+domains' landing fragments, so the `NAVIGATION-LANDING.m4` aggregate can
+carry stale `m4_define` entries (e.g. an ancient path-as-name form instead
+of `__LANDING_<DOMAIN>_URL__`). Because `__REDIRECT_URL` (`generator.m4`)
+now hard-`m4_fatal`s when a redirect target's `__LANDING_<DOMAIN>_URL__` is
+missing, a stale aggregate makes `make build` **abort** during redirect-page
+HTML generation — where previously the silent `http://DOMAIN` fallback
+masked it. **Workaround:** run `make realclean` before rebuilding after any
+`generator.m4` change touching landing-fragment format.
+
+Observed 2026-07-17 converting `tekii.srl`/`tekii.llc` to landing sites: the
+main checkout's `tekii.ar`/`tekii.us` landing fragments predated the
+`__UP`-based landing naming and only a clean build refreshed them (a fresh
+worktree that `realclean`s first was unaffected). The guard surfacing this
+loudly is working as intended; the underlying gap is landing-fragment
+staleness on the incremental path — likely the same class as the
+[`NAVIGATION.m4` dependency edge](#navigationm4s-non-obvious-dependency-edge-parked-until-navigation-work)
+item below. **Hypothesis to confirm at pickup:** `NAV/%.landing.m4`'s
+prerequisite on `generator.m4` isn't forcing regeneration when the declaring
+DEP `.mk` is itself being regenerated in the same run (Make include-remake
+ordering). A proper fix removes the need for the `realclean` workaround.
+
 ## `NAVIGATION.m4`'s non-obvious dependency edge (parked until navigation work)
 
 `$(BUILD_ROOT)/NAV/%/NAVIGATION.m4 : | $$(@D)/` (`Makefile:115`) has a
