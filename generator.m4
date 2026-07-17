@@ -95,9 +95,21 @@ m4_define([__ABSOLUTE],[m4_ifdef([__PREVIEW__],
 # redirect ever be needed, grow a deliberate preview-exempt path here -- do
 # not relax the guard.
 #
+# The m4_fatal is gated to GENERATE_HTML_PHASE. generator.m4 expands __FIRST__
+# and __LAYOUT__ (and thus a redirect page's __REDIRECT_URL call) in EVERY
+# phase, discarding the result outside HTML. In GENERATE_MAKEFILE_PHASE the
+# DEP .mk is generated at the very start of a clean build, before any
+# NAVIGATION-LANDING.m4 exists, so __LANDING_<DOMAIN>_URL__ is legitimately
+# absent then -- fatalling there would abort DEP generation and drop the
+# page's build rule. Only in GENERATE_HTML_PHASE is the landing aggregate
+# guaranteed present (order-only prereq of the .html target) and the URL
+# actually emitted, so a missing registration there is the real error we
+# want to catch. Off-HTML phases fall through to empty (harmless, discarded).
+#
 m4_define([__REDIRECT_URL],[m4_ifdef([__LANDING_]__UP([$1])[_URL__],dnl
 [__ABSOLUTE(__LANDING_]__UP([$1])[_URL__)],dnl
-[m4_fatal([__REDIRECT_URL: no landing page registered for redirect target ']$1[' (expected __LANDING_]__UP([$1])[_URL__) -- wrap its default page's __MAKE_PAGE in __AS_LANDING or fix the target; external redirects are unsupported])])])dnl
+[m4_if(__PHASE__,[GENERATE_HTML_PHASE],dnl
+[m4_fatal([__REDIRECT_URL: no landing page registered for redirect target ']$1[' (expected __LANDING_]__UP([$1])[_URL__) -- wrap its default page's __MAKE_PAGE in __AS_LANDING or fix the target; external redirects are unsupported])])])])dnl
 
 #
 # CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR) MACRO

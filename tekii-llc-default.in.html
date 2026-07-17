@@ -1,0 +1,22 @@
+__WITH_DOMAIN([tekii.llc],[
+    __WITH_STEM([index],[
+        __WITH_LANG([__EN__],[
+            __AS_LANDING([
+                __MAKE_PAGE([__LOCALIZE_URL_NULL])
+            ])
+        ])
+    ])
+])
+
+m4_divert_push([HEAD])dnl
+        <title>TEKii LLC</title>
+m4_divert_pop([HEAD])
+
+m4_divert_push([MAIN])dnl
+<section id="home">
+    <h1>
+        __NAV_ITEM(__LANG__,[Home],[__LOCAL_URL_ID__],[])dnl
+    </h1>
+    <p>Lorem ipsum dolor sit amet,&nbsp;consectetur adipiscing elit,&nbsp;sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,&nbsp;quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,&nbsp;sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+</section>
+m4_divert_pop([MAIN])
