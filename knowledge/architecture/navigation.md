@@ -94,6 +94,40 @@ This makes the cross-domain review rule *structural*: a nav item cannot
 bypass `__ABSOLUTE` across a domain boundary (see
 [HTML code review guidelines](../code-review/html.md)).
 
+## Cross-aggregate coupling: a cross-domain nav item ties the two aggregates
+
+Two aggregate files feed rendering, both built by the *same* order-only
+pattern (above): the **per-domain** `NAV/<domain>/NAVIGATION.m4` and the
+**global** `NAV/NAVIGATION-LANDING.m4` (one file, `$^` = every domain's
+landing fragments). A *same-domain* nav item's URL resolves to a `__…_URL__`
+macro defined **within its own** `NAVIGATION.m4` — self-contained. A
+**cross-domain** nav item (e.g. the `TEKii LLC` link on `tekii.us`) resolves
+to `__LANDING_<domain>_URL__`, which is defined **not** in that page's
+`NAVIGATION.m4` but in the global `NAVIGATION-LANDING.m4`, pulled in by the
+unconditional `m4_sinclude` at `generator.m4:434` (per-domain nav comes via
+the HTML-phase `m4_include` at `generator.m4:430`). So a cross-domain nav
+item makes the per-domain nav **depend on the global landing aggregate**.
+
+Build consequences:
+
+- **Clean build is sound** — both aggregates are *order-only* prerequisites of
+  the page (`generator.m4:277`), and the global aggregate itself depends on
+  all landing fragments, so a page transitively waits for the *target*
+  domain's landing to be generated and aggregated first.
+- **Incrementally it under-propagates** — because both reach the page only as
+  order-only prerequisites, a change to the target's landing (or to an
+  aggregation recipe) does not mark the consuming page stale; `make realclean`
+  is the reset (see [the deferred-work register](../notes/deferred-work.md)).
+- **Implicit correctness dependency** — a cross-domain nav target MUST register
+  via `__AS_LANDING`; otherwise `__LANDING_<domain>_URL__` is undefined at
+  render and `__NAV_HREF` resolves garbage.
+
+This coupling is a **future optimization, not a shipping blocker**: production
+publishes from clean builds, which are correct. Making the *incremental* path
+robust — promoting these order-only edges to real prerequisites (accepting
+more rebuilds) or hashing recipes — is the eventual fix, not a prerequisite
+for shipping.
+
 ## Two render sites; `__ALTERNATES__` is a separate set
 
 `__NAV__ITEMS__` is rendered in **two** places in `layout.html` — the
