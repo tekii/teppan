@@ -15,8 +15,6 @@ m4_if(__LANG__,$1,[dnl
         <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
         <meta name="msvalidate.01" content="__MICROSOFT_VALIDATE_KEY__" />
         <link rel="shortcut icon" href="__DASSET(favicon.ico)" type="image/x-icon" />
-dnl     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Days+One&family=IBM+Plex+Sans&display=swap" rel="stylesheet">
         <!-- BEGIN HEAD divert -->
 m4_undivert([HEAD])[]dnl
         <!-- END   HEAD divert -->
@@ -24,7 +22,12 @@ dnl __INCLUDE([meta.json])[]dnl <!-- -->
         <!-- BEGIN custom elements -->
 m4_undivert([CUSTOM_ELEMENTS])[]dnl
         <!-- END custom elements BEGIN custom styles -->
-        <link rel="stylesheet" href="__DASSET(water.css,third_party/water.css)">
+        <link rel="stylesheet" href="__DASSET(pico.classless.css,third_party/pico.classless.css)">
+        <!-- 'Days One' brand font, delivered same-origin to this domain's DOC
+             root so custom.css's @font-face can load it with a stylesheet-relative
+             url("days-one-latin.woff2"). The call below registers the deferred
+             copy; the href it returns is inert inside this comment:
+             __DASSET(days-one-latin.woff2,third_party/days-one-latin.woff2) -->
         <link rel="stylesheet" href="__DASSET(custom.css)">
         <style>
 /*__MAGIC_COMMENT_TO_AVOID_MESSING_WITH_CSS_HIGHLIGHT_WHILE_UNDIVERT_CUSTOM_STYLES__*/
@@ -64,89 +67,44 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
                 d="M 8,8 504,504 M 8.0000001,8 H 504 c 0,0 0,0 0,10e-8 V 504 c 0,0 0,0 0,0 H 8.0000001 C 8,504 8,504 8,504 V 8.0000001 C 8,8 8,8 8.0000001,8 Z"/>
             </symbol>
         </svg>
-        <!-- END LOGO DEF -- BEGIN LEFT SIDEBAR -->
-        <input type="checkbox" id="sidebar-toggle" class="drawer-toggle" aria-label="Menu">
-        <label for="sidebar-toggle" class="drawer-backdrop drawer-backdrop-sidebar"></label>
-        <nav id="sidebar" class="drawer drawer-left">
-            <label for="sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]close"/></svg></label>
-
-            <ul>
+        <!-- END LOGO DEF -- BEGIN NAV (SINGLE SOURCE: off-canvas drawer <768px, static sidebar column >=768px) -->
+        <!-- No-JS drawer: #nav-toggle is the (visually hidden but focusable)
+             control the header/close labels drive; custom.css uses its :checked
+             state via body:has(...) to slide #sidebar in. Above 768px the toggle
+             and its labels are display:none and #sidebar is an always-visible
+             column, so one markup source serves both modes. -->
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu">
+        <label for="nav-toggle" class="nav-backdrop" aria-hidden="true"></label>
+        <aside id="sidebar">
+            <label for="nav-toggle" class="nav-close" aria-label="Close menu"><svg><use xlink:href="[#]close"/></svg></label>
+            <svg class="layout-logo" xmlns:xlink="http://www.w3.org/1999/xlink"><use id="header-layout-logo" xlink:href="[#]tekii-logo"/></svg>
+            <nav>
+                <ul>
 __RENDER_SET([__NAV__ITEMS__],[dnl
 m4_if($1,__LANG__,[dnl
-                <li class="nav-item">
-                    <a class="link" href="__NAV_HREF([$3],[$4])">$2</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="link" href="__NAV_HREF([$3],[$4])">$2</a>
+                    </li>
 ])dnl
 ])dnl
-__RENDER_SET([__ALTERNATES__],[dnl
-m4_if(__LANG__,$1,[],[dnl
-                <!-- $1 - $2 - $3 -->
-                <li class="nav-item">
-                    <a class="" href="__HREF([$3])">
-                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48">
-                    </a>
-                </li>
-])dnl
-])dnl
-            </ul>
-        </nav>
-        <!-- END LEFT SIDEBAR -- BEGIN RIGHT SIDEBAR -->
-        <input type="checkbox" id="lang-sidebar-toggle" class="drawer-toggle" aria-label="Language">
-        <label for="lang-sidebar-toggle" class="drawer-backdrop drawer-backdrop-lang-sidebar"></label>
-        <nav id="lang-sidebar" class="drawer drawer-right">
-            <label for="lang-sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]close"/></svg></label>
-            <ul>
+                </ul>
+            </nav>
+            <!-- language switch: the one mechanism, present in both modes (it
+                 lives inside the sidebar). Current locale marked selected. -->
+            <ul class="lang-switch">
 __RENDER_SET([__ALTERNATES__],[dnl
                 <li>
-                    <a m4_if(__LANG__,$1,[class="selected" href="[#]"],[href="__HREF([$3])"])>__LANG_NAME($1)</a>
+                    <a m4_if(__LANG__,$1,[class="selected" aria-current="true" href="[#]"],[href="__HREF([$3])"])>__LANG_NAME($1)</a>
                 </li>
 ])dnl
             </ul>
-        </nav>
-        <!-- END RIGHT SIDEBAR -- BEGING HEADER -->
-        <header>
-            <label for="sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]hamburger"/></svg></label>
-            <svg class="layout-logo"><use xlink:href="[#]bird2"/></svg>
-dnl         <svg ><use id="header-layout-logo" xlink:href="[#]tekii-logo"/></svg>
+        </aside>
+        <!-- END NAV -- BEGIN TOPBAR (hamburger bar, shown only <768px; main/footer stay direct body children so Pico's container styling applies) -->
+        <header class="topbar">
+            <label for="nav-toggle" class="nav-open" aria-label="Menu"><svg><use xlink:href="[#]hamburger"/></svg></label>
             <span class="text-isologo">TEKii</span>
-            <label for="lang-sidebar-toggle" class="ui-element"><svg><use xlink:href="[#]language"/></svg></label>
-            <div class="lang-dd" style="display: contents;" role="button" tabindex="1">
-                <svg class="ui-element"><use xlink:href="[#]language"/></svg>
-                <div>
-__RENDER_SET([__ALTERNATES__],[dnl
-                    <a m4_if(__LANG__,$1,[class="selected" href="[#]"],[href="__HREF([$3])"])>__LANG_NAME($1)</a>
-])dnl
-                </div>
-            </div>
         </header>
-        <!-- END HEADER -- BEGIN DESKTOP-SIDEBAR -->
-        <div id="desktop-sidebar">
-            <svg class="layout-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use id="header-layout-logo" xlink:href="#tekii-logo"/></svg>
-            <!-- AMP's amp-sidebar toolbar/toolbar-target="desktop-sidebar" used to
-                 clone #sidebar's nav list here at runtime; without AMP that has to be
-                 emitted directly, so this is the same [__RENDER_SET] calls as #sidebar. -->
-            <nav>
-            <ul>
-__RENDER_SET([__NAV__ITEMS__],[dnl
-m4_if($1,__LANG__,[dnl
-                <li class="nav-item">
-                    <a class="link" href="__NAV_HREF([$3],[$4])">$2</a>
-                </li>
-])dnl
-])dnl
-__RENDER_SET([__ALTERNATES__],[dnl
-m4_if(__LANG__,$1,[],[dnl
-                <li class="nav-item">
-                    <a class="" href="__HREF([$3])">
-                        <img src="__DASSET(img/flag-$1.png)" alt="" height="48" width="48">
-                    </a>
-                </li>
-])dnl
-])dnl
-            </ul>
-            </nav>
-        </div>
-        <!-- END DESKTOP-SIDEBAR -- BEGIN MAIN -->
+        <!-- END TOPBAR -- BEGIN MAIN -->
 <main id="main-scroll">
 m4_undivert([MAIN])[]dnl <!-- MAIN DIVERSION WILL BE INSERTED HERE -->
 </main>

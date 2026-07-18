@@ -90,20 +90,30 @@ $(BUILD_ROOT)/.mode-% : FORCE | $(BUILD_ROOT)/
 #
 # VENDOR
 #
-# `water.css` is committed under `third_party/` (a tracked source asset delivered
-# via __DASSET, like custom.css) so builds are fully offline -- the jsDelivr
-# CDN is firewalled in-container. `vendor` is only an optional REFRESH helper
-# to bump the pinned copy; it is NOT a build prerequisite. Pin + integrity:
-# water.css@2.1.1, sha256
-# 47073611dda0977c57c95d5bbda291084a589e5c7af197fa4d09822657249a0e.
+# `pico.classless.css` and the 'Days One' brand font (`days-one-latin.woff2`)
+# are committed under `third_party/` (tracked source assets delivered via
+# __DASSET, like custom.css) so builds are fully offline -- the npm registry is
+# reachable in-container but CDNs are firewalled. `vendor` is only an optional
+# REFRESH helper to bump the pinned copies; it is NOT a build prerequisite.
+# Pins + integrity:
+#   @picocss/pico@2.1.1  css/pico.classless.css
+#     sha256 76994d55389adc669e0d975a31e33041e81fde36d7d56ad912f3731b222cbdfb
+#   @fontsource/days-one@5.2.7  files/days-one-latin-400-normal.woff2 (OFL-1.1)
+#     sha256 185dc6bea2e5918892d7f057dc2caa49bbb6e05706176c2b8f387f13f8e2a890
+# Two npm packs extract into separate subdirs -- both tarballs use a top-level
+# `package/`, so a shared extract dir would clobber the first with the second.
 .PHONY: vendor
 vendor:
 	@tmp=$$(mktemp -d) \
-	  && ( cd "$$tmp" && npm pack water.css@2.1.1 >/dev/null && tar xzf water.css-2.1.1.tgz ) \
-	  && cp "$$tmp/package/out/water.css" $(SRC)/third_party/water.css \
-	  && cp "$$tmp/package/LICENSE.md" $(SRC)/third_party/water.css.LICENSE \
+	  && ( cd "$$tmp" && npm pack @picocss/pico@2.1.1 >/dev/null && mkdir pico && tar xzf picocss-pico-2.1.1.tgz -C pico ) \
+	  && ( cd "$$tmp" && npm pack @fontsource/days-one@5.2.7 >/dev/null && mkdir font && tar xzf fontsource-days-one-5.2.7.tgz -C font ) \
+	  && cp "$$tmp/pico/package/css/pico.classless.css" $(SRC)/third_party/pico.classless.css \
+	  && cp "$$tmp/pico/package/LICENSE.md" $(SRC)/third_party/pico.classless.css.LICENSE \
+	  && cp "$$tmp/font/package/files/days-one-latin-400-normal.woff2" $(SRC)/third_party/days-one-latin.woff2 \
+	  && cp "$$tmp/font/package/LICENSE" $(SRC)/third_party/days-one-latin.woff2.LICENSE \
 	  && rm -rf "$$tmp" \
-	  && echo "refreshed water.css -> sha256 $$(sha256sum $(SRC)/third_party/water.css | cut -d' ' -f1)"
+	  && echo "refreshed pico     -> sha256 $$(sha256sum $(SRC)/third_party/pico.classless.css | cut -d' ' -f1)" \
+	  && echo "refreshed days-one -> sha256 $$(sha256sum $(SRC)/third_party/days-one-latin.woff2 | cut -d' ' -f1)"
 
 #
 # NAVIGATION MAP

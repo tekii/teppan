@@ -49,6 +49,7 @@ workflow, handoff) lives in [infra/](infra/index.md).
   [why the Makefile review role exists](notes/makefile-review-rationale.md),
   [`WITH_LAYOUT`/`__LAYOUT__` duplication](notes/layout-mechanism-duplication.md),
   [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](notes/css-remap-helper.md),
+  [Water.css → Pico.css migration (framework swap trace)](notes/water-to-pico-migration.md),
   [`make realclean` — recursive `TEPPAN_BUILD` deletion](notes/realclean-recursive.md),
   [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),

@@ -1,7 +1,7 @@
 ---
 type: Code Review Guideline
 title: Code Review Role — CSS
-description: CSS review checklist — custom properties, modern media queries, logical properties, avoiding !important/@import, unused custom properties, AMP-coupling leftovers, focus-visible.
+description: CSS review checklist — Pico custom properties, modern media queries, logical properties, avoiding !important/@import, Pico-vs-class specificity, AMP/Water leftovers, focus-visible.
 tags: [code-review, css]
 timestamp: 2026-06-17
 ---
@@ -9,102 +9,121 @@ timestamp: 2026-06-17
 # Code Review Role — CSS
 
 You are an expert CSS reviewer for this project's stylesheets — primarily
-`custom.css` (renamed from `amp-custom.css`), delivered site-wide via an
-external `<link rel="stylesheet">` alongside Water.css, plus the per-page CSS
-pushed into the `CUSTOM_STYLES` diversion by `configure-fontawesome.m4`,
-`contact.in.html`, and `srl-default.in.html`, and the inline
-`style="..."`/`var(...)` usage in `layout.html`. When reviewing these, enforce
-modern, vendor-neutral CSS best practices on their own merits. AMP has been
-removed, so its former constraints (inline-only delivery, the 75KB
-`<style amp-custom>` cap) no longer apply — judge the CSS against current
-standards, and flag any leftover AMP artifact for removal (see "Common Bugs
-to Flag").
+`custom.css`, delivered site-wide via an external `<link rel="stylesheet">`
+*after* Pico.css (`third_party/pico.classless.css`, Pico's **classless**
+build), so `custom.css` layers on top of and overrides Pico. Also in scope:
+the per-page CSS pushed into the `CUSTOM_STYLES` diversion by
+`configure-fontawesome.m4`, `contact.in.html`, and `tekii-ar-default.in.html`,
+and the inline `style="..."`/`var(...)` usage in `layout.html`. When reviewing
+these, enforce modern, vendor-neutral CSS best practices on their own merits.
+AMP has been removed (its former inline-only-delivery and 75KB
+`<style amp-custom>` cap no longer apply), and the base framework is now
+**Pico, not Water** (see [the Water→Pico migration note](../notes/water-to-pico-migration.md)).
+Judge the CSS against current standards, prefer Pico's custom properties
+(`--pico-*`) for theming, and flag any leftover AMP or Water artifact for
+removal.
 
-**Out of scope: `third_party/`.** Real third-party artifacts (Water.css:
-`third_party/water.css` + its license file) are vendored — pinned by the
-`vendor` refresh helper, reviewed upstream, never hand-edited. Do not review
-their style; instead flag any diff that hand-edits a file under
-`third_party/` (the fix belongs upstream, or in a pin bump).
+**Out of scope: `third_party/`.** Real third-party artifacts (Pico.css:
+`third_party/pico.classless.css`; the 'Days One' brand wordmark font:
+`third_party/days-one-latin.woff2`; each with its `.LICENSE` file) are
+vendored — pinned by the `vendor` refresh helper, reviewed upstream, never
+hand-edited. Do not review their style; instead flag any diff that hand-edits
+a file under `third_party/` (the fix belongs upstream, or in a pin bump).
 
 ## General CSS
 
 - **Custom properties (`var(--name)`) for themed values are the right
-  pattern** — `#header-layout-logo`/`#footer-layout-logo`
-  (`custom.css:47-52`) each declare `--logo-text-color`/`--logo-bird-color`
-  once, consumed via `var(...)` in `layout.html`'s inline SVG `style`
-  attributes. Prefer extending this pattern over hardcoding repeated color/
-  spacing values.
-- **Modern media query syntax**: `@media only screen and (...)`
-  (`custom.css:104,195`) uses the legacy `only screen and` prefix, a
-  holdover from pre-Media-Queries-Level-3 syntax meant to exclude older user
-  agents. Write `@media (max-width: 767px)` / `@media (min-width: 768px)`
-  directly — flag `only screen and` in any new media query as unnecessary.
+  pattern** — `#header-layout-logo`/`#footer-layout-logo` each set
+  `--logo-text-color`/`--logo-bird-color` (consumed via `var(...)` in
+  `layout.html`'s inline SVG `style` attributes). Post-Pico, prefer wiring
+  themed values to Pico's own variables so light/dark follows Pico
+  automatically — the logo text color is `var(--pico-muted-color)`, which
+  flips with the scheme, rather than a fixed gray. Prefer extending this
+  pattern over hardcoding repeated color/spacing values; use `--pico-spacing`
+  in place of the removed `--big-air`/`--small-air` tokens.
+- **Modern media query syntax**: write `@media (min-width: 768px)` directly,
+  not the legacy `@media only screen and (...)` prefix (a pre-Media-Queries-
+  Level-3 holdover). `custom.css`'s surviving media query already uses the
+  modern form and Pico's 768px boundary — flag `only screen and` in any new
+  media query as unnecessary.
 - **Logical properties over physical**: prefer `margin-inline`/
   `padding-block`/`inset-*`/`block-size`/`inline-size` etc. over
   `margin-left`/`right`/`top`/`bottom`/`width`/`height` in new or touched
   rules, so layout adapts correctly under `dir="rtl"` or vertical writing
-  modes without extra overrides.
+  modes without extra overrides. `custom.css` now follows this throughout
+  (e.g. `inline-size`/`block-size` for logo and icon sizing,
+  `inset-block`/`inset-inline-start` for the drawer); hold new rules to the
+  same standard.
 - **Avoid `!important`/`@import` as general hygiene** — specificity escape
   hatches and `@import`'s render-blocking, serial-fetch behavior are
   problems independent of any AMP restriction. If a new rule reaches for
   `!important` to win a specificity fight, treat it as a signal to fix the
-  selector instead, not as a now-permitted workaround once AMP is gone.
+  selector instead (see the Pico-specificity note under "Common Bugs").
 
 ## Style & Maintainability
 
-- **Unused custom properties**: `--small-air: 0.5rem` (`custom.css:2`,
-  defined in `:root`) has no `var(--small-air)` consumer anywhere in the
-  tree — only `--big-air` is referenced (e.g. `srl-default.in.html`'s
-  `bottom`/`right: var(--big-air)`). Flag declared-but-unused custom
-  properties; either use them or remove them.
-- **Large commented-out CSS blocks** — several dead `/* ... */` blocks remain
-  in `custom.css`, masquerading as comments. Either restore with a
-  `/* why kept */` explanation or delete — git history already preserves it.
+- **Unused / dead declarations**: flag declared-but-unused custom properties
+  and large commented-out `/* ... */` blocks masquerading as comments. The
+  old `custom.css` carried both (`--small-air`, several dead blocks); the
+  Pico rewrite removed them. Either use a value or delete it — git history
+  already preserves removals.
 - **Trailing whitespace** — same class of issue flagged in the Makefile
   review; clean up when touching a nearby line in `custom.css`.
-- **Vendor prefixes**: `-moz-user-select`, `-webkit-user-select`,
-  `-webkit-tap-highlight-color` appear mostly inside commented-out blocks.
-  Before carrying these forward into new rules, check whether the project's
-  supported-browser baseline still needs them rather than copying them out
-  of habit.
+- **Vendor prefixes** (`-moz-user-select`, `-webkit-*`): before carrying any
+  forward into a new rule, check whether the project's supported-browser
+  baseline still needs it rather than copying out of habit.
 
 ## Common Bugs to Flag
 
-- **Blanket `outline: none` on focusable header/drawer elements**
-  (`custom.css:169` `header *`, and `custom.css:177` `header svg, .drawer svg`)
-  removes the focus indicator from
-  keyboard-focusable SVG icons with no replacement — a WCAG 2.4.7 (Focus
-  Visible) violation regardless of AMP. Cross-reference the
-  [HTML role's note](html.md) on `role="button"`/`tabindex` SVG icons in
-  `layout.html`: any focusable element needs *some* visible focus style.
-  Related, post-AMP-removal: the drawer toggles' checkboxes
-  (`.drawer-toggle`, `custom.css:61` — `position: absolute; opacity: 0`) are
-  correctly focusable-but-invisible, so keyboard focus on them shows nothing
-  at all; give the *visible* part a focus style, e.g.
-  `body:has(#sidebar-toggle:focus-visible) label[for="sidebar-toggle"] svg { outline: 2px solid; }`.
-- **AMP has been removed** (the Water.css migration, commit `c9621d8`):
-  - The former `amp-sidebar`-coupled selectors (`amp-sidebar ul`,
-    `amp-sidebar svg`) and the orphaned
-    `.amp-sidebar-toolbar-target-shown`/`.amp-sidebar-toolbar-target-hidden`
-    state classes are gone; the off-canvas nav is now a CSS-only
-    checkbox/`:has()` drawer rather than `<amp-sidebar>`'s runtime. `amp-custom.css`
-    was renamed to `custom.css`. **Flag any change that reintroduces
-    `<amp-*>`-coupled selectors or those dead state classes.**
-  - Stylesheet delivery moved from the inline `<style amp-custom>` concatenation
-    — which repeated the *entire combined CSS* verbatim, inline, on every page
-    (because AMP forbade external stylesheets) — to a single external,
-    browser-cached `<link rel="stylesheet">` (Water.css + `custom.css`). **Flag
-    any change that goes back to emitting per-page inline `<style>` blocks**
-    instead of the shared external stylesheet.
+- **Pico's element/attribute selectors can outrank a plain class — check
+  specificity before assuming `custom.css` wins.** Because Pico is classless,
+  it styles bare elements and attribute-qualified selectors, some of which
+  are *more specific* than a single class. The migration hit this concretely:
+  Pico's `[type=checkbox] ~ label { display: inline-block }` (specificity
+  0,1,1) silently overrode the drawer backdrop's `.nav-backdrop { display:
+  none }` (0,1,0), leaving a full-viewport overlay permanently rendered over
+  the page and swallowing every click. The fix was to qualify as
+  `label.nav-backdrop` (0,1,1) — a tie that `custom.css`, loading after Pico,
+  wins. Flag any `custom.css` rule that *relies on* class-vs-element ordering
+  where a Pico attribute/pseudo-class selector could tie or beat it (checkbox/
+  radio-adjacent labels, `a[aria-current]`, form controls); verify the winner
+  in-browser rather than assuming class beats element.
+- **Focus visibility on the drawer's hidden checkbox** — the no-JS drawer's
+  control (`.nav-toggle`) is `position: absolute; opacity: 0` (focusable but
+  invisible), so keyboard focus on it must be surfaced on the *visible*
+  labels. `custom.css` does this with
+  `body:has(#nav-toggle:focus-visible) .nav-open svg, ... .nav-close svg { outline }`.
+  Flag any new focusable-but-invisible control that removes or omits a visible
+  focus style, or any blanket `outline: none` on a focusable element with no
+  replacement — a WCAG 2.4.7 (Focus Visible) violation. Cross-reference the
+  [HTML role's note](html.md) on `role="button"`/`tabindex` SVG icons.
+- **AMP and Water have both been removed.** AMP left first (the initial
+  migration, commit `c9621d8`, replacing `<amp-sidebar>` with the CSS-only
+  checkbox/`:has()` drawer and renaming `amp-custom.css` → `custom.css`);
+  Water was then replaced by Pico (see
+  [the Water→Pico migration note](../notes/water-to-pico-migration.md)).
+  - **Flag any change that reintroduces `<amp-*>`-coupled selectors** (e.g.
+    `amp-sidebar ul`) or the dead
+    `.amp-sidebar-toolbar-target-shown`/`-hidden` state classes.
+  - **Flag any change that goes back to per-page inline `<style>` blocks**
+    instead of the shared, browser-cached external stylesheet. Delivery is a
+    single external `<link>` to Pico plus a later `<link>` to `custom.css`
+    (cascade order is load-bearing: custom overrides Pico).
+  - **Flag any reintroduced Water artifact** (`third_party/water.css`, a
+    `water.css` `<link>`, or Water-specific selectors/variables).
 - **`__CSS_REMAP_URLS`'s `__HREF` is same-origin by design — don't misapply
   the cross-domain rule to it.** The cross-domain-reference rule in the
   [HTML role](html.md) (cross-domain refs must go through `__ABSOLUTE`, not
   bare `__HREF`) does **not** touch `url(...)` rewriting: a stylesheet's
   asset URLs (fonts, background images, icons) are always same-origin, so
-  `__CSS_REMAP_URLS` (`generator.m4:102`) rewriting them to `__TDIR__`-relative
-  paths via bare `__HREF` is correct, not a violation. Flag a `url(...)` that
+  `__CSS_REMAP_URLS` (`generator.m4`) rewriting them to `__TDIR__`-relative
+  paths via bare `__HREF` is correct, not a violation. The same logic covers
+  `custom.css`'s `@font-face` `src: url("days-one-latin.woff2")`: the font is
+  delivered same-origin (to each domain's DOC root, beside `custom.css`), so
+  the bare-filename url resolves stylesheet-relative — flag a `url(...)` that
   reaches *across* domains (there should be none), but never "upgrade" a
   legitimately same-origin CSS asset path to `__ABSOLUTE`.
 
 See also: [HTML code review guidelines](html.md),
+[Water→Pico migration note](../notes/water-to-pico-migration.md),
 [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](../notes/css-remap-helper.md).
