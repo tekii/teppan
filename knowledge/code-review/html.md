@@ -46,17 +46,20 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
   keyboard-operable per WAI-ARIA Authoring Practices (which the HTML spec
   defers to for ARIA semantics): an element given `role="button"` needs
   `tabindex` **and** a `keydown` handler for `Enter`/`Space` — or should be
-  a real `<button>`, or (as `layout.html`'s drawer toggles now do,
-  post-AMP-removal) a `<label>` paired with a visually-hidden-but-focusable
-  checkbox, both of which get keyboard operation for free. Flag new
-  `role="button"` usages without a keydown handler. The one surviving
-  `role="button"` in `layout.html` is the `.lang-dd` hover-dropdown `<div>`
-  — it has no keydown handler **and** a *positive* `tabindex="1"`, which
-  yanks it to the front of the page's tab order (an antipattern: use
-  `tabindex="0"` and let DOM order decide).
+  a real `<button>`, or (as `layout.html`'s navigation now does) a `<label>`
+  paired with a visually-hidden-but-focusable checkbox, which gets keyboard
+  operation for free. The nav drawer, its close control, and the language
+  switch are all built this way (labels driving one `#nav-toggle` checkbox,
+  plus plain `<a>` links for the locales), so there are **no** `role="button"`
+  elements left in `layout.html`: the former `.lang-dd` hover-dropdown `<div>`
+  — a `role="button"` with no keydown handler *and* an antipattern *positive*
+  `tabindex="1"` — was removed in the Pico migration. Flag any *new*
+  `role="button"` without a keydown handler, and any positive `tabindex`.
 - `alt=""` is correct for purely decorative images, but flag it on images
-  that *are* the content (flag icons identifying a language, customer/sponsor
-  logos in `fragment-customers.html`) — those need a descriptive `alt`.
+  that *are* the content (customer/sponsor logos in `fragment-customers.html`)
+  — those need a descriptive `alt`. (The nav's former per-language flag icons,
+  which had exactly this problem, are gone: the language switch now uses text
+  locale names, not flag images.)
 - `id` attributes must be unique per document — watch for collisions when
   copying blocks between `layout.html` and `layout-redirect.html`.
 - **`<!-- -->` wrapping the top-level `__WITH_LAYOUT(...)`/`__WITH_DOMAIN(...)`
@@ -75,17 +78,22 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
   correct BCP 47 tag is `pt-BR` (or `pt`). This affects every page rendered
   for the `__BR__` locale and its `<link rel="alternate">`/`hreflang`
   entries.
-- **AMP has been removed** — the Water.css migration (commit `c9621d8`) plus a
-  follow-up markup cleanup stripped `<amp-img>`, `<amp-sidebar>`, the `⚡`
-  attribute on `<html>`, `<style amp-custom>`/`<style amp-boilerplate>`, and the
+- **AMP and Water have both been removed.** The initial AMP removal (commit
+  `c9621d8` plus a follow-up markup cleanup) stripped `<amp-img>`,
+  `<amp-sidebar>`, the `⚡` attribute on `<html>`,
+  `<style amp-custom>`/`<style amp-boilerplate>`, and the
   `<script async src="https://cdn.ampproject.org/...">` runtime from the live
-  sources. Stylesheet delivery is now an external `<link rel="stylesheet">`
-  (Water.css + `custom.css`), not inline `<style amp-custom>`. **Flag any *new*
-  AMP-only element/attribute as a regression**, and flag standard-HTML that
-  still carries leftover AMP-only attributes (`layout="..."`, `on="tap:..."`).
-  One deliberate exception: an `amp-sidebar` *explanatory comment* in
-  `layout.html` is kept — it documents why `#desktop-sidebar` now emits the nav
-  list directly (AMP's runtime used to clone it).
+  sources. The later Pico migration (see
+  [the Water→Pico note](../notes/water-to-pico-migration.md)) then replaced
+  Water.css with Pico and collapsed the duplicated `#sidebar`/`#desktop-sidebar`
+  nav lists into a single `#sidebar` source — so the old `#desktop-sidebar`
+  element and its `amp-sidebar` explanatory comment are both gone. Stylesheet
+  delivery is an external `<link rel="stylesheet">` to Pico plus a later one to
+  `custom.css`, not inline `<style amp-custom>`, and the pages make zero
+  external rendering requests (the brand font is self-hosted). **Flag any *new*
+  AMP-only element/attribute as a regression**, any standard-HTML still carrying
+  leftover AMP-only attributes (`layout="..."`, `on="tap:..."`), and any
+  reintroduced `water.css` `<link>`.
 - Page styles are delivered via external `<link rel="stylesheet">`; don't
   reintroduce ad-hoc inline `<style>` blocks.
 - **Cross-domain references must go through `__ABSOLUTE`, never bare

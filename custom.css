@@ -1,226 +1,204 @@
-:root {
-    --small-air: 0.5rem;
-    --big-air: 1rem;
+/*
+ * TEKii custom styles -- layered after Pico's classless base (custom overrides
+ * Pico; delivered as a separate, later <link>). Scope is deliberately minimal:
+ * the brand wordmark font, the two logo color blocks, and the single navigation
+ * mechanism (off-canvas drawer below 768px, static sidebar rail at/above it).
+ * Everything else falls to Pico's defaults.
+ */
+
+/* Brand wordmark font, self-hosted (the page makes zero external font requests).
+   Same-origin by construction: layout.html's __DASSET copies the woff2 into each
+   domain's DOC root -- the same directory this stylesheet is served from -- so a
+   bare-filename url() resolves relative to the stylesheet under both build and
+   file:// preview. */
+@font-face {
+    font-family: 'Days One';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("days-one-latin.woff2") format("woff2");
 }
-html {
-    scroll-behavior: smooth;
+
+/* Brand-name text opts into the wordmark font via this class. Kept general (a
+   class, not a one-off selector) so any inline brand-name instance can use it,
+   not only the header isologo -- see the brand-font goal in the migration. */
+.text-isologo {
+    font-family: 'Days One', sans-serif;
+    font-size: 1.75rem;
 }
-body {
-    display: flex;
-    font-family: 'IBM Plex Serif', serif;
-}
-h1:nth-of-type(1) {
-    margin-block-start: 0em;
-}
-header, h1, h2 {
-    font-family: 'IBM Plex Sans', sans-serif;
-}
-header, footer, .drawer, section {
-    padding: var(--big-air);
-}
-footer {
-    color: white;
-    background-color: #333;
-    text-decoration: none;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 80%;
-}
-footer ul, .drawer ul {
-    list-style-type: none;
-    /*text-align: left;
-    margin-block-start: 0em;
-    margin-block-end: 0em;*/
-}
-footer a:link, footer a:visited, footer a:hover {
-    color: white;
-    text-decoration: none;
-}
-footer a:hover {
-    text-decoration: underline;
-}
-.drawer ul {
-    font-family: 'IBM Plex Sans', sans-serif;
-    list-style-type: none;
-    padding-left: 0pt;
-}
-#header-layout-logo {
-    --logo-text-color:#666666;
-    --logo-bird-color:#5582f3;
-}
+
+/* Logo color tokens, consumed by layout.html's inline SVG `style` attributes
+   (fill:var(--logo-text-color) / var(--logo-bird-color)). --pico-muted-color
+   auto-flips with Pico's light/dark scheme, replacing the old fixed #666666
+   that was tuned against Water's backgrounds; the bird keeps its brand blue,
+   legible on both schemes. The footer logo no longer sits on a dark bar (that
+   theme is gone), so it uses the same tokens rather than the old white. */
+#header-layout-logo,
 #footer-layout-logo {
-    --logo-text-color:white;
-    --logo-bird-color:white;
+    --logo-text-color: var(--pico-muted-color);
+    --logo-bird-color: #5582f3;
+}
+.layout-logo {
+    inline-size: 8rem;
+    block-size: 8rem;
+}
+/* Footer social icons (github/linkedin) are unattributed inline SVGs; Pico
+   gives them no intrinsic size, so constrain them by their role. (The footer
+   itself renders only below 768px -- see the media query -- matching today's
+   desktop shape, where it is hidden.) */
+footer svg[role="img"] {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
 }
 
 /*
- * Off-canvas drawer mechanics (checkbox-hack, CSS-only). AMP's <amp-sidebar>
- * runtime used to supply positioning/transition/scroll-lock for free --
- * amp-custom.css never had to define any of this itself, so it's authored
- * fresh here rather than adapted from an existing rule.
+ * NAVIGATION -- one markup source (layout.html's #sidebar), two presentations.
+ * The rules here are the mobile/drawer state; the >=768px media query at the
+ * bottom promotes #sidebar to a static, always-visible left rail.
  */
-.drawer-toggle {
+
+/* the drawer's focusable-but-invisible checkbox control (the labels drive it) */
+.nav-toggle {
     position: absolute;
     opacity: 0;
+    pointer-events: none;
 }
-.drawer {
+
+/* mobile top bar: hamburger + brand, sticky so the toggle stays reachable */
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: var(--pico-spacing);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 10;
+    background: var(--pico-background-color);
+}
+.nav-open, .nav-close {
+    cursor: pointer;
+}
+.nav-open svg, .nav-close svg {
+    inline-size: 2rem;
+    block-size: 2rem;
+}
+
+/* #sidebar as an off-canvas drawer, hidden until #nav-toggle is checked */
+#sidebar {
     position: fixed;
-    top: 0;
-    bottom: 0;
-    width: 300px;
-    overflow-y: auto;
-    background: var(--background, #fff);
-    transition: transform .25s ease;
+    inset-block: 0;
+    inset-inline-start: 0;
     z-index: 20;
-}
-.drawer-left {
-    left: 0;
+    inline-size: min(80vw, 18rem);
+    overflow-y: auto;
+    padding: var(--pico-spacing);
+    background: var(--pico-background-color);
+    border-inline-end: 1px solid var(--pico-muted-border-color);
     transform: translateX(-100%);
+    transition: transform .25s ease;
 }
-.drawer-right {
-    right: 0;
-    transform: translateX(100%);
+body:has(#nav-toggle:checked) #sidebar {
+    transform: translateX(0);
 }
-.drawer-backdrop {
+
+/* dimming backdrop behind the open drawer; page scroll is locked while open.
+   NB the `label.` qualifier is load-bearing: Pico styles checkbox-adjacent
+   labels ([type=checkbox] ~ label, specificity 0,1,1) as form labels, which
+   outranks a bare .nav-backdrop (0,1,0). The backdrop is the one nav label
+   that is a sibling of #nav-toggle, so without matching that specificity it
+   would render over the whole page permanently, swallowing every click. */
+label.nav-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, .4);
     z-index: 19;
+    background: rgba(0, 0, 0, .5);
 }
-body:has(#sidebar-toggle:checked) #sidebar {
-    transform: translateX(0);
-}
-body:has(#lang-sidebar-toggle:checked) #lang-sidebar {
-    transform: translateX(0);
-}
-body:has(#sidebar-toggle:checked) .drawer-backdrop-sidebar,
-body:has(#lang-sidebar-toggle:checked) .drawer-backdrop-lang-sidebar {
+body:has(#nav-toggle:checked) label.nav-backdrop {
     display: block;
 }
-body:has(#sidebar-toggle:checked, #lang-sidebar-toggle:checked) {
+body:has(#nav-toggle:checked) {
     overflow: hidden;
 }
 
-@media only screen and (max-width: 767px) {
-    .layout-logo {
-        width: 75px;
-        height: 75px;
-    }
-    body {
-        flex-direction: column;
-    }
-    header {
-        display: flex;
-        align-items: center;
-        /*grid-template-columns: auto auto auto;
-        justify-content: space-between;*/
-    }
-    /* #desktop-sidebar's nav list is a duplicate of #sidebar's -- only ever
-       meant to be shown at the desktop breakpoint below. It was never
-       explicitly hidden here before (it only held a small logo, so the gap
-       was harmless); now that it also carries the nav list, this needs to
-       be explicit. */
-    div#desktop-sidebar {
-        display: none;
-    }
-    svg.ui-element, .ui-element svg, header svg:nth-of-type(2) {
-        width: 2rem;
-        height: 2rem;
-    }
-    span.text-isologo {
-        font-family:'Days One', sans-serif;
-        font-size: 36px;
-    }
-    div.lang-dd {
-        position: relative;
-        display:inline-block;
-    }
-    /*div.lang-dd button {
-        border: none;
-        background-color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        cursor: pointer;
-        padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
-    }*/
-    div.lang-dd > div {
-        display: none;
-        position: absolute;
-        right: 0;
-        background-color: lightgrey;
-        /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
-        z-index: 1;
-    }
-    div.lang-dd:hover div, div.lang-dd div:hover {
-        display: block;
-    }
-    /*div.lang-dd div a {
-        padding: var(--big-air) var(--big-air) var(--big-air) var(--big-air);
-    }*/
-    div.lang-dd div a:hover {
-        background-color: gray;
-    }
-    div.lang-dd:hover div {
-        background-color: lightgray;
-    }
-    header * {
-        user-select: none;
-        -moz-user-select: none;
-        outline: none;
-    }
-    header label, .drawer label {
-        cursor: pointer;
-    }
-    header svg, .drawer svg {
-        /*-moz-user-select: none;
-        -webkit-user-select: none;*/
-        outline:none;
-        border:none;
-        background: none;
-        cursor: pointer;
-        padding: unset;
-        /*transition: transform 0.1s linear;*/
-        /*height: 36px;*/
-        -webkit-tap-highlight-color: transparent;
-        /*user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;*/
-        margin-inline-end: 1rem;
-    }
-    header svg.ui-element:hover, .drawer svg.ui-element:hover,
-    header .ui-element:hover svg, .drawer .ui-element:hover svg {
-        transform:scale(1.1);
-    }
+/* nav list: vertical, block links, marker-free (overrides Pico's horizontal
+   nav ul so the sidebar reads as a stacked menu) */
+#sidebar nav ul {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    margin: 0;
 }
-@media only screen and (min-width: 768px) {
-    .layout-logo {
-        width: 100px;
-        height: 100px;
-    }
-    body {
-        flex-direction: row;
-        max-height: 100vh;
-    }
-    header, footer {
+#sidebar nav li {
+    list-style: none;
+    padding: 0;
+}
+#sidebar nav a {
+    display: block;
+}
+
+/* language switch: a marker-free row inside the sidebar (present in both
+   presentations); current locale marked .selected */
+.lang-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pico-spacing);
+    margin-block-start: var(--pico-spacing);
+    padding-block-start: var(--pico-spacing);
+    border-block-start: 1px solid var(--pico-muted-border-color);
+    list-style: none;
+}
+.lang-switch li {
+    list-style: none;
+}
+/* `a.selected` (0,2,1), not `.selected` (0,2,0): the current-locale link carries
+   aria-current="true", and Pico's a[aria-current]:not([aria-current=false])
+   (0,2,1) would otherwise win the color, leaving it link-blue instead of the
+   intended "current page, not a link" dark. */
+.lang-switch a.selected {
+    font-weight: bold;
+    color: var(--pico-color);
+    text-decoration: none;
+    cursor: default;
+}
+
+/* keyboard focus lands on the invisible #nav-toggle -- surface it on the
+   visible labels so keyboard users see the affordance (WCAG 2.4.7) */
+body:has(#nav-toggle:focus-visible) .nav-open svg,
+body:has(#nav-toggle:focus-visible) .nav-close svg {
+    outline: 2px solid var(--pico-primary);
+    outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+    /* drawer machinery is inert at desktop width: hide the toggle (dropping it
+       from the tab order), the backdrop, the close button and the mobile topbar */
+    .nav-toggle,
+    .nav-close,
+    .topbar,
+    body > footer {
         display: none;
     }
-    div#desktop-sidebar {
-        flex-direction: column;
-        min-width: 299px;
-        width: 303px;
-        flex-grow: 1;
+    /* backdrop is a checkbox-adjacent label (see the note above), so hiding it
+       at desktop -- including the resized-while-open case -- needs the
+       label-qualified selectors, not a bare .nav-backdrop */
+    label.nav-backdrop,
+    body:has(#nav-toggle:checked) label.nav-backdrop {
+        display: none;
     }
-    div#desktop-sidebar ul {
-        list-style-type: none;
-        padding-left: 0pt;
-        font-family: 'IBM Plex Sans', sans-serif;
+    /* #sidebar becomes a fixed, always-visible left rail; main (still a direct
+       body child, so Pico's container applies) is pushed clear of it with a
+       matching inline-start margin. The footer is hidden here to preserve
+       today's desktop shape (sidebar + content only) -- see findings. */
+    #sidebar {
+        inline-size: 18rem;
+        transform: none;
     }
-    main {
-        display:flex;
-        flex-direction: column;
-        flex-grow: 2;
-        /*height: 100vh;*/
-        overflow:auto;
+    body > main {
+        margin-inline-start: 18rem;
+        /* cap the content column to the space left of the rail: Pico's fixed-px
+           max-width (up to 1200px) plus an 18rem left margin would otherwise
+           overflow the viewport and clip text on the right. custom.css loads
+           after Pico, so this wins over Pico's body > main max-width. */
+        max-width: calc(100% - 18rem);
     }
-
 }
