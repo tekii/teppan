@@ -91,22 +91,16 @@ m4_if($1,__LANG__,[dnl
                     </li>
 ])dnl
 ])dnl
+                    <!-- locale entries: rendered as ordinary nav items so they blend into the menu; present only when the page exists in more than one locale (single-locale sites get none). Current locale is the selected item. -->
+m4_if(m4_eval(m4_set_size([__ALTERNATES__]) > 1),[1],[dnl
+__RENDER_SET([__ALTERNATES__],[dnl
+                    <li class="nav-item">
+                        <a m4_if(__LANG__,$1,[class="link selected" aria-current="true" href="[#]"],[class="link" href="__HREF([$3])"])><img class="lang-flag" src="__DASSET(region-flag-__LANG_FLAG($1).svg,third_party/region-flag-__LANG_FLAG($1).svg)" alt="">__LANG_NAME($1)</a>
+                    </li>
+])dnl
+])dnl
                 </ul>
             </nav>
-            <!-- language switch: the one mechanism, present in both modes (it
-                 lives inside the sidebar). Rendered only when the page exists in
-                 more than one locale (__ALTERNATES__ holds a real alternative);
-                 a single-locale page (tekii.us/.srl/.llc) gets no switch at all.
-                 Current locale marked selected. -->
-m4_if(m4_eval(m4_set_size([__ALTERNATES__]) > 1),[1],[dnl
-            <ul class="lang-switch">
-__RENDER_SET([__ALTERNATES__],[dnl
-                <li>
-                    <a m4_if(__LANG__,$1,[class="selected" aria-current="true" href="[#]"],[href="__HREF([$3])"])><img class="lang-flag" src="__DASSET(region-flag-__LANG_FLAG($1).svg,third_party/region-flag-__LANG_FLAG($1).svg)" alt="">__LANG_NAME($1)</a>
-                </li>
-])dnl
-            </ul>
-])dnl
         </aside>
         <!-- END NAV -- BEGIN TOPBAR (hamburger bar, shown only <768px; main/footer stay direct body children so Pico's container styling applies) -->
         <header class="topbar">
