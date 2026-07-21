@@ -100,6 +100,17 @@ $(BUILD_ROOT)/.mode-% : FORCE | $(BUILD_ROOT)/
 #     sha256 76994d55389adc669e0d975a31e33041e81fde36d7d56ad912f3731b222cbdfb
 #   @fontsource/days-one@5.2.7  files/days-one-latin-400-normal.woff2 (OFL-1.1)
 #     sha256 185dc6bea2e5918892d7f057dc2caa49bbb6e05706176c2b8f387f13f8e2a890
+#   googlefonts/noto-emoji @ v2.051  third_party/region-flags/svg/{AR,US,BR}.svg
+#     + third_party/region-flags/LICENSE (public-domain/exempt) -- flat region
+#     flags, decorative garnish beside the language-switch text names. sha256:
+#       region-flag-AR.svg     dafb5bc6543c59249be9c7dec2298eaeaa1fe7805a62754990315cc6db93b2f3
+#       region-flag-US.svg     6ca529bf919d51857659fe703c3e4e6e33f7836aa66e62a8ad593209b0be1abf
+#       region-flag-BR.svg     6379aeeb756c0b62f4d676e74821b6e4a97652f51fc690ede2a77c7dd48c96e5
+#       region-flags.LICENSE   73af5be6e2ea006b75bebfd2f463f252c5ce8c94024c639dbdd97f0456272a5a
+# Unlike the npm packs, the region-flags fetch uses curl against
+# raw.githubusercontent.com tag URLs -- that host is firewalled in-container, so
+# that step of the refresh likely must run host-side (vendor is an optional
+# refresh helper, never a build prerequisite; the tracked copies build offline).
 # Two npm packs extract into separate subdirs -- both tarballs use a top-level
 # `package/`, so a shared extract dir would clobber the first with the second.
 .PHONY: vendor
@@ -114,6 +125,10 @@ vendor:
 	  && rm -rf "$$tmp" \
 	  && echo "refreshed pico     -> sha256 $$(sha256sum $(SRC)/third_party/pico.classless.css | cut -d' ' -f1)" \
 	  && echo "refreshed days-one -> sha256 $$(sha256sum $(SRC)/third_party/days-one-latin.woff2 | cut -d' ' -f1)"
+	@echo "fetching region-flags from googlefonts/noto-emoji@v2.051 (raw.githubusercontent -- runs host-side; firewalled in-container)" \
+	  && for f in AR US BR; do curl -fL -o $(SRC)/third_party/region-flag-$$f.svg https://raw.githubusercontent.com/googlefonts/noto-emoji/v2.051/third_party/region-flags/svg/$$f.svg; done \
+	  && curl -fL -o $(SRC)/third_party/region-flags.LICENSE https://raw.githubusercontent.com/googlefonts/noto-emoji/v2.051/third_party/region-flags/LICENSE \
+	  && for f in AR US BR; do echo "refreshed region-flag-$$f -> sha256 $$(sha256sum $(SRC)/third_party/region-flag-$$f.svg | cut -d' ' -f1)"; done
 
 #
 # NAVIGATION MAP

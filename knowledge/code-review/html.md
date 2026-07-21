@@ -55,11 +55,19 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
   — a `role="button"` with no keydown handler *and* an antipattern *positive*
   `tabindex="1"` — was removed in the Pico migration. Flag any *new*
   `role="button"` without a keydown handler, and any positive `tabindex`.
-- `alt=""` is correct for purely decorative images, but flag it on images
-  that *are* the content (customer/sponsor logos in `fragment-customers.html`)
-  — those need a descriptive `alt`. (The nav's former per-language flag icons,
-  which had exactly this problem, are gone: the language switch now uses text
-  locale names, not flag images.)
+- `alt=""` is correct for purely decorative images — decided by the
+  **same-control test**: an image *inside a link/control whose text already
+  names it* is decorative, so `alt=""` is right (the accessible name comes from
+  the text; a filled `alt` would duplicate the announcement — "English English"
+  — or assert the country-for-language category error aloud, e.g. "United
+  States flag English"). The language switch is exactly this case as of
+  2026-07-21: each locale link pairs its text name with a decorative region
+  flag `<img alt="">`, so the flag announces nothing and the link's name stays
+  the text. The **contrast case** is an image that is a link's *sole* content:
+  the switch's former flags-only links were nameless precisely because the
+  image carried no text alongside it. Separately, flag `alt=""` on images that
+  *are* the content (customer/sponsor logos in `fragment-customers.html`) —
+  those need a descriptive `alt`.
 - `id` attributes must be unique per document — watch for collisions when
   copying blocks between `layout.html` and `layout-redirect.html`.
 - **`<!-- -->` wrapping the top-level `__WITH_LAYOUT(...)`/`__WITH_DOMAIN(...)`

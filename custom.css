@@ -152,6 +152,15 @@ body:has(#nav-toggle:checked) {
     text-decoration: none;
     cursor: default;
 }
+/* decorative region flag beside each language name: sized to the text so the
+   row height is unchanged (block-size in em, inline-size auto keeps the flag's
+   aspect ratio); nudged onto the text baseline and spaced from the name. */
+.lang-flag {
+    block-size: 1.1em;
+    inline-size: auto;
+    vertical-align: -0.15em;
+    margin-inline-end: 0.4em;
+}
 
 /* keyboard focus lands on the invisible #nav-toggle -- surface it on the
    visible labels so keyboard users see the affordance (WCAG 2.4.7) */

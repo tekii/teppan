@@ -102,7 +102,7 @@ m4_if(m4_eval(m4_set_size([__ALTERNATES__]) > 1),[1],[dnl
             <ul class="lang-switch">
 __RENDER_SET([__ALTERNATES__],[dnl
                 <li>
-                    <a m4_if(__LANG__,$1,[class="selected" aria-current="true" href="[#]"],[href="__HREF([$3])"])>__LANG_NAME($1)</a>
+                    <a m4_if(__LANG__,$1,[class="selected" aria-current="true" href="[#]"],[href="__HREF([$3])"])><img class="lang-flag" src="__DASSET(region-flag-__LANG_FLAG($1).svg,third_party/region-flag-__LANG_FLAG($1).svg)" alt="">__LANG_NAME($1)</a>
                 </li>
 ])dnl
             </ul>
