@@ -26,6 +26,41 @@ light/none; code or build inputs → `make test` **and** `make build`. Related: 
 gate this would revise is documented in the [Teppan Severance
 profile](../severance/profile.md).
 
+### Visual-verification level (direction agreed 2026-07-21)
+
+Even `make build` only proves generation succeeds — nothing in the gate
+sees the rendered cascade, and every visual regression to date (the
+click-swallowing permanent backdrop, the rail/container clipping) lived
+below that floor. Devon agreed (2026-07-21) to a phased approach:
+
+- **Now (per change):** agent-driven Playwright QA in the applying
+  session — judgment-based screenshots plus computed-style /
+  `elementFromPoint` probes. Not repeatable; each session re-derives
+  what to check.
+- **Near future (the agreed next step):** **scripted functional-visual
+  probes** — a small deterministic script (Playwright test runner or
+  headless Chrome) asserting computed facts against the `file://`
+  preview build, exposed as a `make test-visual` target and run for
+  CSS/layout/HTML change types under the change-type-aware gate this
+  entry proposes. Seed assertions = the codified lessons to date:
+  `elementFromPoint` at page center hits content, not an overlay (the
+  backdrop bug); scrolled to bottom, the footer's box covers the full
+  viewport and owns every hit-test point in it; no horizontal overflow
+  (`scrollWidth <= innerWidth`); the drawer opens/dims/focuses via its
+  checkbox; scheme-dependent token values resolve as expected under
+  emulated `prefers-color-scheme`. Each future visual bug's post-mortem
+  adds one assertion — the suite is the project's visual memory.
+- **Later, optional:** a thin pixel-baseline layer (e.g. Playwright
+  `toHaveScreenshot`) over a handful of stable pages, rendered in the
+  devcontainer for determinism. Caveat that keeps it optional: baselines
+  churn with environment/font rendering, and the project's worst visual
+  bug (the backdrop) was **pixel-invisible** — pixel diffing complements
+  the functional probes, never replaces them.
+
+Still open (why this entry stays): choosing the runner, wiring
+`test-visual` into `scripts/mdr.sh`'s change-type gate, and writing the
+seed probes.
+
 ## Wayland display-forwarding decision (host/infra lane — decision needed)
 
 VS Code auto-bind-mounts the host Wayland socket into the dev container
