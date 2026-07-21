@@ -280,10 +280,13 @@ body > footer .layout-logo {
     /* #sidebar becomes a fixed, always-visible left rail; main (still a direct
        body child, so Pico's container applies) is pushed clear of it with a
        matching inline-start margin. The footer billboard is intentionally NOT
-       hidden here -- it now renders on desktop too, full-bleed over the rail. */
+       hidden here -- it now renders on desktop too, full-bleed over the rail.
+       The drawer's edge border is dropped at desktop (Devon, 2026-07-21): rail
+       and content share Pico's background, no separator line. */
     #sidebar {
         inline-size: 18rem;
         transform: none;
+        border-inline-end: none;
     }
     body > main {
         margin-inline-start: 18rem;
