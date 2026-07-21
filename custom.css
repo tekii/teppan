@@ -132,7 +132,10 @@ body:has(#nav-toggle:checked) {
    presentations); current locale marked .selected */
 .lang-switch {
     display: flex;
-    flex-wrap: wrap;
+    /* stack the locales vertically (one per row), matching the nav list above,
+       instead of a horizontal wrapping row */
+    flex-direction: column;
+    align-items: flex-start;
     gap: var(--pico-spacing);
     margin-block-start: var(--pico-spacing);
     padding-block-start: var(--pico-spacing);
