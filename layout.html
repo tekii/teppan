@@ -94,7 +94,11 @@ m4_if($1,__LANG__,[dnl
                 </ul>
             </nav>
             <!-- language switch: the one mechanism, present in both modes (it
-                 lives inside the sidebar). Current locale marked selected. -->
+                 lives inside the sidebar). Rendered only when the page exists in
+                 more than one locale (__ALTERNATES__ holds a real alternative);
+                 a single-locale page (tekii.us/.srl/.llc) gets no switch at all.
+                 Current locale marked selected. -->
+m4_if(m4_eval(m4_set_size([__ALTERNATES__]) > 1),[1],[dnl
             <ul class="lang-switch">
 __RENDER_SET([__ALTERNATES__],[dnl
                 <li>
@@ -102,6 +106,7 @@ __RENDER_SET([__ALTERNATES__],[dnl
                 </li>
 ])dnl
             </ul>
+])dnl
         </aside>
         <!-- END NAV -- BEGIN TOPBAR (hamburger bar, shown only <768px; main/footer stay direct body children so Pico's container styling applies) -->
         <header class="topbar">
