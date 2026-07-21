@@ -33,10 +33,30 @@ two:
   firewall section for why the `tekii-` name matters).
 - `postcreate.sh` — claims the build volume and registers the Playwright MCP.
 - `managed-settings.json` — container-only Claude policy baked to
-  `/etc/claude-code/managed-settings.json` (defaults to `bypassPermissions`;
-  see the permission-grant isolation section).
+  `/etc/claude-code/managed-settings.json` (defaults to `bypassPermissions`
+  — see the permission-grant isolation section — and pins
+  `sandbox.enabled: false`; see the sandbox-policy section).
 
 ## Why these choices
+
+### Managed settings pin the Bash sandbox off (config-leak closure, 2026-07-21)
+
+Claude Code's `/sandbox` panel writes to the *project's*
+`.claude/settings.local.json` — gitignored, but part of the bind-mounted
+workspace, so it crosses between host and container freely (the user-level
+`~/.claude` is volume-private; the project-level `.claude/` is not). On
+2026-07-21 a host-side sandbox enable crossed exactly that way into a
+freshly rebuilt container, where bubblewrap cannot create user namespaces
+under Docker's default seccomp — every Bash call hard-failed and the
+session was shell-dead. Managed settings have the highest precedence, so
+`/etc/claude-code/managed-settings.json` pinning `sandbox.enabled: false`
+makes the container immune to such crossings: the container's own
+hardening (egress firewall, non-root user, volume isolation) is the
+sandbox here, and an inner bubblewrap adds fragility, not defense. This
+closed a C-11-class unintentional config channel (constitution:
+"channels can arise by accident; audit for them"). Revisit only if the
+container ever gains unprivileged-userns support *and* a real need for
+per-command sandboxing inside the hardened floor.
 
 ### MCP scoping is the crux — local scope, not a committed `.mcp.json`
 The generic advice ("put MCP servers in a project-scope `.mcp.json`") is
