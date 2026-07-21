@@ -128,29 +128,10 @@ body:has(#nav-toggle:checked) {
     display: block;
 }
 
-/* language switch: a marker-free row inside the sidebar (present in both
-   presentations); current locale marked .selected */
-.lang-switch {
-    display: flex;
-    /* stack the locales vertically (one per row), matching the nav list above,
-       instead of a horizontal wrapping row */
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--pico-spacing);
-    margin-block-start: var(--pico-spacing);
-    padding-block-start: var(--pico-spacing);
-    /* zero the browser <ul> default inline indent so the switch's left edge
-       lines up with the nav list above it (#sidebar nav ul also zeros it) */
-    padding-inline-start: 0;
-    border-block-start: 1px solid var(--pico-muted-border-color);
-    list-style: none;
-}
-.lang-switch li {
-    list-style: none;
-    /* zero the <li> default inline padding too, so the flag lines up with the
-       nav items' text (x=20) rather than sitting 10px in from it */
-    padding-inline-start: 0;
-}
+/* The locale entries are rendered as ordinary #sidebar nav items (see
+   layout.html), so they inherit the nav list's layout/alignment -- no separate
+   .lang-switch styling. Only their flag image and the shared current highlight
+   below are language-specific. */
 /* Current locale AND current-page nav item share ONE highlight: bold weight
    only (Devon, 2026-07-21 -- keep Pico's link color + underline). Both the
    language switch and the nav live inside #sidebar, so `#sidebar a.selected`
