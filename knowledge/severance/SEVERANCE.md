@@ -1,11 +1,11 @@
 ---
 type: Convention
 title: SEVERANCE — the severed multi-session workflow (SPEC)
-description: The Severance workflow's binding law — constitution, conventions, profile contract — amalgamated at v0.3.0. Vendored copy: do not edit; update by re-vendoring a release.
+description: The Severance workflow's binding law — constitution, conventions, profile contract — amalgamated at v0.3.1. Vendored copy: do not edit; update by re-vendoring a release.
 tags: [severance, spec, workflow, vendored]
-timestamp: 2026-07-17
-version: 0.3.0
-built-from: v0.3.0
+timestamp: 2026-07-21
+version: 0.3.1
+built-from: v0.3.1
 ---
 
 <!-- ═══ source: preamble.md ═══ -->
@@ -230,7 +230,12 @@ naming the route makes it auditable:
   verbosity. Mark such a step at the point of use ("load-bearing — do
   not collapse") and name the concrete failure the ordering prevents;
   where feasible, prefer a form that stays correct under collapse
-  (cwd-robust, idempotent) over relying on the marker. A
+  (cwd-robust, idempotent) over relying on the marker. The rule binds
+  **any command sequence a session emits — its own interactive shell
+  chains included**, not only sequences authored into tapes or injected
+  into agents; the canonical footgun is chaining state-reads after a
+  teardown/cleanup step whose side effect (cwd removal, ref deletion)
+  the trailing steps depend on. A
   behavior-identical collapse needs no marker — over-annotation buries
   the real ones.
 - **Label unverified claims** explicitly (e.g. "confirm on first launch")
