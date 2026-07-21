@@ -81,6 +81,43 @@ specific edge per the [Makefile review role](../code-review/makefile.md)'s
 comment about the `awk` dedup/ordering, but not about the order-only
 prerequisite itself.
 
+## Re-home the old footer content onto the `.srl`/`.llc` landings (deferred)
+
+The site-wide footer was redesigned into a **full-viewport brand billboard**
+(flat color, monochrome isologo only, on every content page, desktop and
+mobile — `layout.html`'s `<footer>` + the FOOTER BILLBOARD block in
+`custom.css`). That redesign **removed** the previous footer's informational
+content, which had no new home yet:
+
+- the ESENBR company blurb (`CONTINUIDAD + INNOVACIÓN` / "Since 2006 …"),
+- the GitHub and LinkedIn inline-SVG icon links,
+- the **AFIP DATA FISCAL** badge (`img/DATAWEB.jpg` linking to the AFIP QR).
+
+**Deferred re-homing (near-future iteration, not the billboard change):** move
+this content onto the `tekii.srl` / `tekii.llc` landing bodies. Mechanism
+sketch: add a **new page diversion** (e.g. a `LANDING_FOOTER`-style diversion
+pushed by the landing sources) plus a **footer insertion point** in
+`layout.html` that undiverts it *above* the billboard — so a landing can opt
+into a content block while ordinary pages keep the bare billboard. The
+`.srl`/`.llc` landings currently carry only mock placeholder sections (R6);
+real copy plus this re-homed content land together.
+
+**Devon accepted (2026-07-21) the interim absence of the DATA FISCAL badge**
+while it has no home — it is not lost, only unhosted until this iteration.
+
+### Trace: the removed mobile-only footer design (design-bearing removal)
+
+What was removed and why (per the trace-note convention): the prior footer was
+a **mobile-only** element — hidden at ≥768px via `body > footer { display:
+none }` in `custom.css`'s desktop media query — carrying the blurb, social
+icons, and AFIP badge in a `<div>` wrapper, with a `footer svg[role="img"]`
+sizing rule for the icons and a KILL-diverted legacy social block. It lost to
+the billboard on the merits: Devon wanted a single full-viewport brand closing
+screen on **all** devices, so the desktop-hidden informational footer no
+longer fit. Git history preserves the markup/CSS bytes; **revisit trigger** is
+the re-homing iteration above (which decides where the informational content
+actually lives once the billboard owns the footer slot).
+
 See also: [handoff convention (Severance SPEC)](../severance/SEVERANCE.md),
 [infra/process register](../infra/deferred-work.md),
 [Knowledge base index](../index.md).
