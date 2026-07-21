@@ -148,24 +148,14 @@ body:has(#nav-toggle:checked) {
        nav items' text (x=20) rather than sitting 10px in from it */
     padding-inline-start: 0;
 }
-/* `a.selected` (0,2,1), not `.selected` (0,2,0): the current-locale link carries
-   aria-current="true", and Pico's a[aria-current]:not([aria-current=false])
-   (0,2,1) would otherwise win the color, leaving it link-blue instead of the
-   intended "current page, not a link" dark. */
-.lang-switch a.selected {
+/* Current locale AND current-page nav item share ONE highlight: bold weight
+   only (Devon, 2026-07-21 -- keep Pico's link color + underline). Both the
+   language switch and the nav live inside #sidebar, so `#sidebar a.selected`
+   (specificity 1,1,1) styles both; it out-specifies Pico's
+   a[aria-current]:not([aria-current=false]) (0,2,1) but sets only font-weight,
+   so it deliberately does NOT fight Pico's aria-current color/underline. */
+#sidebar a.selected {
     font-weight: bold;
-    color: var(--pico-color);
-    text-decoration: none;
-    cursor: default;
-    /* highlight the current locale as a filled pill so it clearly stands out
-       from the (blue, underlined) switchable links -- bold alone was too weak
-       once the colorful flags drew the eye, and Pico's "current" color is
-       nearly the link blue. The pill is drawn with background + a matching
-       box-shadow spread (not padding), so it adds NO layout: the flag stays
-       aligned at x=20 and the row height is unchanged. */
-    background: var(--pico-muted-border-color);
-    border-radius: var(--pico-border-radius);
-    box-shadow: 0 0 0 0.25em var(--pico-muted-border-color);
 }
 /* decorative region flag beside each language name. Fixed uniform box (the
    source flags have different aspect ratios -- 1.9:1, 1.6:1, 1.43:1 -- so
