@@ -108,6 +108,9 @@ scripts/mdr.sh teardown mywork        # remove worktree + branch + tmux
 > it's caller-side discipline. Don't collapse the flow into one
 > worktree-resident one-liner (`cd wt-… && … && teardown`); commit with
 > `git -C /workspaces/wt-<task> …` if you'd rather not `cd` in at all.
+> Since the 2026-07-21 recurrence, `integrate` and `teardown` **self-report
+> the resulting `master` HEAD** when they finish — there is nothing left to
+> verify manually, so never chain further commands after them.
 
 **One-off commit straight on the trunk** (when a worktree is overkill): prefix
 the single git command with the sanctioned override:
