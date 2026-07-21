@@ -157,6 +157,15 @@ body:has(#nav-toggle:checked) {
     color: var(--pico-color);
     text-decoration: none;
     cursor: default;
+    /* highlight the current locale as a filled pill so it clearly stands out
+       from the (blue, underlined) switchable links -- bold alone was too weak
+       once the colorful flags drew the eye, and Pico's "current" color is
+       nearly the link blue. The pill is drawn with background + a matching
+       box-shadow spread (not padding), so it adds NO layout: the flag stays
+       aligned at x=20 and the row height is unchanged. */
+    background: var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    box-shadow: 0 0 0 0.25em var(--pico-muted-border-color);
 }
 /* decorative region flag beside each language name. Fixed uniform box (the
    source flags have different aspect ratios -- 1.9:1, 1.6:1, 1.43:1 -- so
