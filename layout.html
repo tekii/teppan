@@ -50,6 +50,10 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
                 <path style="fill:none;stroke:currentColor;stroke-width:48;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                 d="M 96,416 416,96 M 96,96 416,416"/>
             </symbol>
+            <symbol id="chevron-up" viewBox="0 0 512 512">
+                <path style="fill:none;stroke:currentColor;stroke-width:48;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                d="M 96,320 256,160 416,320"/>
+            </symbol>
             <symbol id="bird2" viewBox="0 0 512 512">
                 <path
                 style="opacity:1;fill:currentColor;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -114,6 +118,8 @@ m4_undivert([MAIN])[]dnl <!-- MAIN DIVERSION WILL BE INSERTED HERE -->
                 <use id="footer-layout-logo" xlink:href="#tekii-logo"/>
             </svg>
         </footer>
+        <!-- Site-wide scroll-to-top control (fixed; revealed by scroll). -->
+        <a href="[#]top" class="scroll-to-top" aria-label="Back to top"><svg><use xlink:href="[#]chevron-up"/></svg></a>
         <!-- END FOOTER -- BEGIN EPILOG -->
 m4_undivert([EPILOG])[]dnl
         <!-- END EPILOG -->

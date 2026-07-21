@@ -171,6 +171,22 @@ body > main {
     min-block-size: 100svh;
 }
 
+/* Brand color pair -- ONE definition point, consumed by the footer billboard,
+   its monochrome logo, and the scroll-to-top control. Light: blue field /
+   white mark; the dark block below is the exact inversion. Neither layout sets
+   data-theme, so Pico follows prefers-color-scheme and this query stays in sync
+   with Pico's scheme choice. Re-theming the whole set is a two-line edit here. */
+:root {
+    --footer-bg: #5582f3;
+    --footer-fg: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --footer-bg: #ffffff;
+        --footer-fg: #5582f3;
+    }
+}
+
 /*
  * FOOTER BILLBOARD -- the last screen of every content page (all domains,
  * desktop and mobile) is a full-viewport flat-color block holding only the
@@ -181,12 +197,6 @@ body > main {
  * keeps it out of the initial viewport.
  */
 body > footer {
-    /* the color pair -- swap these two lines to re-theme the billboard; the
-       dark scheme below is their exact inversion. Neither layout sets
-       data-theme, so Pico follows prefers-color-scheme and this query stays in
-       sync with Pico's scheme choice. */
-    --footer-bg: #5582f3;
-    --footer-fg: #ffffff;
     min-block-size: 100svh;
     display: grid;
     place-items: center;
@@ -196,12 +206,6 @@ body > footer {
     position: relative;
     z-index: 30;
     background: var(--footer-bg);
-}
-@media (prefers-color-scheme: dark) {
-    body > footer {
-        --footer-bg: #ffffff;
-        --footer-fg: #5582f3;
-    }
 }
 /* monochrome: both logo tokens collapse to the single foreground, inherited
    from body > footer. The header logo keeps its own two-tone tokens. */
@@ -213,6 +217,49 @@ body > footer {
 body > footer .layout-logo {
     inline-size: min(50vw, 50vh);
     block-size: min(50vw, 50vh);
+}
+
+/* Scroll-to-top: a site-wide fixed control (promoted from the old tekii.ar
+   page and rebuilt to current standards). Colors come from the shared brand
+   pair -- the field is the logo color, the chevron the billboard color -- so
+   it flips with the scheme. A thin ring of the chevron color plus a soft shadow
+   keeps the light-scheme button (a near-white disc over mostly-white content)
+   legible mid-scroll (R6). z-index 40 sits above the billboard (30) so it stays
+   reachable over the footer. Reveal is scroll-driven progressive enhancement --
+   no JS; browsers without scroll-timelines keep it always visible. */
+.scroll-to-top {
+    position: fixed;
+    inset-block-end: var(--pico-spacing);
+    inset-inline-end: var(--pico-spacing);
+    z-index: 40;
+    inline-size: 3rem;
+    block-size: 3rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--footer-fg);
+    color: var(--footer-bg);
+    border: 1px solid var(--footer-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
+.scroll-to-top svg {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+}
+.scroll-to-top:focus-visible {
+    outline: 2px solid var(--footer-bg);
+    outline-offset: 2px;
+}
+@supports (animation-timeline: scroll()) {
+    .scroll-to-top {
+        opacity: 0;
+        animation: reveal-scroll-to-top linear both;
+        animation-timeline: scroll();
+        animation-range: 400px 500px;
+    }
+    @keyframes reveal-scroll-to-top {
+        to { opacity: 1; }
+    }
 }
 
 @media (min-width: 768px) {
