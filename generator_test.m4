@@ -153,6 +153,20 @@ m4_divert_pop([TESTS])dnl
 
 
 #
+# __LANG_FLAG maps an internal code to its region flag stem (garnish only):
+# es->AR, en->US, br->BR; unknown codes fall through to "UNDEFINED LANG" like
+# the other __LOOKUP_LANG_NAME-based maps. EXPECTED derived from the mapping
+# spec, not the macro's output.
+#
+m4_divert_push([TESTS])dnl
+__ASSERT_EQ([LANG_FLAG en maps to US],__LANG_FLAG([en]),[US])
+__ASSERT_EQ([LANG_FLAG es maps to AR],__LANG_FLAG([es]),[AR])
+__ASSERT_EQ([LANG_FLAG br maps to BR],__LANG_FLAG([br]),[BR])
+__ASSERT_EQ([LANG_FLAG unknown],__LANG_FLAG([nn]),[UNDEFINED LANG])
+m4_divert_pop([TESTS])dnl
+
+
+#
 # __LANG_NAME__ is defined as m4_define([__LANG_NAME__], __LANG_NAME(__LANG__))
 # with an UNQUOTED second argument, so it is resolved once at the point
 # generator.m4 is m4_include'd here -- NOT dynamically per m4_pushdef([__LANG__],...).

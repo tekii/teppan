@@ -55,6 +55,18 @@ m4_define([__LANG_TAGS__],[[en,[en]],[es,[es]],[br,[pt-BR]]])
 m4_define([__LANG_TAG], [__LOOKUP_LANG_NAME($1,m4_unquote(__LANG_TAGS__))])
 m4_define([__LANG_TAG__], __LANG_TAG(__LANG__))
 
+#
+# __LANG_FLAGS__ maps an internal code to a *region* flag artwork stem, NOT a
+# language: es->AR, en->US, br->BR. The flags are decorative garnish beside the
+# text language names in the switch (the text carries the accessible name; the
+# images are alt=""). Choice recorded 2026-07-21: flat style, US for English.
+# __LANG_FLAG maps an internal code to its region stem (used to build the
+# third_party/region-flag-<STEM>.svg asset path).
+#
+m4_define([__LANG_FLAGS__],[[en,[US]],[es,[AR]],[br,[BR]]])
+m4_define([__LANG_FLAG], [__LOOKUP_LANG_NAME($1,m4_unquote(__LANG_FLAGS__))])
+m4_define([__LANG_FLAG__], __LANG_FLAG(__LANG__))
+
 m4_define([__ESEN],
 [m4_case(__LANG__,__ES__,[$1],__EN__,[$2])])
 
