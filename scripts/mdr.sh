@@ -78,7 +78,8 @@ integrate(){
     TEPPAN_MAIN_HEAD_OK=1 git -C "$MAIN" reset --hard ORIG_HEAD
     die "integration of $b reverted"
   fi
-  echo "integrated $b (OK)  ->  run: $0 teardown $task"
+  echo "integrated $b (OK)  ->  master: $(git -C "$MAIN" log -1 --oneline)"
+  echo "next: $0 teardown $task"
 }
 
 teardown(){
@@ -87,7 +88,15 @@ teardown(){
   git -C "$MAIN" worktree remove --force "$p" 2>/dev/null || true
   git -C "$MAIN" branch -D "$b" 2>/dev/null || true
   git -C "$MAIN" worktree prune
-  echo "torn down $task"
+  # Self-report the end state: nothing is left to check manually, so no one
+  # is tempted to chain git commands after teardown (the collapse footgun
+  # that twice broke on the deleted cwd -- see the runbook's load-bearing
+  # note and findings-collapse-rule-scope, 2026-07-21).
+  echo "torn down $task  ->  master: $(git -C "$MAIN" log -1 --oneline)"
+  git -C "$MAIN" status -sb | head -1
+  # A child process cannot move the parent shell's cwd, but it can warn at
+  # the exact moment the trap springs:
+  case "$PWD" in "$p"*) echo "NOTE: your shell's cwd was just removed -- run: cd $MAIN";; esac
 }
 
 list(){
