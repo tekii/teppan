@@ -16,60 +16,10 @@ m4_divert_push([HEAD])dnl
         <meta name="keywords" content="tekii,trazabilidad,traceability,anmat">
 m4_divert_pop([HEAD])
 
-m4_divert_push([CUSTOM_STYLES])dnl
-dnl<style>
-        :root {
-            --color-primary: #005AF0;
-            --color-secondary: #00DCC0;
-            --color-text-light: #fff;
-            --box-shadow-1: 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 1px -1px rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
-        }
-        .scrollToTop {
-            color: var(--color-text-light);
-            font-size: 1.4em;
-            box-shadow: var(--box-shadow-1);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: none;
-            outline: none;
-            background: var(--color-primary);
-            z-index: 9999;
-            bottom: var(--pico-spacing);
-            right: var(--pico-spacing);
-            position: fixed;
-        }
-        /* Progressive enhancement only: browsers without scroll-driven
-           animations keep the always-visible resting state above. No JS
-           fallback branch to maintain either way. */
-        @supports (animation-timeline: scroll()) {
-            .scrollToTop {
-                opacity: 0;
-                animation: reveal-scroll-to-top linear both;
-                animation-timeline: scroll();
-                animation-range: 400px 500px;
-            }
-            @keyframes reveal-scroll-to-top {
-                to { opacity: 1; }
-            }
-        }
-        /* we move the anchor down to componsate the fixed header */
-        .target {
-            position: relative;
-        }
-        .target-anchor {
-            position: absolute;
-            top: -72px;
-            left: 0;
-        }
-dnl</style>
-m4_divert_pop([CUSTOM_STYLES])
-
 m4_divert_push([MAIN])dnl
 dnl<body>
 <section id="about">
-    <h1 class="target">
-        <a class="target-anchor" id="top"></a>
+    <h1>
         __NAV_ITEM(__LANG__,[__ESENBR([Nuestra Historia],[About Us],[])],[__LOCAL_URL_ID__],[])dnl
     </h1>
 __ESENBR([dnl
@@ -96,6 +46,5 @@ dnl     <a href="[#]">GET STARTED</a>
 dnl     <a href="[#]">MORE INFO</a>
 dnl </div>
 </section>
-<a id="scrollToTopButton" href="[#]top" class="scrollToTop">⌃</a>
 dnl</body>
 m4_divert_pop([MAIN])

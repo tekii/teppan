@@ -12,10 +12,12 @@ You are an expert CSS reviewer for this project's stylesheets — primarily
 `custom.css`, delivered site-wide via an external `<link rel="stylesheet">`
 *after* Pico.css (`third_party/pico.classless.css`, Pico's **classless**
 build), so `custom.css` layers on top of and overrides Pico. Also in scope:
-the per-page CSS pushed into the `CUSTOM_STYLES` diversion by
-`configure-fontawesome.m4`, `contact.in.html`, and `tekii-ar-default.in.html`,
-and the inline `style="..."`/`var(...)` usage in `layout.html`. When reviewing
-these, enforce modern, vendor-neutral CSS best practices on their own merits.
+any per-page CSS pushed into the `CUSTOM_STYLES` diversion — currently only
+`configure-fontawesome.m4` carries such a block, and its `m4_include` is
+`dnl`-disabled, so no active page ships a per-page `CUSTOM_STYLES` block (the
+former `tekii-ar-default.in.html` scroll-to-top styles moved site-wide into
+`custom.css`) — and the inline `style="..."`/`var(...)` usage in `layout.html`.
+When reviewing these, enforce modern, vendor-neutral CSS best practices on their own merits.
 AMP has been removed (its former inline-only-delivery and 75KB
 `<style amp-custom>` cap no longer apply), and the base framework is now
 **Pico, not Water** (see [the Water→Pico migration note](../notes/water-to-pico-migration.md)).
