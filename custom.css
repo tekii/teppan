@@ -136,11 +136,17 @@ body:has(#nav-toggle:checked) {
     gap: var(--pico-spacing);
     margin-block-start: var(--pico-spacing);
     padding-block-start: var(--pico-spacing);
+    /* zero the browser <ul> default inline indent so the switch's left edge
+       lines up with the nav list above it (#sidebar nav ul also zeros it) */
+    padding-inline-start: 0;
     border-block-start: 1px solid var(--pico-muted-border-color);
     list-style: none;
 }
 .lang-switch li {
     list-style: none;
+    /* zero the <li> default inline padding too, so the flag lines up with the
+       nav items' text (x=20) rather than sitting 10px in from it */
+    padding-inline-start: 0;
 }
 /* `a.selected` (0,2,1), not `.selected` (0,2,0): the current-locale link carries
    aria-current="true", and Pico's a[aria-current]:not([aria-current=false])
@@ -152,12 +158,16 @@ body:has(#nav-toggle:checked) {
     text-decoration: none;
     cursor: default;
 }
-/* decorative region flag beside each language name: sized to the text so the
-   row height is unchanged (block-size in em, inline-size auto keeps the flag's
-   aspect ratio); nudged onto the text baseline and spaced from the name. */
+/* decorative region flag beside each language name. Fixed uniform box (the
+   source flags have different aspect ratios -- 1.9:1, 1.6:1, 1.43:1 -- so
+   `inline-size:auto` rendered visibly different widths); `object-fit:cover`
+   fills the box identically for every flag. Sized to the text so the row height
+   is unchanged; nudged onto the text baseline and spaced from the name. */
 .lang-flag {
-    block-size: 1.1em;
-    inline-size: auto;
+    inline-size: 1.5em;
+    block-size: 1em;
+    object-fit: cover;
+    border-radius: 2px;
     vertical-align: -0.15em;
     margin-inline-end: 0.4em;
 }
