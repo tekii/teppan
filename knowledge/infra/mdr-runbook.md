@@ -111,6 +111,13 @@ scripts/mdr.sh teardown mywork        # remove worktree + branch + tmux
 > Since the 2026-07-21 recurrence, `integrate` and `teardown` **self-report
 > the resulting `master` HEAD** when they finish — there is nothing left to
 > verify manually, so never chain further commands after them.
+> **Scope boundary (learned 2026-07-22, the over-correction incident):** the
+> avoid-`cd` advice covers git operations and the teardown-then-read footgun
+> — **not `make`**. Build/test/preview MUST run with cwd inside the
+> worktree: this Makefile derives `SRC`/`BUILD_ROOT` from `$(PWD)`, and
+> `make -C` changes make's directory but **not** the `$(PWD)` env var, so it
+> silently builds the main checkout instead of the worktree. Rule of thumb:
+> **`cd` for `make`; `git -C` for git; `mdr.sh` from the main checkout.**
 
 **One-off commit straight on the trunk** (when a worktree is overkill): prefix
 the single git command with the sanctioned override:
