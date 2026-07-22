@@ -38,9 +38,23 @@ revived: rewriting the `url(...)` paths to be correct relative to the output
 tree isn't sufficient by itself, because the vendored font files
 (`VENDOR/fontawesome-free-.../webfonts/*`) are never copied into `TEPPAN_BUILD/DOC`
 in the first place (`VENDOR` is gitignored/build-only) — that would need
-`__CP_ASSET`/`__DEFERRED_ASSET` wiring alongside the macro. Full background,
-including a working-prototype trace of the bad relative path this produces
-today, is in the repo-root `HELPER_CSS_REMAP_PROPOSAL.md`.
+`__DASSET` wiring alongside the macro (the `__CP_ASSET`/`__DEFERRED_ASSET`
+names this note once cited were removed when asset copying converged on
+`__DASSET`). Full background — the removed Python helper's source listing
+and a working-prototype trace of the correctly-computed-but-unpublishable
+relative path (`../../../../VENDOR/...`) — lives in git history: the
+repo-root `HELPER_CSS_REMAP_PROPOSAL.md` (implemented and superseded;
+removed 2026-07-22) and `helper.py` itself (removed `4952d91`).
+
+The proposal's open fork — self-hosted FontAwesome webfont vs moving icons
+to SVG — has since been resolved by events: every shipped icon is an inline
+SVG symbol (nav controls, the scroll-to-top chevron; the FontAwesome-era
+footer icons are gone with the billboard redesign). That leaves the whole
+`dnl`-disabled FontAwesome apparatus (`configure-fontawesome.m4`, its
+vendor-zip Makefile rules, and `__CSS_REMAP_URLS` itself with its three
+assertions) as dormant support for a decision history bypassed — the
+registered "fontawesome / social-icon situation" item. If its deletion is
+ever ruled, this note is the trace.
 
 See also: [Core build files](../architecture/overview.md),
 [CSS code review guidelines](../code-review/css.md).
