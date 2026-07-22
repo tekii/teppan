@@ -35,5 +35,15 @@ This structure is also what keeps the file's legacy/scratch experiments
 documentation comments safe to write as `#` rather than `dnl` — see the
 [M4 comment style convention](../conventions/m4-comment-style.md).
 
+## Absence-based checks must guard on freshness
+
+An acceptance check of the form "zero occurrences of X in the built
+output" is **vacuously true when the output does not exist or was not
+rebuilt**: absence-because-clean and absence-because-missing are the same
+observable (2026-07-22: a wrong-tree build produced no DOC files and every
+emptiness grep "passed"). Before trusting an emptiness result, assert the
+evidence base first — the build succeeded *this run*, and/or `test -f` a
+representative output file — then run the grep.
+
 See also: [Build & test commands](../build/commands.md),
 [Diversion/phase model](../architecture/diversion-phase-model.md).

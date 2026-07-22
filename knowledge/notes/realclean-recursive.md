@@ -105,6 +105,13 @@ Note the guard would also soften the shared-tree case from a hard abort into
 silently alternating full rebuilds; better, but the volume isolation remains
 the intended design.
 
+2026-07-22: bitten again, new vector — `make -C <worktree>` run from the
+main checkout: `make -C` changes `CURDIR` but not `$(PWD)`, so the run
+consumed/baked the wrong root (and a stale foreign-root `.mk` already in
+the shared tree turned it fatal). Second live trigger datum for the parked
+`$(PWD)`-stamp hardening above — the `.source-root` sentinel would refuse
+exactly this mismatch.
+
 See also: [Build & test commands](../build/commands.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md),
 [Domains](../architecture/domains.md).
