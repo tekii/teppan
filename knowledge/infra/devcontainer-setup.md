@@ -195,6 +195,23 @@ volume (and Claude's memory) persisted. Failure signature and recovery: see
 `source` embeds `${devcontainerId}` — likewise lands only on rebuild, as a
 fresh empty volume.)
 
+**Recurred 2026-07-21/22** after the sandbox-fix rebuild, and ran
+**undetected for ~a day** because the `findmnt` hygiene precondition was not
+run before builds on the floor: `docker inspect` listed the volume as
+mounted while the container's own namespace had no entry (`docker exec …
+findmnt` empty) — config-level "mounted" was a lie only the runtime probe
+could expose. Consequences while shared: bidirectional `DEP/*.mk`
+poisoning (host builds broke on `/workspaces/…` roots; the 2026-07-22
+build-cwd incident's "stale `.mk` from a different checkout" was this — a
+second root cause, probe-confirmed from the host via read-only
+`docker exec` diagnostics), and on the host the poison reached the
+[realclean-poisoning stage](../notes/realclean-recursive.md) (manual
+`rm -rf TEPPAN_BUILD` recovery). Healed by a no-cache rebuild,
+namespace-verified. Both morals restated: **run the probe every session —
+only the namespace answers truthfully**, and the volume that comes back is
+the *same old volume* — `make realclean` in-container before trusting its
+content.
+
 ### Node provenance
 Node is installed from the canonical `nodejs.org` tarball (pinned +
 `SHASUMS256.txt`-verified), matching the provenance of the project's existing
