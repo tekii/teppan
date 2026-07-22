@@ -77,7 +77,7 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
              state via body:has(...) to slide #sidebar in. Above 768px the toggle
              and its labels are display:none and #sidebar is an always-visible
              column, so one markup source serves both modes. -->
-        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Menu">
+        <input type="checkbox" id="nav-toggle" aria-label="Menu">
         <label for="nav-toggle" class="nav-backdrop" aria-hidden="true"></label>
         <aside id="sidebar">
             <label for="nav-toggle" class="nav-close" aria-label="Close menu"><svg><use xlink:href="[#]close"/></svg></label>
@@ -86,16 +86,16 @@ m4_undivert([CUSTOM_ELEMENTS])[]dnl
                 <ul>
 __RENDER_SET([__NAV__ITEMS__],[dnl
 m4_if($1,__LANG__,[dnl
-                    <li class="nav-item">
-                        <a m4_if($4,[],[m4_if($3,__LOCAL_URL_ID__,[class="link selected" aria-current="true"],[class="link"])],[class="link"]) href="__NAV_HREF([$3],[$4])">$2</a>
+                    <li>
+                        <a m4_if($4,[],[m4_if($3,__LOCAL_URL_ID__,[aria-current="true"],[])],[]) href="__NAV_HREF([$3],[$4])">$2</a>
                     </li>
 ])dnl
 ])dnl
                     <!-- locale entries: rendered as ordinary nav items so they blend into the menu; present only when the page exists in more than one locale (single-locale sites get none). Current locale is the selected item. -->
 m4_if(m4_eval(m4_set_size([__ALTERNATES__]) > 1),[1],[dnl
 __RENDER_SET([__ALTERNATES__],[dnl
-                    <li class="nav-item">
-                        <a m4_if(__LANG__,$1,[class="link selected" aria-current="true" href="[#]"],[class="link" href="__HREF([$3])"])><img class="lang-flag" src="__DASSET(region-flag-__LANG_FLAG($1).svg,third_party/region-flag-__LANG_FLAG($1).svg)" alt="">__LANG_NAME($1)</a>
+                    <li>
+                        <a m4_if(__LANG__,$1,[aria-current="true" href="[#]"],[href="__HREF([$3])"])><img class="lang-flag" src="__DASSET(region-flag-__LANG_FLAG($1).svg,third_party/region-flag-__LANG_FLAG($1).svg)" alt="">__LANG_NAME($1)</a>
                     </li>
 ])dnl
 ])dnl

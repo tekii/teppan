@@ -91,7 +91,7 @@ a file under `third_party/` (the fix belongs upstream, or in a pin bump).
   radio-adjacent labels, `a[aria-current]`, form controls); verify the winner
   in-browser rather than assuming class beats element.
 - **Focus visibility on the drawer's hidden checkbox** — the no-JS drawer's
-  control (`.nav-toggle`) is `position: absolute; opacity: 0` (focusable but
+  control (`#nav-toggle`) is `position: absolute; opacity: 0` (focusable but
   invisible), so keyboard focus on it must be surfaced on the *visible*
   labels. `custom.css` does this with
   `body:has(#nav-toggle:focus-visible) .nav-open svg, ... .nav-close svg { outline }`.
