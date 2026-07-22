@@ -49,8 +49,10 @@
  * bottom promotes #sidebar to a static, always-visible left rail.
  */
 
-/* the drawer's focusable-but-invisible checkbox control (the labels drive it) */
-.nav-toggle {
+/* the drawer's focusable-but-invisible checkbox control (the labels drive it);
+   keyed to its id -- the element's one name -- like every other rule that
+   drives it */
+#nav-toggle {
     position: absolute;
     opacity: 0;
     pointer-events: none;
@@ -133,12 +135,12 @@ body:has(#nav-toggle:checked) {
    .lang-switch styling. Only their flag image and the shared current highlight
    below are language-specific. */
 /* Current locale AND current-page nav item share ONE highlight: bold weight
-   only (Devon, 2026-07-21 -- keep Pico's link color + underline). Both the
-   language switch and the nav live inside #sidebar, so `#sidebar a.selected`
-   (specificity 1,1,1) styles both; it out-specifies Pico's
-   a[aria-current]:not([aria-current=false]) (0,2,1) but sets only font-weight,
-   so it deliberately does NOT fight Pico's aria-current color/underline. */
-#sidebar a.selected {
+   only (Devon, 2026-07-21 -- keep Pico's link color + underline). Keyed to
+   aria-current so the accessibility state is the single source of truth
+   (the former parallel .selected class could drift from it); same vocabulary
+   as Pico's own a[aria-current] rules, and only font-weight is set, so
+   Pico's aria-current color/underline still applies untouched. */
+#sidebar a[aria-current="true"] {
     font-weight: bold;
 }
 /* decorative region flag beside each language name. Fixed uniform box (the
@@ -267,7 +269,7 @@ body > footer .layout-logo {
 @media (min-width: 768px) {
     /* drawer machinery is inert at desktop width: hide the toggle (dropping it
        from the tab order), the backdrop, the close button and the mobile topbar */
-    .nav-toggle,
+    #nav-toggle,
     .nav-close,
     .topbar {
         display: none;
