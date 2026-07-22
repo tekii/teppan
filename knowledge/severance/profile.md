@@ -22,7 +22,11 @@ Note the gate's known limits and the pending change-type revision in the
 `findmnt -R /workspaces/teppan` must show the `TEPPAN_BUILD` volume
 mount before any `make` on the main checkout, or the
 [baked-root trap](../notes/realclean-recursive.md) aborts/re-poisons.
-If missing, **STOP and hand back**.
+If missing, **STOP and hand back**. Since 2026-07-22 the probe is also
+**mechanized**: the `Makefile` itself refuses container main-checkout
+builds when no volume is mounted on `TEPPAN_BUILD` (worktrees and the
+host are exempt) — the session-start probe remains good practice, but
+the guard no longer depends on it being remembered.
 
 ## Sanctioned flow
 
