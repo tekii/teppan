@@ -7,6 +7,27 @@ TMP:=/tmp
 BUILD_ROOT:=$(PWD)/TEPPAN_BUILD
 VENDOR:=$(PWD)/VENDOR
 
+# HYGIENE GUARD -- refuse container builds of the MAIN checkout when the
+# TEPPAN_BUILD volume is not actually mounted (config-level "mounted" can
+# lie; only the namespace answers truthfully -- see the "declared != mounted"
+# caveat + 2026-07-21/22 recurrence in knowledge/infra/devcontainer-setup.md).
+# Scope: container only (TEPPAN_IN_CONTAINER=1, baked in the image ENV) AND
+# main checkout only ($(PWD) == $(WORKSPACE_ROOT)) -- worktrees are exempt by
+# design (their TEPPAN_BUILDs are deliberately local, never volume-mounted),
+# and the host is exempt (no TEPPAN_IN_CONTAINER there).
+# Parse-time on purpose (NOT a FORCE/prerequisite guard like the mode stamp):
+# make remakes -include'd DEP/*.mk BEFORE any target or prerequisite runs, so
+# a graph-level guard fires only after the poison is already written -- only
+# a parse-time $(error) precedes -include processing. Stamp = staleness =
+# graph mechanism; guard = refusal = parse mechanism.
+ifeq ($(TEPPAN_IN_CONTAINER),1)
+ifeq ($(PWD),$(WORKSPACE_ROOT))
+ifeq ($(shell findmnt -no TARGET $(BUILD_ROOT) 2>/dev/null),)
+$(error hygiene precondition failed: no volume mounted on $(BUILD_ROOT); a build now would cross-poison host and container DEP trees -- STOP, rebuild the container, re-probe (findmnt -R $(WORKSPACE_ROOT)))
+endif
+endif
+endif
+
 #
 # M4
 #
