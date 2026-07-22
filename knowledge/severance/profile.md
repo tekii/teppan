@@ -13,7 +13,11 @@ Teppan's answers to the profile contract in the vendored
 
 ## Gate
 
-`make test` — currently 31 `__ASSERT_EQ` assertions, 0 FAIL required.
+`make test` — every `__ASSERT_EQ` assertion must pass: **0 FAIL** is the
+criterion. (The assertion count grows as coverage grows — 31 when this
+line was first written, 35 as of 2026-07-22 — and is deliberately not
+part of the criterion, so the profile no longer drifts stale with each
+added test.)
 Note the gate's known limits and the pending change-type revision in the
 [infra deferred-work register](../infra/deferred-work.md).
 
@@ -31,7 +35,7 @@ the guard no longer depends on it being remembered.
 ## Sanctioned flow
 
 `scripts/mdr.sh provision` → edits in the worktree → `make test`
-gate (30 PASS / 0 FAIL) → `integrate` → `teardown`.
+gate (all assertions PASS / 0 FAIL) → `integrate` → `teardown`.
 
 **The main checkout is never hand-edited.** Every repo-content change
 starts with `scripts/mdr.sh provision` (a sibling worktree) and reaches
