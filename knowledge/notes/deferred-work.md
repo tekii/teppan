@@ -18,6 +18,18 @@ deferrals may instead live in their own note — e.g. [`make publish`](publish-t
 [`sitemap.xml`](sitemap-target.md); this register is for cross-cutting or
 otherwise unhomed items.)
 
+## Pretty / extensionless URLs (`cleanUrls`) — deferred
+
+The Firebase Hosting config sets `"cleanUrls": false` (see
+[Firebase Hosting publish pipeline](firebase-publish.md)) because the generator
+emits explicit `.html` links. Flipping it to `true` would let Firebase serve
+`/about` for `/about.html`, but only if the in-page links are *also*
+extensionless — otherwise every link triggers a sitewide 301 bounce. The unit
+of work is making `__HREF`/`__ABSOLUTE` emit extensionless URLs (mode-aware:
+real files browsed off disk under `preview` still need the `.html`) *plus* the
+`cleanUrls` flip. **Revisit trigger:** SEO work, or a decision to prefer pretty
+URLs.
+
 ## Wire `fragment-customers.html` into a page (deferred)
 
 The fragment was de-AMP'd (`<amp-img>`→`<img>`, `__ASSET`→`__DASSET`, alt text)
@@ -48,19 +60,25 @@ An incremental `make build` after a `generator.m4` change that alters the
 `*.landing.m4` fragment format does **not** reliably regenerate *existing*
 domains' landing fragments, so the `NAVIGATION-LANDING.m4` aggregate can
 carry stale `m4_define` entries (e.g. an ancient path-as-name form instead
-of `__LANDING_<DOMAIN>_URL__`). Because `__REDIRECT_URL` (`generator.m4`)
-now hard-`m4_fatal`s when a redirect target's `__LANDING_<DOMAIN>_URL__` is
-missing, a stale aggregate makes `make build` **abort** during redirect-page
-HTML generation — where previously the silent `http://DOMAIN` fallback
-masked it. **Workaround:** run `make realclean` before rebuilding after any
-`generator.m4` change touching landing-fragment format.
+of `__LANDING_<DOMAIN>_URL__`). Historically this failed loudly: the former
+`__REDIRECT_URL` guard hard-`m4_fatal`'d when a redirect target's
+`__LANDING_<DOMAIN>_URL__` was missing, so a stale aggregate aborted
+`make build` during redirect-page HTML generation. That guard and the redirect
+pages were **removed 2026-07-23** (redirect domains are now Firebase
+console-level redirects — see
+[Firebase Hosting publish pipeline](firebase-publish.md)), so the loud abort is
+gone; the staleness itself remains, since a stale `NAVIGATION-LANDING.m4` can
+still feed outdated cross-domain landing URLs. **Workaround:** run
+`make realclean` before rebuilding after any `generator.m4` change touching
+landing-fragment format.
 
 Observed 2026-07-17 converting `tekii.srl`/`tekii.llc` to landing sites: the
 main checkout's `tekii.ar`/`tekii.us` landing fragments predated the
 `__UP`-based landing naming and only a clean build refreshed them (a fresh
-worktree that `realclean`s first was unaffected). The guard surfacing this
-loudly is working as intended; the underlying gap is landing-fragment
-staleness on the incremental path — likely the same class as the
+worktree that `realclean`s first was unaffected). That guard surfaced the
+staleness loudly while it existed (removed 2026-07-23 with the redirect pages);
+the underlying gap is landing-fragment staleness on the incremental path —
+likely the same class as the
 [`NAVIGATION.m4` dependency edge](#navigationm4s-non-obvious-dependency-edge)
 item below. **Hypothesis to confirm at pickup:** `NAV/%.landing.m4`'s
 prerequisite on `generator.m4` isn't forcing regeneration when the declaring

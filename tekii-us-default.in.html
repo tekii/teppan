@@ -1,8 +1,10 @@
 __WITH_DOMAIN([tekii.us],[
     __WITH_STEM([index],[
         __WITH_LANG([__EN__],[
-            __AS_LANDING([
-                __MAKE_PAGE([__LOCALIZE_URL_NULL])
+            __AS_REDIRECT_DOMAINS([tekii.com,tekii.info,tekii.biz,tekii.co,tekii.net],[
+                __AS_LANDING([
+                    __MAKE_PAGE([__LOCALIZE_URL_NULL])
+                ])
             ])
 dnl         cross-domain menu link to the TEKii LLC landing site. Registered
 dnl         here in KILL context (outside the MAIN push below) so it lands in

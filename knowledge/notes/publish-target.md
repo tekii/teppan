@@ -1,15 +1,27 @@
 ---
 type: Design Note
-title: make publish — intended gsutil publish flow (incomplete)
-description: The publish target and its gsutil-based per-file upload flow are stubbed; documents the intended design, the GSUTIL_EXTRA_FLAGS per-file override pattern, and what remains to be implemented.
-tags: [design-note, makefile, publish]
+title: gsutil publish flow (retired — replaced by Firebase Hosting)
+description: Trace note for the removed gsutil-based per-file publish flow (never fully implemented). Preserves the intended design and the GSUTIL_EXTRA_FLAGS per-file override pattern; superseded 2026-07-23 by the Firebase Hosting pipeline (see firebase-publish.md).
+tags: [design-note, makefile, publish, trace, retired]
 timestamp: 2026-06-28
 ---
 
-# `make publish` — intended gsutil publish flow (incomplete)
+# gsutil publish flow (retired — replaced by Firebase Hosting)
 
-The `publish` target and the `do-publish` recipe are currently stubbed —
-`publish:` has no prerequisites wired up and `do-publish` only echoes the
+> **Retired 2026-07-23.** The gsutil/ZIP publish pathway — the `do-publish`
+> stub, `do-compress`, the `GSUTIL_EXTRA_FLAGS` per-file override pattern, and
+> the per-page `PUBLISH`/`ZIP` `.mk` rules — was removed in favour of
+> **Firebase Hosting**. See [Firebase Hosting publish pipeline](firebase-publish.md)
+> for the live design. **Why it lost (on the merits):** Firebase Hosting
+> provides a CDN, managed TLS certs, atomic releases with rollback, per-pattern
+> cache headers, and real path-preserving 301 redirects — none of which the
+> echo-only gsutil stub ever delivered; chosen 2026-07-23. **Revisit trigger:**
+> leaving Firebase for plain bucket hosting (e.g. GCS static-website hosting)
+> would bring this per-file, header-per-object `gsutil` model back into scope.
+> The rest of this note is preserved as the **trace** of that removed design.
+
+The (removed) `publish` target and the `do-publish` recipe were stubbed —
+`publish:` had no prerequisites wired up and `do-publish` only echoed the
 command it *would* run:
 
 ```makefile
@@ -93,5 +105,6 @@ that: actually navigate to the live published URL and check real rendering
 site, not just the local `file://` preview. `curl` stays the fast first
 check; the browser is for the deeper, slower pass once `curl` is clean.
 
-See also: [Build & test commands](../build/commands.md),
+See also: [Firebase Hosting publish pipeline](firebase-publish.md) (the live successor),
+[Build & test commands](../build/commands.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md).

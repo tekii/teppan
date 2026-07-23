@@ -51,7 +51,8 @@ workflow, handoff) lives in [infra/](infra/index.md).
   [`__CSS_REMAP_URLS`/former `helper-css-remap` tool](notes/css-remap-helper.md),
   [Water.css → Pico.css migration (framework swap trace)](notes/water-to-pico-migration.md),
   [`make realclean` — recursive `TEPPAN_BUILD` deletion](notes/realclean-recursive.md),
-  [`make publish` — intended gsutil publish flow (incomplete)](notes/publish-target.md),
+  [Firebase Hosting publish pipeline (`firebase.json` + deploy targets)](notes/firebase-publish.md),
+  [gsutil publish flow (retired — replaced by Firebase Hosting)](notes/publish-target.md),
   [`sitemap.xml` generation — not yet implemented](notes/sitemap-target.md),
   [deferred / open work register (project; infra/process items in `infra/`)](notes/deferred-work.md),
   [`Rules.mk` recursive sub-make rationale](notes/rules-mk-rationale.md).
