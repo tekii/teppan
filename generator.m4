@@ -18,6 +18,7 @@ m4_define([_m4_divert(DEFERRED_MK)], 9)
 m4_define([_m4_divert(EPILOG)], 10)
 m4_define([_m4_divert(TESTS)], 11)
 m4_define([_m4_divert(LANDING)], 12)
+m4_define([_m4_divert(PUBLISH)], 13)
 
 dnl
 dnl
@@ -88,40 +89,6 @@ m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relati
 m4_define([__ABSOLUTE],[m4_ifdef([__PREVIEW__],
 [__HREF([$1])],
 [http://__HREF([$1],__BUILD_ROOT__/DOC)])])dnl
-
-#
-# REDIRECT_URL(DOMAIN) MACRO
-# resolves DOMAIN's registered landing page (__LANDING_<DOMAIN>_URL__, as
-# aggregated into NAVIGATION-LANDING.m4 -- see __MAKE_PAGE's [landing] arg)
-# and routes it through __ABSOLUTE, the sole build-mode-aware cross-domain
-# chokepoint, so the redirect is correct under both `build` (http://host/...)
-# and `preview` (relative, browsable off disk).
-#
-# DOMAIN must be a TEKii domain that registers a landing page. Every redirect
-# target in this project is internal (see knowledge/architecture/domains.md);
-# there is no external-redirect use case. A missing registration is therefore
-# always an authoring mistake -- a typo'd target, or a new site whose default
-# page was not wrapped in __AS_LANDING -- so it is a hard m4_fatal, not a
-# silent `http://DOMAIN` that would bypass __ABSOLUTE (escaping to the live
-# host even under `make preview`) and hide the error. Should an external
-# redirect ever be needed, grow a deliberate preview-exempt path here -- do
-# not relax the guard.
-#
-# The m4_fatal is gated to GENERATE_HTML_PHASE. generator.m4 expands __FIRST__
-# and __LAYOUT__ (and thus a redirect page's __REDIRECT_URL call) in EVERY
-# phase, discarding the result outside HTML. In GENERATE_MAKEFILE_PHASE the
-# DEP .mk is generated at the very start of a clean build, before any
-# NAVIGATION-LANDING.m4 exists, so __LANDING_<DOMAIN>_URL__ is legitimately
-# absent then -- fatalling there would abort DEP generation and drop the
-# page's build rule. Only in GENERATE_HTML_PHASE is the landing aggregate
-# guaranteed present (order-only prereq of the .html target) and the URL
-# actually emitted, so a missing registration there is the real error we
-# want to catch. Off-HTML phases fall through to empty (harmless, discarded).
-#
-m4_define([__REDIRECT_URL],[m4_ifdef([__LANDING_]__UP([$1])[_URL__],dnl
-[__ABSOLUTE(__LANDING_]__UP([$1])[_URL__)],dnl
-[m4_if(__PHASE__,[GENERATE_HTML_PHASE],dnl
-[m4_fatal([__REDIRECT_URL: no landing page registered for redirect target ']$1[' (expected __LANDING_]__UP([$1])[_URL__) -- wrap its default page's __MAKE_PAGE in __AS_LANDING or fix the target; external redirects are unsupported])])])])dnl
 
 #
 # CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR) MACRO
@@ -231,6 +198,24 @@ m4_popdef([__LANDING_CONTEXT__])dnl
 ])
 
 #
+# AS_REDIRECT_DOMAINS(DOMAINS, BODY) MACRO
+# $1 comma-separated domains that redirect -- at the Firebase console's
+#    domain-attach level, 301 path-preserving -- to __DOMAIN__, the domain
+#    whose landing page BODY registers
+# $2 body -- the __AS_LANDING([__MAKE_PAGE(...)]) call for that landing page
+# Declares $1 as __DOMAIN__'s redirect aliases. __MAKE_PAGE checks
+# __REDIRECT_DOMAINS_CONTEXT__ (m4_ifdef) -- same dynamic-scope idiom as
+# __AS_LANDING's __LANDING_CONTEXT__: pushdef'd before BODY expands, visible
+# to the __MAKE_PAGE call BODY contains, popped after. The redirect TARGET is
+# deliberately not a parameter: it is the enclosing __DOMAIN__.
+#
+m4_define([__AS_REDIRECT_DOMAINS],[dnl
+m4_pushdef([__REDIRECT_DOMAINS_CONTEXT__],[$1])dnl
+$2[]dnl
+m4_popdef([__REDIRECT_DOMAINS_CONTEXT__])dnl
+])
+
+#
 # MAKE_PAGE MACRO
 # $1 LinkType
 # wrap the call in __AS_LANDING([...]) to register this page as
@@ -270,6 +255,27 @@ $(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 : __FIRST__ | $$(@D)/ ; $(do-generate
 navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 && rm $(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4 || true
 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 : $(BUILD_ROOT)/NAV/__PATH_STEM__.landing.m4
 navigation-files-clean :: ; @test -f $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 && rm $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 || true
+[#] FIREBASE PUB FRAGMENT (GENERATE_PUBLISH_PHASE run for this landing stem)
+$(BUILD_ROOT)/PUB/__DOMAIN__.json : __SRC__/generator.m4
+$(BUILD_ROOT)/PUB/__DOMAIN__.json : EXTRA_PUBLISH_FLAGS+= -D [__DOMAIN__]=__DOMAIN__ -D [__LANG__]=__LANG__ -D [__STEM__]=__STEM__ -D [__LOCAL_URL_ID__]=__LOCAL_URL_ID__
+$(BUILD_ROOT)/PUB/__DOMAIN__.json : __FIRST__ | $$(@D)/ ; $(do-generate-publish)
+publish-files-clean :: ; @test -f $(BUILD_ROOT)/PUB/__DOMAIN__.json && rm $(BUILD_ROOT)/PUB/__DOMAIN__.json || true
+$(BUILD_ROOT)/firebase.json : $(BUILD_ROOT)/PUB/__DOMAIN__.json
+build : $(BUILD_ROOT)/firebase.json
+[#] PER-DOMAIN PUBLISH + REFUSE-ONLY MODE GUARD (see BUILD MODE STAMP, Makefile)
+[#] guard reads the stamp only -- publish never builds (Devon decision, 2026-07-23)
+m4_ifdef([__REDIRECT_DOMAINS_CONTEXT__],[dnl
+[#] CONSOLE REDIRECT VERIFICATION (see check-redirect, Makefile)
+m4_foreach([__RD__],m4_dquote(__REDIRECT_DOMAINS_CONTEXT__),[dnl
+publish-verify :: ; @$(call check-redirect,__RD__,__DOMAIN__)
+])dnl
+],[])dnl
+m4_pushdef([__DOMAIN_DASHED__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
+.PHONY : __DOMAIN_DASHED__-publish __DOMAIN_DASHED__-mode-guard
+__DOMAIN_DASHED__-mode-guard : ; @test "$$(cat $(BUILD_ROOT)/.mode-__DOMAIN__ 2>/dev/null)" = "build" || { echo "*** __DOMAIN__ not built in build mode -- run 'make build' first"; exit 1; }
+__DOMAIN_DASHED__-publish : __DOMAIN_DASHED__-mode-guard $(BUILD_ROOT)/firebase.json ; $(do-firebase-deploy-only)
+publish : __DOMAIN_DASHED__-mode-guard
+m4_popdef([__DOMAIN_DASHED__])dnl
 ],[])dnl
 dnl
 [#] HTML
@@ -300,18 +306,6 @@ dnl dashed-domain block) so a single domain's assets can be (re)built in
 dnl isolation; assets-clean/assets-compress stay global for now.
 assets-clean assets-compress :: | $(BUILD_ROOT)/DOC/__PATH_STEM__.mk ; $(MAKE) --no-print-directory -f Rules.mk -f $(BUILD_ROOT)/DOC/__PATH_STEM__.mk SRC=__SRC__ BUILD_ROOT=$(BUILD_ROOT) [$]@
 dnl
-[#] ZIP
-.SECONDARY : $(BUILD_ROOT)/ZIP/__PATH_STEM__.html
-$(BUILD_ROOT)/ZIP/__PATH_STEM__.html : GZIP_EXTRA_FLAGS:=
-$(BUILD_ROOT)/ZIP/__PATH_STEM__.html : $(BUILD_ROOT)/DOC/__PATH_STEM__.html | $$(@D)/ $(BUILD_ROOT)/DOC/__PATH_STEM__.mk ;  $(do-compress)
-compressed-files-clean :: ; @test -f $(BUILD_ROOT)/ZIP/__PATH_STEM__.html && rm $(BUILD_ROOT)/ZIP/__PATH_STEM__.html || true
-dnl
-[#] PUBLISH
-.INTERMEDIATE : __PATH_STEM__.html
-__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Content-Type:$(shell mimetype --brief $(BUILD_ROOT)/DOC/__PATH_STEM__.html | tr -d '\n')"
-__PATH_STEM__.html : GSUTIL_EXTRA_FLAGS+= -h "Cache-Control:public,max-age=86400"
-__PATH_STEM__.html : $(BUILD_ROOT)/ZIP/__PATH_STEM__.html ; $(do-publish)
-dnl
 m4_pushdef([__DOMAIN__],m4_bpatsubst(__DOMAIN__,[\.],[-]))dnl
 .PHONY : __DOMAIN__-build __DOMAIN__-assets-copy
 dnl per-domain asset copy: recurse into this stem's deferred .mk to run its
@@ -322,9 +316,6 @@ __DOMAIN__-build : $(BUILD_ROOT)/DOC/__PATH_STEM__.html __DOMAIN__-assets-copy |
 dnl build aggregates the per-domain targets so a full build also copies deferred
 dnl assets (via assets-copy), and a single domain can be rebuilt on its own.
 build : __DOMAIN__-build
-.PHONY : __DOMAIN__
-__DOMAIN__ : __PATH_STEM__.html
-publish : __DOMAIN__
 m4_popdef([__DOMAIN__])dnl
 dnl
 makefiles-clean :: ; @test -f __TARGET__ && rm __TARGET__ || true
@@ -344,6 +335,9 @@ m4_divert_push([LANDING])dnl
 m4_text_box(__PATH_STEM__,[-])
 [m4_define](m4_dquote(__LANDING_URL_ID__),m4_dquote(__BUILD_ROOT__/DOC/__PATH_STEM__.html))
 m4_divert_pop([LANDING])dnl
+m4_divert_push([PUBLISH])dnl
+m4_include(__SRC__/firebase-entry.json.m4)dnl
+m4_divert_pop([PUBLISH])dnl
 ],[])dnl
 dnl
 m4_popdef([__PATH_STEM__])
@@ -458,7 +452,7 @@ m4_case(__PHASE__,
 [GENERATE_LANDING_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([LANDING])])],
 [GENERATE_HTML_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([HTML])])],
 [GENERATE_DEFERRED_MK_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([DEFERRED_MK])])],
-[MAKEPUB_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
+[GENERATE_PUBLISH_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([PUBLISH])])],
 [TEST_PHASE],[m4_divert_text([DEFAULT],[m4_undivert([TESTS])])],
 [m4_fatal([Unmached! __PHASE__==]__PHASE__)])dnl
 dnl
@@ -466,6 +460,7 @@ dnl
 m4_cleardivert([MAKEFILE])
 m4_cleardivert([DEFERRED_MK])
 m4_cleardivert([LANDING])
+m4_cleardivert([PUBLISH])
 dnl m4_cleardivert([SITEMAP])
 m4_cleardivert([HEAD])
 m4_cleardivert([MAIN])

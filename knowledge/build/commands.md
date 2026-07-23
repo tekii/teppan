@@ -37,6 +37,31 @@ few narrower targets, so a full `make build` isn't the only option:
   `$(PWD)/TEPPAN_BUILD`, and Make matches target strings literally, so a
   relative `TEPPAN_BUILD/DOC/...` won't match any rule.
 
+## Publishing (Firebase Hosting)
+
+Publishing is **host-side only** (the container network is firewalled) and
+**never builds** — it deploys whatever is already in `TEPPAN_BUILD/DOC`,
+refusing if that is stale/preview output. See
+[Firebase Hosting publish pipeline](../notes/firebase-publish.md) for the full
+design.
+
+- `make publish` — `firebase deploy … --only hosting` for all four content
+  sites. Requires `FIREBASE_PROJECT` in the environment (no tracked default) —
+  a publish goal without it is a parse-time error. Auth is ambient
+  (`firebase login` / `GOOGLE_APPLICATION_CREDENTIALS`), never in Make.
+- `make <dashed-domain>-publish` — deploy one site, e.g. `make tekii-ar-publish`
+  → `--only hosting:tekii-ar-teppan-site`. Guarded by `<dashed-domain>-mode-guard`,
+  which refuses unless that domain was last built in `build` mode (the
+  `.mode-<domain>` stamp).
+- `make publish-verify` — probe the nine console-level domain redirects
+  (`curl`, 301 + `Location`, path-preserving) against the in-repo declared map.
+  Exempt from the `FIREBASE_PROJECT` requirement (no CLI/project involved).
+- `PREVIEW=1` with any publish goal is refused at parse time (preview output has
+  `file://`-relative URLs, unfit to deploy).
+
+`make build` generates `TEPPAN_BUILD/firebase.json` (the multi-site deploy
+config) alongside the site; validate it with `jq -e . TEPPAN_BUILD/firebase.json`.
+
 ## Build mode (`build` vs `preview`) is stamped, not just a flag
 
 See [`file://`-relative preview](../notes/file-relative-preview.md) for why
@@ -68,4 +93,5 @@ Use the `build-preview` skill to build and serve `TEPPAN_BUILD/DOC` locally for
 manual inspection in a browser.
 
 See also: [Testing conventions](../testing/conventions.md),
+[Firebase Hosting publish pipeline](../notes/firebase-publish.md),
 [`make realclean`](../notes/realclean-recursive.md).

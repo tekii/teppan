@@ -77,25 +77,45 @@ __ASSERT_EQ([NAV_TARGET_DOMAIN first path segment],__NAV_TARGET_DOMAIN__([__BUIL
 m4_divert_pop([TESTS])dnl
 
 #
-# __REDIRECT_URL(DOMAIN) resolves to DOMAIN's registered landing page
-# (__LANDING_<UP(DOMAIN)>_URL__, as __MAKE_PAGE's [landing] arg would define
-# it once NAVIGATION-LANDING.m4 is sincluded), routed through __ABSOLUTE.
-# __UP translits "." to "_" and upcases, so "tekii.ar" registers under
-# __LANDING_TEKII_AR_URL__ -- defined here directly (without going through
-# __MAKE_PAGE/NAVIGATION-LANDING.m4) to pin __REDIRECT_URL's lookup in
-# isolation. The missing-registration path is intentionally not asserted: it
-# is now a hard m4_fatal (every redirect target must register a landing page
-# -- see the macro header in generator.m4), so exercising it would abort the
-# whole `make test` run instead of yielding a comparable value. __UP itself
-# is pinned separately below, since the guard's lookup and its error message
-# both depend on it.
+# __UP translits "." to "_" and upcases -- used to build domain-derived macro
+# names (__LANDING_<DOMAIN>_URL__, __LOCAL_URL_ID__). Pinned in isolation:
+# "tekii.com.ar" upcased with dots as underscores is TEKII_COM_AR (derived by
+# hand from the translit spec, not the macro's output).
 #
 m4_divert_push([TESTS])dnl
 __ASSERT_EQ([UP dots-to-underscores and upcase],__UP([tekii.com.ar]),[TEKII_COM_AR])
-m4_pushdef([__LANDING_TEKII_AR_URL__],[__BUILD_ROOT__/DOC/tekii.ar/index.html])dnl
-__ASSERT_EQ([REDIRECT_URL with registered landing page],dnl
-__REDIRECT_URL([tekii.ar]),[http://tekii.ar/index.html])
-m4_popdef([__LANDING_TEKII_AR_URL__])dnl
+m4_divert_pop([TESTS])dnl
+
+
+#
+# The firebase.json hosting entry is now emitted by the file-scope template
+# firebase-entry.json.m4 (the meta.json guillemet idiom, m4_include'd into the
+# PUBLISH diversion), not by a macro -- so it is proven at artifact level
+# (fragment bytes + firebase.json validity in the verification), not through
+# __ASSERT_EQ argument collection. What stays unit-testable is the single
+# transformation the template depends on: the site ID is __DOMAIN__ with a
+# literal -teppan-site suffix, every dot dashed. Derived by hand:
+# tekii.com.ar-teppan-site -> tekii-com-ar-teppan-site (the suffix has no dot,
+# so substitution leaves it intact). This must match the Makefile's per-domain
+# --only hosting:<id>-teppan-site.
+#
+m4_divert_push([TESTS])dnl
+__ASSERT_EQ([firebase entry site id: dashed domain plus -teppan-site suffix],m4_bpatsubst([tekii.com.ar-teppan-site],[\.],[-]),[tekii-com-ar-teppan-site])
+m4_divert_pop([TESTS])dnl
+
+
+#
+# __AS_REDIRECT_DOMAINS(DOMAINS,BODY) pushdefs __REDIRECT_DOMAINS_CONTEXT__ to
+# DOMAINS around BODY's expansion -- visible inside BODY, popped once the macro
+# returns. Same dynamic-scope shape as the __AS_LANDING context check above.
+# m4_quote wraps the call so the comma in the multi-domain DOMAINS value stays
+# one argument to __ASSERT_EQ instead of splitting it.
+#
+m4_divert_push([TESTS])dnl
+__ASSERT_EQ([AS_REDIRECT_DOMAINS context visible in body],dnl
+m4_quote(__AS_REDIRECT_DOMAINS([a.x,b.y],[m4_ifdef([__REDIRECT_DOMAINS_CONTEXT__],[__REDIRECT_DOMAINS_CONTEXT__],[UNSET])])),[a.x,b.y])
+__ASSERT_EQ([AS_REDIRECT_DOMAINS context not visible after],dnl
+m4_ifdef([__REDIRECT_DOMAINS_CONTEXT__],[SET],[UNSET]),[UNSET])
 m4_divert_pop([TESTS])dnl
 
 

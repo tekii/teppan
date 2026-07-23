@@ -69,9 +69,9 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
   *are* the content (customer/sponsor logos in `fragment-customers.html`) —
   those need a descriptive `alt`.
 - `id` attributes must be unique per document — watch for collisions when
-  copying blocks between `layout.html` and `layout-redirect.html`.
+  copying blocks between `layout.html` and the fragments it includes.
 - **`<!-- -->` wrapping the top-level `__WITH_LAYOUT(...)`/`__WITH_DOMAIN(...)`
-  macro call** in some page sources (`redirect.in.html`, `news.in.html`) is
+  macro call** in some page sources (e.g. `news.in.html`) is
   intentional — it keeps the editor's HTML syntax highlighter from
   misinterpreting the raw m4 macro text, not a build requirement (the call
   sits outside any diversion push, so it lands in the default `KILL`
@@ -105,26 +105,29 @@ output in `TEPPAN_BUILD/DOC`, enforce the following.
 - Page styles are delivered via external `<link rel="stylesheet">`; don't
   reintroduce ad-hoc inline `<style>` blocks.
 - **Cross-domain references must go through `__ABSOLUTE`, never bare
-  `__HREF`** — `__HREF` (`generator.m4:68`) produces a reference relative to
+  `__HREF`** — `__HREF` (`generator.m4`) produces a reference relative to
   the current document's origin (per RFC 3986, a relative ref cannot name a
   different scheme/host). A bare `__HREF` whose target spells *another*
   domain as a path segment (e.g. `../../tekii.ar/index.html`) only "means"
   cross-domain inside the artificially colocated build/preview tree; in
-  production each domain ships to its own GCS bucket/origin
-  (`Makefile` `do-publish` → `gs://$@`), so that path 404s against the
-  *current* domain's bucket. `__ABSOLUTE` (`generator.m4:76`) is the sole
-  cross-domain chokepoint and the only macro that is build-mode-aware
-  (production: literal `http://` + domain-as-directory; preview, under
-  `__PREVIEW__`: bare `__HREF` so the link stays valid off disk — see
-  [`file://`-relative preview](../notes/file-relative-preview.md)).
-  **Flag any cross-domain reference — an explicit cross-domain link,
-  a `hreflang`/canonical alternate (`layout.html:9,11`), or a redirect
-  target — that does not resolve through `__ABSOLUTE`**, and flag any bare
-  `__HREF` call whose target crosses a domain boundary. Redirects reach
-  `__ABSOLUTE` via `__REDIRECT_URL` (`generator.m4:86`, used by
-  `layout-redirect.html`); a page/template that hardcodes its own
-  `http://<domain>` instead of routing through `__ABSOLUTE`/`__REDIRECT_URL`
-  is the exact regression this rule exists to catch.
+  production each content domain ships to its **own Firebase Hosting site**
+  (`make publish` → `firebase deploy --only hosting`; see
+  [Firebase Hosting publish pipeline](../notes/firebase-publish.md)), so that
+  path 404s against the *current* domain's origin. `__ABSOLUTE`
+  (`generator.m4`) is the sole cross-domain chokepoint and the only macro that
+  is build-mode-aware (production: literal `http://` + domain-as-directory;
+  preview, under `__PREVIEW__`: bare `__HREF` so the link stays valid off disk
+  — see [`file://`-relative preview](../notes/file-relative-preview.md)).
+  **Flag any cross-domain reference — an explicit cross-domain link or a
+  `hreflang`/canonical alternate (`layout.html`) — that does not resolve
+  through `__ABSOLUTE`**, and flag any bare `__HREF` call whose target crosses
+  a domain boundary. A page/template that hardcodes its own `http://<domain>`
+  instead of routing through `__ABSOLUTE` is the exact regression this rule
+  exists to catch. (Cross-*domain* **redirects** are no longer an in-page
+  concern: the redirect-only domains are Firebase console-level 301s, and the
+  former `__REDIRECT_URL` / `layout-redirect.html` meta-refresh machinery was
+  removed 2026-07-23 — see
+  [Firebase Hosting publish pipeline](../notes/firebase-publish.md).)
 
 See also: [CSS code review guidelines](css.md),
 [Page source conventions](../architecture/page-source-conventions.md),

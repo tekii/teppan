@@ -44,6 +44,20 @@ M4_FLAGS+= -D __PREVIEW__
 endif
 
 #
+# FIREBASE
+#
+# FIREBASE_PROJECT deliberately has NO tracked default: the Firebase project
+# binding is environment-supplied by whoever runs the deploy (host-side only;
+# auth is likewise ambient -- firebase login / GOOGLE_APPLICATION_CREDENTIALS --
+# never in Make). Publish goals refuse at parse time without it; every other
+# goal ignores it. See knowledge/notes/firebase-publish.md.
+ifneq ($(filter publish %-publish,$(MAKECMDGOALS)),)
+ifeq ($(FIREBASE_PROJECT),)
+$(error FIREBASE_PROJECT is not set -- export the Firebase project ID before running publish goals)
+endif
+endif
+
+#
 # RULES START HERE
 #
 # .SECONDEXPANSION enables $$(@D)/ in prerequisites — Make expands $$ a second
@@ -102,6 +116,13 @@ $(TMP)/%/:
 # them spuriously read or rewrite any stamp.
 # Directory creation reuses the project's order-only "%/ on demand" pattern
 # above instead of an explicit mkdir.
+# publish is meaningless against preview output (file://-relative URLs) -- refuse
+# at parse time; the per-domain mode-guards (generated .mk) police staleness beyond this.
+ifneq ($(PREVIEW),)
+ifneq ($(filter publish %-publish publish-verify,$(MAKECMDGOALS)),)
+$(error publish requires build mode -- do not combine PREVIEW=1 with publish goals)
+endif
+endif
 MODE:=$(if $(PREVIEW),preview,build)
 .PHONY: FORCE
 FORCE:
@@ -170,6 +191,14 @@ define do-generate-landing
 	generator.m4 > $@
 endef
 
+define do-generate-publish
+	$(M4) -D __PHASE__=GENERATE_PUBLISH_PHASE $(M4_FLAGS) \
+	-D __BUILD_ROOT__=$(BUILD_ROOT) \
+	$(EXTRA_PUBLISH_FLAGS) \
+	-D __TARGET__=$@ -D __FIRST__=$< \
+	generator.m4 > $@
+endef
+
 # dedup the per-stem nav fragments while PRESERVING their original order:
 # awk '!seen[$0]++' keeps each distinct line's first occurrence (unlike
 # `sort -u`, which also reordered the m4_set_add lines and made the nav menu
@@ -182,6 +211,13 @@ $(BUILD_ROOT)/NAV/%/NAVIGATION.m4 : | $$(@D)/
 # page can cross-link to another domain's landing page.
 $(BUILD_ROOT)/NAV/NAVIGATION-LANDING.m4 : | $$(@D)/
 	cat $^ > $@
+
+# firebase.json: assemble the per-domain PUB fragments (prerequisites accumulate
+# from the generated DEP .mk files, same edge pattern as NAVIGATION.m4 above).
+# awk prints a comma between fragments (FNR==1 on every file after the first).
+$(BUILD_ROOT)/firebase.json : | $$(@D)/
+	{ printf '{\n  "hosting": [\n'; awk 'FNR==1 && NR>1 {print ","} NF' $^; printf '  ]\n}\n'; } > $@
+publish-files-clean :: ; @test -f $(BUILD_ROOT)/firebase.json && rm $(BUILD_ROOT)/firebase.json || true
 
 define do-generate-html
 $(M4) -D __PHASE__=GENERATE_HTML_PHASE $(M4_FLAGS) \
@@ -202,16 +238,6 @@ $(M4) -D __PHASE__=GENERATE_DEFERRED_MK_PHASE $(M4_FLAGS) \
 endef
 
 
-#
-# GZIPED TARGETS
-#
-# reset to empty; per-target rules set this to add -h "Cache-Control:..." etc.
-GSUTIL_EXTRA_FLAGS:=
-
-define do-compress
-	gzip -c --no-name --rsyncable $< >$@
-endef
-
 # no explicit prerequisites: the -include'd DEP/*.mk files wire all real deps.
 .PHONY: build
 build:
@@ -222,28 +248,48 @@ build:
 preview:
 	$(MAKE) PREVIEW=1
 
-define do-publish
-	@echo "++++++ gsutil $(GSUTIL_EXTRA_FLAGS) -h "Content-Encoding:gzip" cp -a public-read -r $<  gs://$@"
-	@echo [[[ PUBLISHED $@ ]]]
+define do-firebase-deploy
+	firebase deploy --non-interactive --project $(FIREBASE_PROJECT) \
+	--config $(BUILD_ROOT)/firebase.json --only hosting
 endef
 
+# per-domain variant: target name <dashed-domain>-publish -> --only hosting:<dashed-domain>
+define do-firebase-deploy-only
+	firebase deploy --non-interactive --project $(FIREBASE_PROJECT) \
+	--config $(BUILD_ROOT)/firebase.json --only hosting:$(patsubst %-publish,%,$@)-teppan-site
+endef
+
+# prerequisites (per-domain mode guards) accumulate from the generated DEP .mk files
 .PHONY: publish
-publish: #$(ALL_GZIP)
-	@echo [[[ DONE $@ ]]]
+publish : $(BUILD_ROOT)/firebase.json
+	$(do-firebase-deploy)
+
+# $(1) redirect domain, $(2) expected target domain. Probes the live console-level
+# redirect: expects 301 with path preserved (deep probe path); reads, never follows.
+define check-redirect
+@r=$$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' https://$(1)/pv/deep/probe.html); \
+test "$$r" = "301 https://$(2)/pv/deep/probe.html" \
+|| { echo "*** $(1): expected 301 -> $(2), got: $$r"; exit 1; }; \
+echo "ok: $(1) -> $(2)"
+endef
+
+# check rules accumulate from the generated DEP .mk files (landing declarations)
+.PHONY: publish-verify
+publish-verify ::
 
 .PHONY: all
 all: build
 
 # clean-* base rules: double-colon so generated .mk files can append recipes.
-.PHONY: build-clean assets-clean compressed-files-clean makefiles-clean navigation-files-clean
+.PHONY: build-clean assets-clean publish-files-clean makefiles-clean navigation-files-clean
 build-clean ::
 assets-clean ::
-compressed-files-clean ::
+publish-files-clean ::
 makefiles-clean ::
 navigation-files-clean ::
 
 .PHONY: clean
-clean : build-clean assets-clean compressed-files-clean makefiles-clean navigation-files-clean
+clean : build-clean assets-clean publish-files-clean makefiles-clean navigation-files-clean
 	@echo [[[ DONE $@ ]]]
 
 .PHONY: realclean
@@ -289,7 +335,7 @@ test: generator_test.m4
 	@! grep -q '^FAIL' $(TMP)/generator_test.out
 
 # suppress errors: files may already be absent, which is expected during clean.
-.IGNORE: clean compressed-files-clean realclean
+.IGNORE: clean realclean
 .DEFAULT_GOAL := build
 
 #

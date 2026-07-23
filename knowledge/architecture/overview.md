@@ -19,11 +19,16 @@ timestamp: 2026-06-17
 - **`*.in.html`** —
   per-page m4 sources. Each stem gets a generated `.mk` under `TEPPAN_BUILD/DEP`,
   `-include`d by the `Makefile`. See [Page source conventions](page-source-conventions.md).
-- **`layout.html`** / **`layout-redirect.html`** — page shells that consume
-  the diversions produced by a page source.
+- **`layout.html`** — the page shell that consumes the diversions produced by a
+  page source. (`layout-redirect.html` was removed 2026-07-23 when redirect
+  domains moved to Firebase console redirects — see
+  [Firebase Hosting publish pipeline](../notes/firebase-publish.md).)
+- **`firebase-entry.json.m4`** — file-scope m4 template (the `meta.json`
+  guillemet idiom) `m4_include`d into the `PUBLISH` diversion to emit one
+  `firebase.json` hosting entry per content domain.
 - **`Makefile`** / **`Rules.mk`** — build orchestration; defines `M4_FLAGS`,
   domain/output paths (`__SRC__`, `__DOC__`, `__BUILD_ROOT__`, `__VENDOR__`,
-  `__ZIP__`, `__NAV__`), and per-stem rules. See [Build & test commands](../build/commands.md).
+  `__NAV__`), and per-stem rules. See [Build & test commands](../build/commands.md).
 
 ## Build output layout
 
@@ -34,6 +39,11 @@ timestamp: 2026-06-17
   `NAVIGATION.m4` files and the cross-domain `NAVIGATION-LANDING.m4`. Not
   published. Kept separate from `TEPPAN_BUILD/DOC` so the published tree contains
   only HTML/assets.
+- `TEPPAN_BUILD/PUB/` — per-content-domain `firebase.json` fragment
+  intermediates (`<domain>.json`), assembled into `TEPPAN_BUILD/firebase.json`
+  (the Firebase Hosting deploy config, one entry per content domain). Not
+  published — the config sits at the `TEPPAN_BUILD/` root, outside `DOC/`. See
+  [Firebase Hosting publish pipeline](../notes/firebase-publish.md).
 
 ## Generated/vendored paths
 

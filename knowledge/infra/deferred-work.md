@@ -26,6 +26,15 @@ light/none; code or build inputs → `make test` **and** `make build`. Related: 
 gate this would revise is documented in the [Teppan Severance
 profile](../severance/profile.md).
 
+Reinforced 2026-07-23 (the Firebase publish change): `make test` neither
+builds nor validates `TEPPAN_BUILD/firebase.json`, so a config that expanded to
+**invalid JSON** (the retired quadrigraph entry macro — see
+[Firebase Hosting publish pipeline](../notes/firebase-publish.md)) passed the
+gate and was caught only by a manual `make build` + `jq -e .` check. A
+**`firebase.json` JSON-validity check** (`jq -e .`; the container has `jq`, not
+`python3`) is a concrete candidate for the build-input arm of this
+change-type-aware gate.
+
 ### Visual-verification level (direction agreed 2026-07-21)
 
 Even `make build` only proves generation succeeds — nothing in the gate
