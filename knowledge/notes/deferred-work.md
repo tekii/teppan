@@ -30,6 +30,25 @@ real files browsed off disk under `preview` still need the `.html`) *plus* the
 `cleanUrls` flip. **Revisit trigger:** SEO work, or a decision to prefer pretty
 URLs.
 
+## `publish-verify` aborts on the first failing domain (pending decision)
+
+`make publish-verify`'s per-domain checks are emitted double-colon rules
+(`publish-verify :: ; @$(call check-redirect,…)` per declared alias), and Make
+stops at the first rule that fails — so a single dead domain masks the state
+of all the others. Observed on the first live run (2026-07-24): `tekii.com.ar`
+(no DNS yet) returned `000` and the remaining eight checks never executed.
+**Interim:** `make -k publish-verify` (keep-going) runs every check and
+reports all failures in one pass — the right invocation during the staged
+`.ar`-family DNS cutover, when some domains fail by design (the `.us` family
+verified green pre-deploy on the same date; `www.tekii.com.ar` deliberately
+stays on the legacy hosting until `tekii.ar` content first deploys).
+**Pending decision:** whether all-domains reporting should be the target's
+default — e.g. guard each emitted recipe with `|| fail=1`-style continuation,
+or collect results and exit once at the end — instead of relying on the
+caller remembering `-k`. **Revisit trigger:** the `.ar` cutover completing
+(when a failure stops being routine), or the first time `-k` is forgotten
+during a real incident.
+
 ## Wire `fragment-customers.html` into a page (deferred)
 
 The fragment was de-AMP'd (`<amp-img>`→`<img>`, `__ASSET`→`__DASSET`, alt text)
