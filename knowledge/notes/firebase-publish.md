@@ -156,6 +156,77 @@ domain-level redirects — then the meta-refresh page (or a
 declarations) would need to return. Git history preserves the removed bytes;
 this note preserves the why.
 
+## Legacy cutover contract — `www.tekii.com.ar` (constraints on the final tekii.ar layout)
+
+`www.tekii.com.ar` is the one redirect alias with a **past**: it serves the
+pre-redesign production site today (probed 2026-07-24), so its cutover carries
+preservation duties none of the other eight aliases have. This section is that
+contract — binding on the final `tekii.ar` layout until honored some other way.
+
+### The live legacy surface (verified 2026-07-24: crawl == sitemap.xml, five pages)
+
+| Legacy path (HTTP 200 today) | Post-301 lands on tekii.ar | Status in the new tree |
+|---|---|---|
+| `/`, `/index.html` | `/index.html` | exists (ES landing) — survives as-is |
+| `/en/contact.html` | `/en/contact.html` | exists — survives as-is |
+| `/es/about.html` | `/es/about.html` | missing (no `es/` dir; ES at root) — needs a rule → `/index.html` |
+| `/es/contact.html` | `/es/contact.html` | missing (same) — needs a rule → `/contact.html` |
+| `/en/about.html` | `/en/about.html` | missing — needs a rule → `/en/index.html` (the landing IS the about content) |
+
+The `es/` cases are one prefix collapse (`/es/:path*` → `/:path`); `en/about` is
+one explicit rule. **No duty beyond these five**: everything else 404s on the
+legacy site today (extensionless/cleanUrls-style paths included — verified: the
+legacy host serves exact filenames only), so the cutover owes them nothing.
+
+### DNS / hosting facts (probed 2026-07-24)
+
+- Zone: Google Cloud DNS (`ns-cloud*.googledomains.com`).
+- **Apex `tekii.com.ar`: zero records** — resolves to nothing today. No
+  preservation duty; attaching it as a console redirect is a pure improvement
+  and can happen **any time** (nothing that works today breaks).
+- **`www.tekii.com.ar`: `CNAME c.storage.googleapis.com`** — a Google Cloud
+  Storage bucket website: the still-running deployment of the retired gsutil
+  flow (see [the gsutil trace](publish-target.md)). HTTP-only by construction
+  (CNAME-to-GCS has no custom-domain TLS — HTTPS fails certificate validation),
+  so all legacy inbound links are `http://` and upgrade cleanly via Firebase's
+  automatic HTTP→HTTPS after cutover.
+- **Sequencing:** `www`'s DNS flip is the real production cutover — only after
+  `tekii.ar` content first deploys. The other three `tekii.ar` aliases
+  (`tekii.com.ar`, `teky.com.ar`, `teky.ar`) have no DNS today and may be
+  attached whenever convenient.
+
+### Post-cutover acceptance
+
+`make publish-verify` (all nine aliases green), plus: curl the five legacy URLs
+above — each must answer 200 or single-301-to-200; zero 404s. Bonus (no duty):
+`/en`, `/en/` start serving via Firebase directory-index handling — legacy
+404'd them.
+
+### OPEN DECISION — where the three fixup rules live (Devon to rule; blocks
+nothing until the `www` cutover itself)
+
+- **Option A — rules on `tekii.ar`'s hosting entry** (console redirect for
+  `www` as for the other aliases): two `redirects` rules in the content site's
+  entry. Cheapest; but legacy deep links take **two-hop 301 chains**
+  (domain-301 then site-rule-301), and `tekii.ar`'s future layout must honor
+  legacy URL shapes forever (coupling).
+- **Option B — a dedicated redirects-only Firebase site for
+  `www.tekii.com.ar`** (Devon's proposal, 2026-07-24): the domain attaches as a
+  *serving* domain on its own site whose entry is only a redirect table — the
+  five paths mapped explicitly to absolute current destinations, plus a
+  path-preserving catch-all `/:path*` → `https://tekii.ar/:path`. Pros:
+  **single-hop 301s** (better SEO equity transfer, half the latency on exactly
+  the URLs that matter), legacy semantics quarantined on the legacy hostname
+  (`tekii.ar`'s entry stays pure; future restructuring edits one mapping
+  table), the whole contract versioned in generated `firebase.json`. Cons:
+  reintroduces for one domain what the console decision avoided — a fifth
+  site/entry (global ID claim), a second entry-template shape + an in-repo
+  declaration for the map (the `__FIREBASE_REDIRECT_ENTRY` seat), and the
+  `public`-dir-must-exist wart (stub dir, or point at `DOC/tekii.ar`,
+  unreachable behind the catch-all). Outie's recommendation (2026-07-24):
+  **Option B**, catch-all path-preserving — one-time machinery beats a
+  permanent constraint on the content site's layout.
+
 ## Accepted risks / known limits
 
 - **No `.firebaserc`, no staging parameterization.** A staging project would
