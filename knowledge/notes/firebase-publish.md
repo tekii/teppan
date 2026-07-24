@@ -56,6 +56,13 @@ the fix for the failure that a macro-based approach hit (below).
   `-teppan-site` suffix, e.g. `tekii.ar` → `tekii-ar-teppan-site`. The site ID is
   the project's own naming convention (it also forms Firebase's default
   `<site-id>.web.app` subdomain); it is **not** derived from `.firebaserc`.
+  **Why the suffix exists (Devon, 2026-07-24):** the first console setup was
+  deleted, and Firebase **retired its site IDs — deleted IDs are not reusable**
+  (e.g. `tekii-us-site`, permanently gone), forcing a fresh namespace on the
+  second attempt. Do not "simplify" the IDs to match the bare dashed-domain
+  convention: site IDs are **immutable**, so renaming means delete-and-recreate
+  — which hits the same retention behavior again, plus custom-domain
+  re-attachment and certificate re-provisioning on live sites.
 - **Load-bearing caveat:** the first `m4_bpatsubst` argument is **unquoted on
   purpose** so `__DOMAIN__` expands *before* substitution. Quoting it would dash
   nothing and re-expand late, silently emitting a dotted (invalid) site ID. Do
