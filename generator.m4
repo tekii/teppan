@@ -88,7 +88,7 @@ m4_define([__HREF],[m4_esyscmd_s(__REALPATH__ --canonicalize-missing $1 --relati
 #
 m4_define([__ABSOLUTE],[m4_ifdef([__PREVIEW__],
 [__HREF([$1])],
-[http://__HREF([$1],__BUILD_ROOT__/DOC)])])dnl
+[https://__HREF([$1],__BUILD_ROOT__/DOC)])])dnl
 
 #
 # CSS_REMAP_URLS(CSS-TEXT, CSS-SRC-DIR) MACRO
