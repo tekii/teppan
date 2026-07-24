@@ -19,7 +19,8 @@ timestamp: 2026-06-30
 - `make test` — run `generator_test.m4`; fails if any `__ASSERT_EQ` assertion
   prints `FAIL` (see `.claude/skills/run-tests`).
 - `make clean` / `make realclean` — remove generated output. `realclean`
-  recursively deletes `TEPPAN_BUILD` entirely (see
+  **empties** `TEPPAN_BUILD` recursively (and removes the directory itself only
+  where it isn't the container's volume mount point — see
   [`make realclean`](../notes/realclean-recursive.md)); `clean` only removes
   files whose rules are still registered in the current source tree.
 

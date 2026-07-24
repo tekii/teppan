@@ -293,8 +293,15 @@ clean : build-clean assets-clean publish-files-clean makefiles-clean navigation-
 	@echo [[[ DONE $@ ]]]
 
 .PHONY: realclean
+# Empty the tree WITHOUT removing TEPPAN_BUILD itself: on the container's main
+# checkout it is the build-volume mount point (unlinking a live mount fails
+# EBUSY). find -mindepth 1 never touches the root and, unlike a TEPPAN_BUILD/*
+# glob, also catches the .mode-<domain> dotfile stamps; it is a silent no-op
+# when already empty. The rmdir then removes the directory only where it is a
+# plain dir (host, worktrees), and stays silent on the mount point.
 realclean:: clean
-	@rm -rf TEPPAN_BUILD
+	@find TEPPAN_BUILD -mindepth 1 -delete 2>/dev/null || true
+	@rmdir TEPPAN_BUILD 2>/dev/null || true
 	@echo [[[ DONE $@ ]]]
 
 
@@ -335,7 +342,9 @@ test: generator_test.m4
 	@! grep -q '^FAIL' $(TMP)/generator_test.out
 
 # suppress errors: files may already be absent, which is expected during clean.
-.IGNORE: clean realclean
+# realclean is NOT ignored: its recipe self-guards (|| true) on the expected
+# failures, so anything that still fails is a real error worth seeing.
+.IGNORE: clean
 .DEFAULT_GOAL := build
 
 #

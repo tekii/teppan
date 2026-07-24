@@ -1,7 +1,7 @@
 ---
 type: Design Note
 title: make realclean — recursive TEPPAN_BUILD deletion
-description: realclean uses rm -rf on the literal, project-namespaced TEPPAN_BUILD directory name to wipe the build tree, safely handling stale output from dropped domain/stem/lang registrations that clean cannot remove.
+description: realclean empties the project-namespaced TEPPAN_BUILD tree (find -mindepth 1 -delete + conditional rmdir) — without unlinking the directory itself where it is the container's build-volume mount point — safely handling stale output from dropped domain/stem/lang registrations that clean cannot remove.
 tags: [makefile, build]
 timestamp: 2026-06-30
 ---
@@ -9,14 +9,20 @@ timestamp: 2026-06-30
 # `make realclean` — recursive `TEPPAN_BUILD` deletion
 
 `realclean` runs `clean` first (removing all files whose rules are still
-registered in the current source tree), then executes `@rm -rf TEPPAN_BUILD`
-to wipe the build tree entirely: `TEPPAN_BUILD/DOC`, `TEPPAN_BUILD/NAV`,
-`TEPPAN_BUILD/DEP`, `TEPPAN_BUILD/ZIP`, and `TEPPAN_BUILD/.mode` (the build-mode
-stamp — see the "BUILD MODE STAMP" block in `Makefile`). `build` and
-`make preview` (`make PREVIEW=1`) write into this single shared root; there
-is no longer a separate `TEKII_PREVIEW` tree.
+registered in the current source tree), then **empties** the build tree —
+`@find TEPPAN_BUILD -mindepth 1 -delete` followed by a conditional
+`@rmdir TEPPAN_BUILD` — wiping everything under the root: `TEPPAN_BUILD/DOC`,
+`TEPPAN_BUILD/NAV`, `TEPPAN_BUILD/DEP`, `TEPPAN_BUILD/PUB`,
+`TEPPAN_BUILD/firebase.json`, and the per-domain `.mode-<domain>` stamps (the
+build-mode stamp — see the "BUILD MODE STAMP" block in `Makefile`). (`ZIP/`
+was retired with the gsutil pathway on 2026-07-23 — see the
+[Firebase Hosting publish pipeline](firebase-publish.md).) The root directory
+itself is removed only where it is a plain directory (host, worktrees), not
+where it is the container's build-volume mount point — see the mount-point
+constraint below. `build` and `make preview` (`make PREVIEW=1`) write into
+this single shared root; there is no longer a separate `TEKII_PREVIEW` tree.
 
-## Why `rm -rf` and not `rmdir`
+## Why a recursive delete, not a plain `rmdir`
 
 `clean`'s removal recipes (`clean-build`, `clean-navigation`, etc.) are
 generated dynamically per `*.in.html` source by the `__MAKE_PAGE` macro in
@@ -26,7 +32,9 @@ rule for its old output disappears too — there is nothing left in the
 current source tree to declare "go remove this file." Those orphaned
 outputs survive `make clean`. A non-recursive `rmdir` would also fail
 because `TEPPAN_BUILD/DOC` is never empty after a build. Only a recursive
-delete is reliable.
+delete is reliable — which is exactly what the `find TEPPAN_BUILD -mindepth 1
+-delete` half does (the trailing `rmdir` only removes the now-empty root
+where that is possible; see the mount-point constraint below).
 
 ## Why `TEPPAN_BUILD` (literal) and not `$(__BUILD_ROOT__)` (variable)
 
@@ -111,6 +119,36 @@ consumed/baked the wrong root (and a stale foreign-root `.mk` already in
 the shared tree turned it fatal). Second live trigger datum for the parked
 `$(PWD)`-stamp hardening above — the `.source-root` sentinel would refuse
 exactly this mismatch.
+
+## Mount-point constraint (container main checkout) — why find+rmdir replaced rm -rf (2026-07-24)
+
+On the container's **main checkout**, `TEPPAN_BUILD` is the build-volume
+**mount point** (the same mount the hygiene guard probes — see
+[the Severance consumer profile](../severance/profile.md)). The old
+`@rm -rf TEPPAN_BUILD` emptied the tree depth-first but then always failed to
+unlink the root itself — `rm: cannot remove 'TEPPAN_BUILD': Device or resource
+busy` — because a live mount cannot be unlinked (and its removal isn't wanted:
+the volume must stay mounted). `.IGNORE: clean realclean` swallowed the exit
+code, so `realclean` "succeeded" while printing an EBUSY line every run — and
+that same `.IGNORE` masked *real* failures too. Host and worktrees were
+unaffected (`TEPPAN_BUILD` is a plain directory there, fully removed).
+
+The replacement `@find TEPPAN_BUILD -mindepth 1 -delete` empties the tree
+without touching the root (`-mindepth 1`), catches the `.mode-<domain>` dotfile
+stamps a `TEPPAN_BUILD/*` glob would miss, and is idempotent on an
+empty/absent tree (`2>/dev/null || true` covers the fresh-checkout case where
+the directory doesn't exist yet). The trailing
+`@rmdir TEPPAN_BUILD 2>/dev/null || true` preserves the old remove-the-dir
+behavior exactly where it was ever possible (host, worktrees) and stays silent
+on the mount point. In the same change, `realclean` was dropped from `.IGNORE`
+(now `.IGNORE: clean`): the recipe self-guards (`|| true`) on the expected
+failures, so anything that still fails is a real error worth seeing.
+
+**Trace (per the removal-trace convention):** the retired form was
+`@rm -rf TEPPAN_BUILD` under `.IGNORE: clean realclean`. It lost **on the
+merits** once the container volume made `TEPPAN_BUILD` a permanent mount point
+— the `rm -rf` form only ever made sense when `TEPPAN_BUILD` was guaranteed to
+be a plain directory. Revisit trigger: none foreseen.
 
 See also: [Build & test commands](../build/commands.md),
 [GNU Makefile code review guidelines](../code-review/makefile.md),
