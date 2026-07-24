@@ -243,6 +243,12 @@ nothing until the `www` cutover itself)
 - **`cleanUrls: false`** — the generator emits explicit `.html` links, so there
   are no sitewide 301 bounces. Pretty/extensionless URLs are deferred (see the
   [project register](deferred-work.md)).
+- **Absolute URLs are `https://`** (`__ABSOLUTE`, flipped 2026-07-24, before
+  first publish): every generated canonical, `hreflang` alternate, and
+  cross-domain link names the final TLS URL — matching the console redirects'
+  `https://` targets, keeping canonicals from pointing at the http→https 301,
+  and anchoring the `<site-id>.web.app` duplicate-content mitigation. Preview
+  output is unaffected (relative URLs).
 
 See also: [gsutil publish trace note](publish-target.md),
 [Build & test commands](../build/commands.md),

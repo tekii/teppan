@@ -57,13 +57,13 @@ m4_divert_pop([TESTS])dnl
 
 
 #
-# __ABSOLUTE turns a __BUILD_ROOT__/DOC-relative path into a http://host/path URL,
+# __ABSOLUTE turns a __BUILD_ROOT__/DOC-relative path into a https://host/path URL,
 # treating the first path segment (relative to __BUILD_ROOT__/DOC) as the host.
 #
 m4_divert_push([TESTS])dnl
-__ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__BUILD_ROOT__/DOC/tests.com/en/about.html]),[http://tests.com/en/about.html])
-__ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__BUILD_ROOT__/DOC/tests.com/about.html]),[http://tests.com/about.html])
-__ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__BUILD_ROOT__/DOC/index.html]),[http://index.html])
+__ASSERT_EQ([ABSOLUTE nested path],__ABSOLUTE([__BUILD_ROOT__/DOC/tests.com/en/about.html]),[https://tests.com/en/about.html])
+__ASSERT_EQ([ABSOLUTE single segment path],__ABSOLUTE([__BUILD_ROOT__/DOC/tests.com/about.html]),[https://tests.com/about.html])
+__ASSERT_EQ([ABSOLUTE doc root],__ABSOLUTE([__BUILD_ROOT__/DOC/index.html]),[https://index.html])
 m4_divert_pop([TESTS])dnl
 
 #
